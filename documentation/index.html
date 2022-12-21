@@ -1,0 +1,324 @@
+<!doctype html>
+<!--[if IE 6 ]><html lang="en-us" class="ie6"> <![endif]-->
+<!--[if IE 7 ]><html lang="en-us" class="ie7"> <![endif]-->
+<!--[if IE 8 ]><html lang="en-us" class="ie8"> <![endif]-->
+<!--[if (gt IE 7)|!(IE)]><!-->
+<html lang="en-us"><!--<![endif]-->
+<head>
+	<meta charset="utf-8">
+
+	<title>Car Rental App v2.1 - Flutter UI Kit using GetX</title>
+
+	<meta name="description" content="Car Rental App UI Kit developed and designed for Developer using Flutter. it contains 10++ total of screen with many ready to used screen, widget, features, function, integration and animation that can be used for multi purpose application in iOS and Android devices. It is optimized coded and easy to customize.
+
+With Car Rental App UI Kit, developer can save for 1000+ hours to develop mobile application rather than searching for features on internet.
+
+The download package contains the full Source Code, Images, Icons and all reusable resources (readme) that helps you to install in the smoothest way and start your next awesome project in few minutes.
+">
+	<meta name="author" content="Coding Your Life">
+	<meta name="copyright" content="Coding Your Life">
+	<meta name="generator" content="Documenter v2.0 https://evp.to/documenter">
+	<meta name="date" content="2021-05-06T00:00:00+02:00">
+
+	<link rel="stylesheet" href="assets/css/documenter_style.css" media="all">
+	<link rel="stylesheet" href="assets/js/google-code-prettify/prettify.css" media="screen">
+	<script src="assets/js/google-code-prettify/prettify.js"></script>
+
+	
+	<link rel="shortcut icon" type="image/x-icon" href="favicon.ico" />
+
+	<script src="assets/js/jquery.js"></script>
+	
+	<script src="assets/js/jquery.scrollTo.js"></script>
+	<script src="assets/js/jquery.easing.js"></script>
+
+	<script>document.createElement('section');var duration='500',easing='swing';</script>
+	<script src="assets/js/script.js"></script>
+
+	<style>
+		html{background-color:#EEEEEE;color:#383838;}
+		::-moz-selection{background:#333636;color:#00DFFC;}
+		::selection{background:#333636;color:#00DFFC;}
+		#documenter_sidebar #documenter_logo{background-image:url(https://firebasestorage.googleapis.com/v0/b/codingyourlife-id.appspot.com/o/CodingYourLife%20-%20New%20Logo%20-%20White%20200x200.png?alt=media&token=ebe69f54-e152-4d55-9e1a-f77abfa4e465);}
+		a{color:#008C9E;}
+		.btn {
+			border-radius:3px;
+		}
+		.btn-primary {
+			  background-image: -moz-linear-gradient(top, #008C9E, #006673);
+			  background-image: -ms-linear-gradient(top, #008C9E, #006673);
+			  background-image: -webkit-gradient(linear, 0 0, 0 008C9E%, from(#343838), to(#006673));
+			  background-image: -webkit-linear-gradient(top, #008C9E, #006673);
+			  background-image: -o-linear-gradient(top, #008C9E, #006673);
+			  background-image: linear-gradient(top, #008C9E, #006673);
+			  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#008C9E', endColorstr='#006673', GradientType=0);
+			  border-color: #006673 #006673 #bfbfbf;
+			  color:#FFFFFF;
+		}
+		.btn-primary:hover,
+		.btn-primary:active,
+		.btn-primary.active,
+		.btn-primary.disabled,
+		.btn-primary[disabled] {
+		  border-color: #008C9E #008C9E #bfbfbf;
+		  background-color: #006673;
+		}
+		hr{border-top:1px solid #D4D4D4;border-bottom:1px solid #FFFFFF;}
+		#documenter_sidebar, #documenter_sidebar ul a{background-color:#343838;color:#FFFFFF;}
+		#documenter_sidebar ul a{-webkit-text-shadow:1px 1px 0px #494F4F;-moz-text-shadow:1px 1px 0px #494F4F;text-shadow:1px 1px 0px #494F4F;}
+		#documenter_sidebar ul{border-top:1px solid #212424;}
+		#documenter_sidebar ul a{border-top:1px solid #494F4F;border-bottom:1px solid #212424;color:#FFFFFF;}
+		#documenter_sidebar ul a:hover{background:#333636;color:#00DFFC;border-top:1px solid #333636;}
+		#documenter_sidebar ul a.current{background:#333636;color:#00DFFC;border-top:1px solid #333636;}
+		#documenter_copyright{display:block !important;visibility:visible !important;}
+	</style>
+
+</head>
+<body class="documenter-project-car-rental-app-v21">
+	<div id="documenter_sidebar">
+		<a href="#documenter_cover" id="documenter_logo"></a>
+		<ul id="documenter_nav">
+			<li><a class="current" href="#documenter_cover">Start</a></li>
+				
+			<li><a href="#getting_started" title="Getting Started">Getting Started</a></li>
+			<li><a href="#getx_state_management" title="GetX State Management">GetX State Management</a></li>
+			<li><a href="#files_and_structure" title="Files and Structure">Files and Structure</a></li>
+			<li><a href="#flutter_packages" title="Flutter Packages">Flutter Packages</a></li>
+			<li><a href="#sources_and_credits" title="Sources and Credits">Sources and Credits</a></li>
+			<li><a href="#about_us" title="About Us">About Us</a></li>
+
+		</ul>
+		<div id="documenter_copyright">Copyright Coding Your Life 2021<br>
+		made with the <a href="https://evp.to/documenter">Documenter v2.0</a>
+		</div>
+	</div>
+	<div id="documenter_content">
+	<section id="documenter_cover">
+	<h1>Car Rental App v2.1</h1>
+	<h2>Flutter UI Kit using GetX</h2>
+	<div id="documenter_buttons">
+		<a href="https://www.youtube.com/channel/UCQF055W_K0_PzgZIvSkfPQw?sub_confirmation=1" class="btn btn-primary btn-large">Youtube Channel</a> <a href="https://previews.customer.envatousercontent.com/h264-video-previews/8c6116ea-ae2e-4415-a032-355b6b740173/4240773.mp4" class="btn btn-large">Video Preview</a> <a href="https://codecanyon.net/item/car-rental-app-flutter-ui-kit-using-getx/31048680" class="btn btn-large">Code Canyon</a> 
+	</div>
+	<hr>
+	<ul>
+	<li>created: 03/17/2021</li>
+	<li>latest update: 05/06/2021</li>
+	<li>by: Coding Your Life</li>
+	<li><a href=""></a></li>
+	<li>email: <a href="mailto:&#102;&#97;&#105;&#115;&#97;&#108;&#114;&#97;&#109;&#100;&#97;&#110;&#46;&#105;&#100;&#64;&#103;&#109;&#97;&#105;&#108;&#46;&#99;&#111;&#109;">&#102;&#97;&#105;&#115;&#97;&#108;&#114;&#97;&#109;&#100;&#97;&#110;&#46;&#105;&#100;&#64;&#103;&#109;&#97;&#105;&#108;&#46;&#99;&#111;&#109;</a></li>
+	</ul>
+	<p>Thank you for purchasing my theme. If you have any questions that are beyond the scope of this help file, please feel free to email via my user page contact form <a href="https://codecanyon.net/user/codingyourlife">here</a>. Thanks so much!</p>
+	</section>
+
+	<section id="getting_started">
+	<div class="page-header"><h3>Getting Started</h3><hr class="notop"></div>
+<p>
+	This project is a starting point for a Flutter application.<br>
+	A few resources to get you started if this is your first Flutter project:</p>
+<p>
+	- [Lab: Write your first Flutter app](<a href="https://flutter.dev/docs/get-started/codelab">https://flutter.dev/docs/get-started/codelab</a>)<br>
+	- [Cookbook: Useful Flutter samples](<a href="https://flutter.dev/docs/cookbook">https://flutter.dev/docs/cookbook</a>)</p>
+<p>
+	Flutter is an open-source mobile application development SDK created by Google. It is used to develop applications for Android and iOS, as well as being the primary method of creating applications for Google Fuchsia, Flutter widgets incorporate all critical platform differences such as scrolling, navigation, icons and fonts to provide full native performance.</p>
+<p>
+	For help getting started with Flutter, view our [online documentation](https://flutter.dev/docs), which offers tutorials, samples, guidance on mobile development, and a full API reference.</p>
+</section>
+<section id="getx_state_management">
+	<div class="page-header"><h3>GetX State Management</h3><hr class="notop"></div>
+<p>
+	&rarr; GetX Documentation :&emsp; <a href="https://pub.dev/packages/get" rel="nofollow" target="_blank">Go to GetX Package</a><br>
+	&rarr; GetX Ecosystem State Management : <a href="https://medium.com/flutter-community/the-flutter-getx-ecosystem-state-management-881c7235511d" rel="nofollow">Read Article</a><br>
+	&rarr; GetX Ecosystem Dependency Injection : <a href="https://medium.com/flutter-community/the-flutter-getx-ecosystem-dependency-injection-8e763d0ec6b9" rel="nofollow" target="_blank">Read Article</a></p>
+<p>
+	GetX is an extra-light and powerful solution for Flutter. It combines high-performance state management, intelligent dependency injection, and route management quickly and practically.</p>
+<p>
+	GetX has 3 basic principles. This means that these are the priority for all resources in the library: PRODUCTIVITY, PERFORMANCE, AND ORGANIZATION.</p>
+<p>
+	GetX is not bloated. It has a multitude of features that allow you to start programming without worrying about anything, but each of these features are in separate containers and are only started after use. If you only use State Management, only State Management will be compiled. If you only use routes, nothing from the state management will be compiled.</p>
+<p>
+	GetX has a huge ecosystem, a large community, a large number of collaborators, and will be maintained as long as the Flutter exists. GetX too is capable of running with the same code on Android, iOS, Web, Mac, Linux, Windows, and on your server.</p>
+<p>
+	<img src="assets/images/image_1.png"></p>
+</section>
+<section id="files_and_structure">
+	<div class="page-header"><h3>Files and Structure</h3><hr class="notop"></div>
+<p>
+	I&#39;m using getx files structure in this theme for references.&nbsp;The file is separated into directories using:</p>
+<pre class="prettyprint lang-css linenums">
+--lib
+  --models
+    --car.dart
+    --dealer.dart
+    --filter.dart
+    --notification.dart
+    --user.dart
+    --xcore.dart
+  --pages
+    --available_cars
+      --available_cars_binding.dart
+      --available_cars_controller.dart
+      --available_cars_view.dart
+    --book_car
+      --book_car_binding.dart
+      --book_car_controller.dart
+      --book_car_view.dart
+    --home
+      --home_controller.dart
+      --home_view.dart
+    --notification
+      --notification_controller.dart
+      --notification_view.dart
+    --profile
+      --profile_view.dart
+      --profile_view.dart
+    --search
+      --search_controller.dart
+      --serach_view.dart
+    --started
+      --forget_password_view.dart
+      --login_view.dart
+      --register_view.dart
+    --xcore.dart
+  --routes
+    --app_pages.dart
+    --app_routes.dart
+  --services
+    --car_service.dart
+    --dealer_service.dart
+    --filter_service.dart
+    --navigation_service.dart
+    --notification_service.dart
+    --user_service.dart
+    --xcore.dart
+  --shared
+    --constants
+      --lottie_file_name.dart
+    --dialogs
+      --confirm_dialog.dart
+      --info_dialog.dart
+    --styles
+      --colors.dart
+    --utils
+      --converter_helper.dart
+      --open_dialog.dart
+    --widgets
+      --app_bar_widget.dart
+      --avatar_widget.dart
+      --car_widget.dart
+      --dealer_widget.dart
+      --images_widget.dart
+      --progress_bar_widget.dart
+      --title_widget.dart
+    --xcore.dart
+  --core.dart
+  --main.dart</pre>
+<p>
+	<span style="color: rgb(56, 56, 56); font-family: Arial, verdana, arial, sans-serif;">There are 5 main folders, such as models, pages, routes, services, and shared. </span></p>
+<p>
+	<span style="color: rgb(56, 56, 56); font-family: Arial, verdana, arial, sans-serif;">For t</span>he files of core.dart and xcore.dart, we use it for exporting directory path references, like :</p>
+<pre class="prettyprint lang-css linenums" style="margin: 0px; font-variant-numeric: normal; font-variant-east-asian: normal; font-stretch: normal; font-size: 13px; line-height: normal; font-family: &quot;Helvetica Neue&quot;; color: rgb(0, 0, 0);">
+export &#39;models/xcore.dart&#39;;
+export &#39;pages/xcore.dart&#39;;
+export &#39;routes/app_pages.dart&#39;;
+export &#39;services/xcore.dart&#39;;
+export &#39;shared/xcore.dart&#39;;</pre>
+<p>
+	&nbsp;</p>
+<p>
+	&nbsp;</p>
+<p>
+	&nbsp;</p>
+</section>
+<section id="flutter_packages">
+	<div class="page-header"><h3>Flutter Packages</h3><hr class="notop"></div>
+<p>
+	This theme using some packages in pubspec.yaml file</p>
+<pre class="prettyprint lang-css linenums" style="margin: 0px; font-variant-numeric: normal; font-variant-east-asian: normal; font-stretch: normal; font-size: 13px; line-height: normal; color: rgb(0, 0, 0);">
+  # The following adds the Cupertino Icons font to your application.
+
+<span class="Apple-converted-space">  </span># Use with the CupertinoIcons class for iOS style icons.<span class="Apple-converted-space"> </span>
+
+<span class="Apple-converted-space">  </span>cupertino_icons: ^0.1.3
+
+
+<span class="Apple-converted-space">  </span># 977 fonts (and their variants) from fonts.google.com
+
+<span class="Apple-converted-space">  </span>google_fonts: ^2.0.0
+
+
+<span class="Apple-converted-space">  </span># Utilities
+
+<span class="Apple-converted-space">  </span>intl: ^0.17.0
+
+<span class="Apple-converted-space">  </span>get: ^4.1.4
+
+<span class="Apple-converted-space">  </span>share: ^2.0.1
+
+
+<span class="Apple-converted-space">  </span># UI widget package
+
+<span class="Apple-converted-space">  </span>line_icons: ^1.3.2
+
+<span class="Apple-converted-space">  </span>font_awesome_flutter: ^8.12.0
+
+<span class="Apple-converted-space">  </span>step_progress_indicator: ^0.2.5+8
+
+<span class="Apple-converted-space">  </span>bubble_bottom_bar: ^1.2.0
+
+<span class="Apple-converted-space">  </span>badges: ^1.1.6
+
+<span class="Apple-converted-space">  </span>transparent_image: ^1.0.0
+
+<span class="Apple-converted-space">  </span>lottie: ^1.0.1
+
+<span class="Apple-converted-space">  </span>flutter_animated_dialog: ^2.0.0</pre>
+<p class="js" style="background-image: url(&quot;../../_img/pre_bg.png&quot;); font-variant-numeric: normal; font-variant-east-asian: normal; font-stretch: normal; line-height: normal; font-family: &quot;Helvetica Neue&quot;; margin-top: 0px; margin-bottom: 0px;">
+	&nbsp;</p>
+</section>
+<section id="sources_and_credits">
+	<div class="page-header"><h3>Sources and Credits</h3><hr class="notop"></div>
+<p>
+	I&#39;ve used the following images, icons or other files from XD Design Concept :</p>
+<p>
+	-&nbsp;<a href="https://dribbble.com/shots/6714941-Car-rental-app" style="font-family: &quot;Helvetica Neue&quot;; font-size: 13px;">https://dribbble.com/shots/6714941-Car-rental-app</a></p>
+<p>
+	-&nbsp;<a href="https://lottiefiles.com" style="font-family: &quot;Helvetica Neue&quot;; font-size: 13px;">https://lottiefiles.com</a></p>
+<p>
+	-&nbsp;<a href="https://undraw.co/illustrations" style="font-family: &quot;Helvetica Neue&quot;; font-size: 13px;">https://undraw.co/illustrations</a></p>
+<hr>
+<p>
+	Once again, thank you so much for purchasing this theme.</p>
+<p>
+	As I said at the beginning, I&#39;d be glad to help you if you have any questions relating to this theme. No guarantees, but I&#39;ll do my best to assist. If you have a more general question relating to the themes on ThemeForest, you might consider visiting the forums and asking your question in the &quot;Item Discussion&quot; section.</p>
+<p>
+	<b>Faisal Ramdan<br>
+	Coding Your Life Founder</b></p>
+</section>
+<section id="about_us">
+	<div class="page-header"><h3>About Us</h3><hr class="notop"></div>
+<p class="p1" style="margin: 0px; font-variant-numeric: normal; font-variant-east-asian: normal; font-stretch: normal; font-size: 13px; line-height: normal; font-family: &quot;Helvetica Neue&quot;; color: rgb(0, 0, 0);">
+	Welcome to Coding Your Life. Stay up to date with best practices about coding of Flutter. See real code examples, and watch engineers from around the world putting Flutter to work!<span class="Apple-converted-space">&nbsp;</span></p>
+<p class="p2" style="margin: 0px; font-variant-numeric: normal; font-variant-east-asian: normal; font-stretch: normal; font-size: 13px; line-height: normal; font-family: &quot;Helvetica Neue&quot;; min-height: 15px; color: rgb(0, 0, 0);">
+	&nbsp;</p>
+<p class="p1" style="margin: 0px; font-variant-numeric: normal; font-variant-east-asian: normal; font-stretch: normal; font-size: 13px; line-height: normal; font-family: &quot;Helvetica Neue&quot;; color: rgb(0, 0, 0);">
+	Subscribe Youtube Channel to stay connected :<br>
+	&rarr;&nbsp;<a href="https://www.youtube.com/channel/UCQF055W_K0_PzgZIvSkfPQw?sub_confirmation=1">https://www.youtube.com/channel/UCQF055W_K0_PzgZIvSkfPQw?sub_confirmation=1</a></p>
+<p class="p2" style="margin: 0px; font-variant-numeric: normal; font-variant-east-asian: normal; font-stretch: normal; font-size: 13px; line-height: normal; font-family: &quot;Helvetica Neue&quot;; min-height: 15px; color: rgb(0, 0, 0);">
+	&nbsp;</p>
+<p class="p1" style="margin: 0px; font-variant-numeric: normal; font-variant-east-asian: normal; font-stretch: normal; font-size: 13px; line-height: normal; font-family: &quot;Helvetica Neue&quot;; color: rgb(0, 0, 0);">
+	Flutter is a mobile app SDK for both iOS, and Android developed at Google with continued support from the global community. Flutter works with existing code, is used by developers, organizations around the world, and is free, and open source.</p>
+<p class="p2" style="margin: 0px; font-variant-numeric: normal; font-variant-east-asian: normal; font-stretch: normal; font-size: 13px; line-height: normal; font-family: &quot;Helvetica Neue&quot;; min-height: 15px; color: rgb(0, 0, 0);">
+	&nbsp;</p>
+<p class="p1" style="margin: 0px; font-variant-numeric: normal; font-variant-east-asian: normal; font-stretch: normal; font-size: 13px; line-height: normal; font-family: &quot;Helvetica Neue&quot;; color: rgb(0, 0, 0);">
+	Visit our website to learn more &rarr;&nbsp;<a href="https://codingyourlife.id">https://codingyourlife.id</a></p>
+<p class="p1" style="margin: 0px; font-variant-numeric: normal; font-variant-east-asian: normal; font-stretch: normal; font-size: 13px; line-height: normal; font-family: &quot;Helvetica Neue&quot;; color: rgb(0, 0, 0);">
+	Follow me on Instagram &rarr; <a href="https://www.instagram.com/faisalramdan17">https://www.instagram.com/faisalramdan17</a></p>
+<p class="p1" style="margin: 0px; font-variant-numeric: normal; font-variant-east-asian: normal; font-stretch: normal; font-size: 13px; line-height: normal; font-family: &quot;Helvetica Neue&quot;; color: rgb(0, 0, 0);">
+	Follow us on Instagram &rarr; <a href="https://www.instagram.com/codingyourlife.id">https://www.instagram.com/codingyourlife.id</a></p>
+<p class="p1" style="margin: 0px; font-variant-numeric: normal; font-variant-east-asian: normal; font-stretch: normal; font-size: 13px; line-height: normal; font-family: &quot;Helvetica Neue&quot;; color: rgb(0, 0, 0);">
+	Business Inquiries &rarr; <a href="mailto:&#102;&#97;&#105;&#115;&#97;&#108;&#114;&#97;&#109;&#100;&#97;&#110;&#46;&#105;&#100;&#64;&#103;&#109;&#97;&#105;&#108;&#46;&#99;&#111;&#109;?subject=Hello">&#102;&#97;&#105;&#115;&#97;&#108;&#114;&#97;&#109;&#100;&#97;&#110;&#46;&#105;&#100;&#64;&#103;&#109;&#97;&#105;&#108;&#46;&#99;&#111;&#109;</a></p>
+</section>
+
+	</div>
+</body>
+</html>
