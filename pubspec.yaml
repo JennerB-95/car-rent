@@ -48,6 +48,8 @@ dependencies:
   flutter_html: ^2.2.1
   country_pickers: ^2.0.0
   queen_validators: ^0.2.3
+  http: ^0.13.5
+
 
 dev_dependencies:
   flutter_test:

@@ -167,26 +167,27 @@ class HomeView extends GetView<HomeController> {
           ),
         ),
         Container(
-          height: 280,
+          height: 250,
           child: ListView(
             physics: BouncingScrollPhysics(),
             scrollDirection: Axis.horizontal,
-            children: controller.cars
-                .map((car) => GestureDetector(
-                      onTap: () {
-                        Get.toNamed(
-                          Routes.BOOK_CAR,
-                          arguments: car,
-                          parameters: {
-                            "heroTag":
-                                "home" + car.id.toString() + car.images[0],
-                          },
-                        );
-                      },
-                      child: CarWidget(
-                        car: car,
-                        index: controller.cars.indexOf(car),
-                        heroTag: "home" + car.id.toString() + car.images[0],
+            children: controller.theData
+                .map((car) => Card(
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 10.0),
+                        child: Column(
+                          children: [
+                            Text(car["title"]),
+                            Padding(
+                              padding: const EdgeInsets.all(15.0),
+                              child: Image.network(
+                                "https://rentcarapex.ceandb.com/assets/img/equipments/thumbnail-images/${car['thumbnail_image']}",
+                                height: 150.0,
+                              ),
+                            ),
+                            Text(car["name"]),
+                          ],
+                        ),
                       ),
                     ))
                 .toList(),
