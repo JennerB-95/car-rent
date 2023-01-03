@@ -21,7 +21,7 @@ class LoginView extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    buildHeader(),
+                    buildLogo(),
                     buildLoginForm(),
                     buildLoginAction(),
                     buildRegisterAction(),
@@ -35,7 +35,7 @@ class LoginView extends StatelessWidget {
     );
   }
 
-  Widget buildHeader() {
+  Widget buildLogo() {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 16),
       decoration: BoxDecoration(
@@ -48,25 +48,12 @@ class LoginView extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(height: 22),
+          SizedBox(height: 0),
           ImagesWidget(
-            heightImages: 200,
+            heightImages: 250,
             images: [
-              "assets/images/welcome/off_road.png",
-              "assets/images/welcome/by_my_car.png",
-              "assets/images/welcome/city_driver.png",
+              "assets/images/welcome/logotipo.jpg",
             ],
-          ),
-          SizedBox(height: 13),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10.0),
-            child: TitleWidget(
-              title: "Welcome!",
-              fontSizeTitle: 27,
-              spacer: 8,
-              subtitle:
-                  "Travel and live the new experience of rent the cars from your home",
-            ),
           ),
           SizedBox(height: 13),
         ],
@@ -82,34 +69,34 @@ class LoginView extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "Email",
-            style: TextStyle(color: Color(0xFF707070), fontSize: 18),
+            "Correo",
+            style: TextStyle(color: Color(0xFFF9B234), fontSize: 18),
           ),
           TextField(
             decoration: InputDecoration(
-              hintText: "Enter your email",
+              hintText: "Ingresa tu correo",
               enabledBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Color(0xFF707070)),
+                borderSide: BorderSide(color: Color(0xFFF9B234)),
               ),
               focusedBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Color(0xFF707070)),
+                borderSide: BorderSide(color: Color(0xFFF9B234)),
               ),
             ),
           ),
           SizedBox(height: 15),
           Text(
-            "Password",
-            style: TextStyle(color: Color(0xFF707070), fontSize: 18),
+            "Contraseña",
+            style: TextStyle(color: Color(0xFFF9B234), fontSize: 18),
           ),
           TextField(
             obscureText: true,
             decoration: InputDecoration(
               hintText: "***********",
               enabledBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Color(0xFF707070)),
+                borderSide: BorderSide(color: Color(0xFFF9B234)),
               ),
               focusedBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Color(0xFF707070)),
+                borderSide: BorderSide(color: Color(0xFFF9B234)),
               ),
             ),
           ),
@@ -119,8 +106,8 @@ class LoginView extends StatelessWidget {
             child: TextButton(
                 onPressed: () => Get.toNamed(Routes.FORGET_PASSWORD),
                 child: Text(
-                  "Forgot your password?",
-                  style: TextStyle(fontSize: 18),
+                  "¿Perdiste tu contraseña?",
+                  style: TextStyle(fontSize: 17, color: Color(0xFFF9B234)),
                 )),
           ),
         ],
@@ -148,7 +135,7 @@ class LoginView extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.only(left: 8.0),
                 child: Text(
-                  "Sign In",
+                  "Ingresar",
                   style: TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
@@ -188,14 +175,14 @@ class LoginView extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              "Don't have an account?",
+              "¿No tienes una cuenta?",
               style: TextStyle(fontSize: 17),
             ),
             TextButton(
                 onPressed: () => Get.toNamed(Routes.REGISTER),
                 child: Text(
-                  "Sign up for free",
-                  style: TextStyle(fontSize: 17),
+                  "Regístrate",
+                  style: TextStyle(fontSize: 17, color: Color(0xFFF9B234)),
                 )),
           ],
         ),
