@@ -1,9 +1,51 @@
+import 'dart:convert';
+
 import 'package:car_rental/core.dart';
 import 'package:car_rental/shared/widgets/images_widget2.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
 
-class RegisterView extends StatelessWidget {
+class RegisterView extends StatefulWidget {
+  @override
+  State<RegisterView> createState() => _RegisterViewState();
+}
+
+class _RegisterViewState extends State<RegisterView> {
+  TextEditingController username = TextEditingController();
+  TextEditingController email = TextEditingController();
+  TextEditingController password = TextEditingController();
+  TextEditingController passwordConfirm = TextEditingController();
+
+  Future register() async {
+    var url = "http://basededatos.ceandb.com/register.php";
+    final response = await http.post(Uri.parse(url), body: {
+      "username": username.text,
+      "email": email.text,
+      "password": password.text,
+    });
+    print(response.statusCode);
+    print(response.body);
+    var data = jsonDecode(response.body ?? '[]');
+    if (data == "Error") {
+      Fluttertoast.showToast(
+        msg: 'Usuario ya registrado!',
+        textColor: Colors.red,
+        fontSize: 25,
+      );
+    } else {
+      Fluttertoast.showToast(
+        msg: 'Registro realizado correctamente!',
+        textColor: Colors.green,
+        fontSize: 25,
+      );
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => LoginView()));
+    }
+    return data;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,25 +91,14 @@ class RegisterView extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(height: 22),
+          SizedBox(height: 0),
           ImagesWidget2(
-            heightImages: 200,
+            heightImages: 250,
             images: [
-              "assets/images/welcome/fast_car.png",
-              "assets/images/welcome/vehicle_sale.png",
+              "assets/images/welcome/logotipo.jpg",
             ],
           ),
-          SizedBox(height: 13),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10.0),
-            child: TitleWidget(
-              title: "Sign Up",
-              fontSizeTitle: 27,
-              spacer: 8,
-              subtitle:
-                  "Travel and live the new experience of \nrent the cars from your home",
-            ),
-          ),
+          SizedBox(height: 0),
           SizedBox(height: 13),
         ],
       ),
@@ -82,94 +113,90 @@ class RegisterView extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "Name",
-            style: TextStyle(color: Color(0xFF707070), fontSize: 18),
+            "Usuario",
+            style: TextStyle(color: Color(0xFFF9B234), fontSize: 18),
           ),
           TextField(
             decoration: InputDecoration(
-              hintText: "Enter your name",
+              hintText: "Ingresa tu usuario",
               enabledBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Color(0xFF707070)),
+                borderSide: BorderSide(color: Color(0xFFF9B234)),
               ),
               focusedBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Color(0xFF707070)),
+                borderSide: BorderSide(color: Color(0xFFF9B234)),
               ),
             ),
+            controller: username,
           ),
           SizedBox(height: 15),
           Text(
-            "Email",
-            style: TextStyle(color: Color(0xFF707070), fontSize: 18),
+            "Correo",
+            style: TextStyle(color: Color(0xFFF9B234), fontSize: 18),
           ),
           TextField(
             decoration: InputDecoration(
-              hintText: "Enter your email",
+              hintText: "Ingresa tu correo",
               enabledBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Color(0xFF707070)),
+                borderSide: BorderSide(color: Color(0xFFF9B234)),
               ),
               focusedBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Color(0xFF707070)),
+                borderSide: BorderSide(color: Color(0xFFF9B234)),
               ),
             ),
+            controller: email,
           ),
           SizedBox(height: 15),
           Text(
-            "Phone",
-            style: TextStyle(color: Color(0xFF707070), fontSize: 18),
+            "Contraseña",
+            style: TextStyle(color: Color(0xFFF9B234), fontSize: 18),
           ),
-          TextField(
-            decoration: InputDecoration(
-              hintText: "+62 857-1100-017",
-              enabledBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Color(0xFF707070)),
+          TextFormField(
+              obscureText: true,
+              decoration: InputDecoration(
+                hintText: "********",
+                enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Color(0xFFF9B234)),
+                ),
+                focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Color(0xFFF9B234)),
+                ),
               ),
-              focusedBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Color(0xFF707070)),
-              ),
-            ),
-          ),
+              controller: password,
+              validator: ((value) {
+                if (value.isEmpty) return "Campo vacío";
+                return null;
+              })),
           SizedBox(height: 15),
           Text(
-            "Password",
-            style: TextStyle(color: Color(0xFF707070), fontSize: 18),
+            "Confirma tu Contraseña",
+            style: TextStyle(color: Color(0xFFF9B234), fontSize: 18),
           ),
-          TextField(
+          TextFormField(
             obscureText: true,
             decoration: InputDecoration(
               hintText: "********",
               enabledBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Color(0xFF707070)),
+                borderSide: BorderSide(color: Color(0xFFF9B234)),
               ),
               focusedBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Color(0xFF707070)),
+                borderSide: BorderSide(color: Color(0xFFF9B234)),
               ),
             ),
+            controller: passwordConfirm,
+            validator: ((value) {
+              if (value.isEmpty) return "Campo vacío";
+              if (value != password) return "No coincide la contraseña";
+              return null;
+            }),
           ),
-          SizedBox(height: 15),
-          Text(
-            "Confirm Password",
-            style: TextStyle(color: Color(0xFF707070), fontSize: 18),
-          ),
-          TextField(
-            obscureText: true,
-            decoration: InputDecoration(
-              hintText: "********",
-              enabledBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Color(0xFF707070)),
-              ),
-              focusedBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Color(0xFF707070)),
-              ),
-            ),
-          ),
-          SizedBox(height: 23),
-          Align(
-            alignment: Alignment.centerLeft,
-            child: Text(
-              "By signing up, I agree to the Car Rental App's User Agreement and Privacy Policy.",
-              style: TextStyle(fontSize: 16),
-            ),
-          ),
+          // SizedBox(height: 23),
+          // Align(
+          //   alignment: Alignment.centerLeft,
+          //   child: Text(
+          //     "Al registrarme, acepto los términos y condiciones de la aplicación APEX Renta de Vehículos.",
+          //     style: TextStyle(fontSize: 16),
+          //   ),
+          // ),
           SizedBox(height: 10),
         ],
       ),
@@ -178,7 +205,7 @@ class RegisterView extends StatelessWidget {
 
   Widget buildLoginAction() {
     return GestureDetector(
-      onTap: () => Get.toNamed(Routes.HOME),
+      onTap: () => register(),
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 27),
         child: Container(
@@ -196,7 +223,7 @@ class RegisterView extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.only(left: 8.0),
                 child: Text(
-                  "Submit",
+                  "Registrar",
                   style: TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
@@ -236,13 +263,13 @@ class RegisterView extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              "Already have an account?",
+              "¿Ya tienes una cuenta?",
               style: TextStyle(fontSize: 17),
             ),
             TextButton(
                 onPressed: () => Get.back(),
                 child: Text(
-                  "Sign in",
+                  "Inicia sesión",
                   style: TextStyle(fontSize: 17),
                 )),
           ],
