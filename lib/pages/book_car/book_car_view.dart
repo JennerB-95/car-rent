@@ -7,11 +7,12 @@ import 'package:share/share.dart';
 import '../../core.dart';
 
 class BookCarView extends GetView<BookCarController> {
-  final car = Get.arguments as Car;
+  final car = Get.arguments;
   final heroTag = Get.parameters["heroTag"];
 
   @override
   Widget build(BuildContext context) {
+    print("the car id ${car["id"]}");
     return Scaffold(
       backgroundColor: Colors.grey[200],
       body: Stack(
@@ -57,15 +58,15 @@ class BookCarView extends GetView<BookCarController> {
           _buildAppBar(),
           SizedBox(height: 17),
           TitleWidget(
-            title: car.model,
-            subtitle: car.brand,
+            title: car["name"],
+            subtitle: car["features"],
           ),
           SizedBox(height: 20),
-          ImagesWidget(
+          /*ImagesWidget(
             images: car.images,
             isExpanded: false,
             heroTag: heroTag,
-          ),
+          ),*/
           SizedBox(height: 17),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 16),
