@@ -1,8 +1,46 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import '../../core.dart';
+import 'package:http/http.dart' as http;
 
-class LoginView extends StatelessWidget {
+class LoginView extends StatefulWidget {
+  @override
+  State<LoginView> createState() => _LoginViewState();
+}
+
+class _LoginViewState extends State<LoginView> {
+  TextEditingController email = TextEditingController();
+  TextEditingController password = TextEditingController();
+
+  Future login() async {
+    var url = "http://basededatos.ceandb.com/login.php";
+    var response = await http.post(Uri.parse(url), body: {
+      "email": email.text,
+      "password": password.text,
+    });
+    var data = json.decode(response.body);
+    if (data == "Success") {
+      Fluttertoast.showToast(
+        msg: 'Inicio de sesión correctamente!',
+        textColor: Colors.green,
+        fontSize: 25,
+      );
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => MainView()));
+    } else {
+      Fluttertoast.showToast(
+        msg: 'Correo y contraseña inválidos!',
+        backgroundColor: Colors.red,
+        textColor: Colors.red,
+        fontSize: 25,
+      );
+    }
+    return data;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -82,6 +120,7 @@ class LoginView extends StatelessWidget {
                 borderSide: BorderSide(color: Color(0xFFF9B234)),
               ),
             ),
+            controller: email,
           ),
           SizedBox(height: 15),
           Text(
@@ -99,6 +138,7 @@ class LoginView extends StatelessWidget {
                 borderSide: BorderSide(color: Color(0xFFF9B234)),
               ),
             ),
+            controller: password,
           ),
           SizedBox(height: 10),
           Align(
@@ -117,7 +157,7 @@ class LoginView extends StatelessWidget {
 
   Widget buildLoginAction() {
     return GestureDetector(
-      onTap: () => Get.toNamed(Routes.HOME),
+      onTap: () => login(),
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 27),
         child: Container(

@@ -49,6 +49,7 @@ dependencies:
   country_pickers: ^2.0.0
   queen_validators: ^0.2.3
   http: ^0.13.5
+  fluttertoast: ^8.1.2
 
 
 dev_dependencies:
