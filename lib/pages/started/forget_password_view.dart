@@ -2,6 +2,8 @@ import 'package:car_rental/core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../shared/widgets/images_widget2.dart';
+
 class ForgetPasswordView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -49,7 +51,7 @@ class ForgetPasswordView extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(height: 22),
-          ImagesWidget(
+          ImagesWidget2(
             heightImages: 200,
             images: [
               "assets/images/welcome/forgot_password.png",

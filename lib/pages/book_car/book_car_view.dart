@@ -1,6 +1,6 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
-import 'package:car_rental/shared/styles/colors.dart';
-import 'package:car_rental/models/car.dart';
 import 'package:get/get.dart';
 import 'package:share/share.dart';
 
@@ -12,7 +12,6 @@ class BookCarView extends GetView<BookCarController> {
 
   @override
   Widget build(BuildContext context) {
-    print("the car id ${car["id"]}");
     return Scaffold(
       backgroundColor: Colors.grey[200],
       body: Stack(
@@ -43,6 +42,11 @@ class BookCarView extends GetView<BookCarController> {
   }
 
   Widget buildHeader() {
+    List carsImages = jsonDecode(car["slider_images"]);
+    List<String> imagesSlider = carsImages
+        .map((car) =>
+            "https://rentcarapex.ceandb.com/assets/img/equipments/slider-images/${car.toString()}")
+        .toList();
     return Container(
       padding: EdgeInsets.symmetric(vertical: 16),
       decoration: BoxDecoration(
@@ -58,15 +62,15 @@ class BookCarView extends GetView<BookCarController> {
           _buildAppBar(),
           SizedBox(height: 17),
           TitleWidget(
-            title: car["name"],
-            subtitle: car["features"],
+            title: car["title"],
+            subtitle: car["name"],
           ),
-          SizedBox(height: 20),
-          /*ImagesWidget(
-            images: car.images,
+          SizedBox(height: 10),
+          ImagesWidget(
+            images: imagesSlider,
             isExpanded: false,
             heroTag: heroTag,
-          ),*/
+          ),
           SizedBox(height: 17),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 16),
@@ -117,30 +121,6 @@ class BookCarView extends GetView<BookCarController> {
             child: Icon(
               Icons.bookmark_border,
               color: Colors.white,
-              size: 23,
-            ),
-          ),
-        ),
-        SizedBox(width: 16),
-        InkWell(
-          onTap: () {
-            Share.share('${car.model}\n${car.brand}\nPrice : \$${car.price}');
-          },
-          child: Container(
-            width: 45,
-            height: 45,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.all(
-                Radius.circular(15),
-              ),
-              border: Border.all(
-                color: Colors.grey[300],
-                width: 1,
-              ),
-            ),
-            child: Icon(
-              Icons.ios_share,
-              color: Colors.black,
               size: 23,
             ),
           ),

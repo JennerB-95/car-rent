@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../core.dart';
+import '../../shared/widgets/images_widget2.dart';
 
 class LoginView extends StatelessWidget {
   @override
@@ -49,7 +50,7 @@ class LoginView extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(height: 0),
-          ImagesWidget(
+          ImagesWidget2(
             heightImages: 250,
             images: [
               "assets/images/welcome/logotipo.jpg",

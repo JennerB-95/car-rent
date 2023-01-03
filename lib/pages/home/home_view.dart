@@ -1,3 +1,4 @@
+import 'package:car_rental/shared/widgets/images_widget2.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../core.dart';
@@ -24,9 +25,7 @@ class HomeView extends GetView<HomeController> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     buildHeader(),
-                    buildAvailableCars(),
                     buildTopDeals(),
-                    buildTopDealers(),
                   ],
                 ),
               ),
@@ -50,15 +49,12 @@ class HomeView extends GetView<HomeController> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          HeaderAppBar(
-            photoURL: controller.userProfile.photoURL,
-            membership: controller.userProfile.membership,
-            balance: controller.userProfile.balance,
-            progress: controller.userProfile.progress,
-          ),
           SizedBox(height: 22),
-          ImagesWidget(images: controller.displayCar.images),
-          HeaderBottom(displayCar: controller.displayCar),
+          ImagesWidget(
+              images: controller.theData
+                  .map((car) =>
+                      "https://rentcarapex.ceandb.com/assets/img/equipments/thumbnail-images/${car['thumbnail_image']}")
+                  .toList()),
           SizedBox(height: 5),
         ],
       ),
@@ -135,32 +131,11 @@ class HomeView extends GetView<HomeController> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                "TOP DEALS",
+                "Disponibles",
                 style: TextStyle(
-                  fontSize: 22,
+                  fontSize: 18,
                   fontWeight: FontWeight.bold,
                   color: Colors.grey[400],
-                ),
-              ),
-              GestureDetector(
-                onTap: () {},
-                child: Row(
-                  children: [
-                    Text(
-                      "More",
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                        color: kPrimaryColor,
-                      ),
-                    ),
-                    SizedBox(width: 8),
-                    Icon(
-                      Icons.arrow_forward_ios,
-                      size: 12,
-                      color: kPrimaryColor,
-                    ),
-                  ],
                 ),
               ),
             ],

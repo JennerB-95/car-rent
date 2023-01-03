@@ -91,11 +91,6 @@ class AppBarWidget extends StatelessWidget {
               ],
             ),
           ),
-          actions == null
-              ? const SizedBox(width: 55)
-              : Row(
-                  children: actions,
-                ),
         ],
       ),
     );

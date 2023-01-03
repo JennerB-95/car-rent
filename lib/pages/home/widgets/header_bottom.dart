@@ -20,32 +20,6 @@ class HeaderBottom extends StatelessWidget {
             title: displayCar.model,
             subtitle: displayCar.brand,
           ),
-          InkWell(
-            onTap: () => OpenDialog.info(
-                lottieFilename: LottieFileName.COMING_SOON,
-                lottiePadding: EdgeInsets.only(top: 50)),
-            child: Padding(
-              padding: const EdgeInsets.all(15.0),
-              child: Row(
-                children: [
-                  Text(
-                    "My Garage",
-                    style: TextStyle(
-                      fontSize: 17,
-                      fontWeight: FontWeight.bold,
-                      color: kPrimaryColor,
-                    ),
-                  ),
-                  SizedBox(width: 8),
-                  Icon(
-                    Icons.arrow_forward,
-                    size: 23,
-                    color: kPrimaryColor,
-                  ),
-                ],
-              ),
-            ),
-          ),
         ],
       ),
     );

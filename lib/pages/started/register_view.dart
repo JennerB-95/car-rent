@@ -1,4 +1,5 @@
 import 'package:car_rental/core.dart';
+import 'package:car_rental/shared/widgets/images_widget2.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -49,7 +50,7 @@ class RegisterView extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(height: 22),
-          ImagesWidget(
+          ImagesWidget2(
             heightImages: 200,
             images: [
               "assets/images/welcome/fast_car.png",

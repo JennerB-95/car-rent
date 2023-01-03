@@ -48,23 +48,33 @@ class ImagesWidget extends StatelessWidget {
 
   Widget buildImagesPage(ValueBuilderUpdateCallback<int> updateFn) {
     return Container(
-      height: heightImages,
+      height: 275.0,
       child: PageView(
         physics: BouncingScrollPhysics(),
         onPageChanged: updateFn,
         children: images.map((path) {
           return Container(
-            padding: EdgeInsets.symmetric(horizontal: 16),
+            padding: EdgeInsets.all(10),
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(10.0))),
             child: heroTag != null && images.indexOf(path) == 0
                 ? Hero(
                     tag: heroTag,
-                    child: Image.asset(
-                      path,
-                      fit: BoxFit.scaleDown,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.all(Radius.circular(20.0)),
+                      child: Image.network(
+                        path,
+                        fit: BoxFit.cover,
+                        //height: 100.0,
+                      ),
                     ))
-                : Image.asset(
-                    path,
-                    fit: BoxFit.scaleDown,
+                : ClipRRect(
+                    borderRadius: BorderRadius.all(Radius.circular(20.0)),
+                    child: Image.network(
+                      path,
+                      fit: BoxFit.cover,
+                      //height: 100.0,
+                    ),
                   ),
           );
         }).toList(),

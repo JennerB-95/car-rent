@@ -14,7 +14,7 @@ class NavigationService {
             color: Colors.black54,
           ),
           activeIcon: Icon(LineIcons.home),
-          title: Text("Home")),
+          title: Text("Inicio")),
       BubbleBottomBarItem(
           backgroundColor: kPrimaryColor,
           icon: Icon(
