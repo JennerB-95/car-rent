@@ -291,7 +291,7 @@ class BookCarView extends GetView<BookCarController> {
                   ),
                   SizedBox(width: 8),
                   Text(
-                    "per month",
+                    "car[",
                     style: TextStyle(
                       color: Colors.grey,
                       fontSize: 13,
@@ -302,9 +302,10 @@ class BookCarView extends GetView<BookCarController> {
             ],
           ),
           InkWell(
-            onTap: () => OpenDialog.info(
-                lottieFilename: LottieFileName.COMING_SOON,
-                lottiePadding: EdgeInsets.only(top: 50)),
+            onTap: () => Get.toNamed(
+              Routes.BOOKING_CARS,
+              arguments: car,
+            ),
             child: Container(
               height: 40,
               decoration: BoxDecoration(

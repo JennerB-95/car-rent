@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import '../core.dart';
+import '../pages/booking_cars/booking_cars.dart';
 
 part 'app_routes.dart';
 
@@ -15,6 +16,10 @@ class AppPages {
     GetPage(
       name: Routes.LOGIN,
       page: () => LoginView(),
+    ),
+    GetPage(
+      name: Routes.BOOKING_CARS,
+      page: () => BookingCarsPage(),
     ),
     GetPage(
       name: Routes.FORGET_PASSWORD,

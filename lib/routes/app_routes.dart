@@ -15,4 +15,5 @@ abstract class Routes {
   static const SETTINGS = '/settings';
   static const PRIVACY_POLICY = '/privacy-policy';
   static const TERMS_CONDITIONS = '/terms-conditions';
+  static const BOOKING_CARS = '/booking_car';
 }
