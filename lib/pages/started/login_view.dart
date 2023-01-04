@@ -142,16 +142,7 @@ class _LoginViewState extends State<LoginView> {
             ),
             controller: password,
           ),
-          SizedBox(height: 10),
-          Align(
-            alignment: Alignment.centerRight,
-            child: TextButton(
-                onPressed: () => Get.toNamed(Routes.FORGET_PASSWORD),
-                child: Text(
-                  "¿Perdiste tu contraseña?",
-                  style: TextStyle(fontSize: 17, color: Color(0xFFF9B234)),
-                )),
-          ),
+           
         ],
       ),
     );

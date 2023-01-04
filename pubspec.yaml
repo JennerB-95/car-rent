@@ -50,6 +50,8 @@ dependencies:
   queen_validators: ^0.2.3
   http: ^0.13.5
   fluttertoast: ^8.1.2
+  flutter_feather_icons: ^2.0.0
+
 
 
 dev_dependencies:
