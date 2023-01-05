@@ -1,9 +1,11 @@
 import 'dart:convert';
 
+import 'package:car_rental/shared/widgets/images_widget3.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:get/get.dart';
 import 'package:share/share.dart';
-
+import 'package:html/parser.dart';
 import '../../core.dart';
 
 class BookCarView extends GetView<BookCarController> {
@@ -13,254 +15,115 @@ class BookCarView extends GetView<BookCarController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[200],
-      body: Stack(
-        children: [
-          Container(
-            color: Colors.white,
-            height: 100,
-          ),
-          SafeArea(
-            child: SingleChildScrollView(
-              child: Container(
-                width: double.infinity,
-                color: Colors.grey[200],
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    buildHeader(),
-                    buildBody(),
-                  ],
-                ),
-              ),
+      backgroundColor: Color(0xffF8F8F8),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Container(
+            width: double.infinity,
+            color: Colors.grey[200],
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                buildHeader(context),
+              ],
             ),
           ),
-        ],
+        ),
       ),
       bottomNavigationBar: buildFooter(),
     );
   }
 
-  Widget buildHeader() {
+  Widget buildHeader(context) {
     List carsImages = jsonDecode(car["slider_images"]);
     List<String> imagesSlider = carsImages
         .map((car) =>
             "https://rentcarapex.ceandb.com/assets/img/equipments/slider-images/${car.toString()}")
         .toList();
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 16),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(30),
-          bottomRight: Radius.circular(30),
-        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildAppBar(),
-          SizedBox(height: 17),
-          TitleWidget(
-            title: car["title"],
-            subtitle: car["name"],
-          ),
-          SizedBox(height: 10),
-          ImagesWidget(
+          ImagesWidget3(
             images: imagesSlider,
             isExpanded: false,
             heroTag: heroTag,
           ),
           SizedBox(height: 17),
+          TitleWidget(title: car["title"], subtitle: car["name"]),
+          SizedBox(height: 17),
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                _buildPricePerPeriod(
-                  "12",
-                  "4.35jt",
-                  true,
-                ),
+                _buildPricePerPeriod("Q${car["per_day_price"]}/Día"),
                 SizedBox(width: 16),
-                _buildPricePerPeriod(
-                  "6",
-                  "4.8jt",
-                  false,
-                ),
-                SizedBox(width: 16),
-                _buildPricePerPeriod(
-                  "1",
-                  "5.1jt",
-                  false,
-                ),
+                _buildPricePerPeriod("Q${car["per_week_price"]}/Semana"),
               ],
             ),
           ),
+          SizedBox(height: 10),
+          Divider(),
+          SizedBox(height: 10),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Text(_parseHtmlString(car["description"]),
+                textAlign: TextAlign.justify, style: TextStyle(fontSize: 15.0)),
+          ),
+          SizedBox(height: 10),
+          Divider(),
+          SizedBox(height: 10),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Text("Características", style: TextStyle(fontSize: 25.0)),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Text(car["features"],
+                textAlign: TextAlign.justify, style: TextStyle(fontSize: 15.0)),
+          ),
+          SizedBox(height: 17),
         ],
       ),
     );
   }
 
-  Widget _buildAppBar() {
-    return AppBarWidget(
-      actions: [
-        InkWell(
-          onTap: () => OpenDialog.info(
-              lottieFilename: LottieFileName.COMING_SOON,
-              lottiePadding: EdgeInsets.only(top: 50)),
-          child: Container(
-            width: 45,
-            height: 45,
-            decoration: BoxDecoration(
-              color: kPrimaryColor,
-              borderRadius: BorderRadius.all(
-                Radius.circular(15),
-              ),
-            ),
-            child: Icon(
-              Icons.bookmark_border,
-              color: Colors.white,
-              size: 23,
-            ),
-          ),
-        ),
-      ],
-    );
+  String _parseHtmlString(String htmlString) {
+    final document = parse(htmlString);
+    final String parsedString = parse(document.body.text).documentElement.text;
+
+    return parsedString;
   }
 
-  Widget _buildPricePerPeriod(String months, String price, bool selected) {
+  Widget _buildPricePerPeriod(price) {
     return Expanded(
       child: Container(
-        height: 95,
-        padding: EdgeInsets.all(14),
+        padding: EdgeInsets.only(right: 14, left: 14, bottom: 20.0, top: 20.0),
         decoration: BoxDecoration(
-          color: selected ? kPrimaryColor : Colors.white,
+          color: Color(0xff0C1239),
           borderRadius: BorderRadius.all(
             Radius.circular(15),
           ),
-          border: Border.all(
-            color: Colors.grey[300],
-            width: selected ? 0 : 1,
+        ),
+        child: Text(
+          price,
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 15,
+            fontWeight: FontWeight.bold,
           ),
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              months + " Month",
-              style: TextStyle(
-                color: selected ? Colors.white : Colors.black,
-                fontSize: 13,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            Expanded(child: Container()),
-            Text(
-              price,
-              style: TextStyle(
-                color: selected ? Colors.white : Colors.black,
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            Text(
-              "IDR",
-              style: TextStyle(
-                color: selected ? Colors.white : Colors.black,
-                fontSize: 13,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget buildBody() {
-    return Container(
-      decoration: BoxDecoration(color: Colors.grey[200]),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: EdgeInsets.only(top: 16, left: 16, right: 16),
-            child: Text(
-              "SPECIFICATIONS",
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Colors.grey[400],
-              ),
-            ),
-          ),
-          Container(
-            height: 80,
-            padding: EdgeInsets.only(
-              top: 10,
-              left: 16,
-            ),
-            margin: EdgeInsets.only(bottom: 16),
-            child: ListView(
-              physics: BouncingScrollPhysics(),
-              scrollDirection: Axis.horizontal,
-              children: [
-                _buildSpecificationCar("Color", "White"),
-                _buildSpecificationCar("Gearbox", "Automatic"),
-                _buildSpecificationCar("Seat", "4"),
-                _buildSpecificationCar("Motor", "v10 2.0"),
-                _buildSpecificationCar("Speed (0-100)", "3.2 sec"),
-                _buildSpecificationCar("Top Speed", "121 mph"),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSpecificationCar(String title, String data) {
-    return Container(
-      width: 130,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.all(
-          Radius.circular(15),
-        ),
-      ),
-      padding: EdgeInsets.symmetric(
-        vertical: 8,
-        horizontal: 16,
-      ),
-      margin: EdgeInsets.only(right: 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            title,
-            style: TextStyle(
-              color: Colors.grey,
-              fontSize: 14,
-            ),
-          ),
-          SizedBox(height: 2),
-          Text(
-            data,
-            style: TextStyle(
-              color: Colors.black,
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ],
       ),
     );
   }
 
   Widget buildFooter() {
     return Container(
-      height: 70,
+      height: 80,
       padding: EdgeInsets.symmetric(vertical: 15, horizontal: 18),
       decoration: BoxDecoration(color: Colors.white),
       child: Row(
@@ -271,7 +134,7 @@ class BookCarView extends GetView<BookCarController> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "12 Month",
+                "Precio de renta por día",
                 style: TextStyle(
                   color: Colors.black,
                   fontWeight: FontWeight.bold,
@@ -279,25 +142,13 @@ class BookCarView extends GetView<BookCarController> {
                 ),
               ),
               SizedBox(height: 4),
-              Row(
-                children: [
-                  Text(
-                    "IDR 4,35jt",
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 15,
-                    ),
-                  ),
-                  SizedBox(width: 8),
-                  Text(
-                    "car[",
-                    style: TextStyle(
-                      color: Colors.grey,
-                      fontSize: 13,
-                    ),
-                  ),
-                ],
+              Text(
+                "Q${car["per_day_price"]}",
+                style: TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 15,
+                ),
               ),
             ],
           ),
@@ -316,14 +167,15 @@ class BookCarView extends GetView<BookCarController> {
               ),
               child: Center(
                 child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  padding: EdgeInsets.symmetric(horizontal: 40),
                   child: Text(
-                    "Select This Car",
+                    "Reservar",
                     style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      // fontSize: 16,
-                    ),
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18.0
+                        // fontSize: 16,
+                        ),
                   ),
                 ),
               ),
