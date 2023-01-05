@@ -3,8 +3,11 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:share/share.dart';
-
+import 'package:table_calendar/table_calendar.dart';
+import 'package:ionicons/ionicons.dart';
 import '../../core.dart';
+
+enum SingingCharacter { pick_up, delivery }
 
 class BookingCarsPage extends StatefulWidget {
   const BookingCarsPage({Key key}) : super(key: key);
@@ -14,7 +17,15 @@ class BookingCarsPage extends StatefulWidget {
 }
 
 class _BookingCarsPageState extends State<BookingCarsPage> {
+  SingingCharacter _character = SingingCharacter.pick_up;
+
   final car = Get.arguments;
+  DateTime _date = DateTime.now();
+  DateTime _selectedDay = DateTime.now();
+  DateTime _focusedDay;
+  var _pay = ['Depósito Bancario'];
+  String _primary = 'Seleccione método de pago';
+
   @override
   Widget build(BuildContext context) {
     print("thecar $car");
@@ -123,43 +134,168 @@ class _BookingCarsPageState extends State<BookingCarsPage> {
   }
 
   Widget buildBody() {
-    return Container(
-      decoration: BoxDecoration(color: Colors.grey[200]),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: EdgeInsets.only(top: 16, left: 16, right: 16),
-            child: Text(
-              "SPECIFICATIONS",
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Colors.grey[400],
+    return SingleChildScrollView(
+      child: Container(
+        decoration: BoxDecoration(color: Colors.grey[200]),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: EdgeInsets.only(top: 16, left: 16, right: 16),
+              child: Text(
+                "Reserva de ${car["title"]}",
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.grey[400],
+                ),
               ),
             ),
-          ),
-          Container(
-            height: 80,
-            padding: EdgeInsets.only(
-              top: 10,
-              left: 16,
+            SizedBox(height: 5),
+            Container(
+              padding: EdgeInsets.only(
+                top: 10,
+                left: 16,
+              ),
+              margin: EdgeInsets.only(bottom: 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  TableCalendar(
+                    pageJumpingEnabled: true,
+                    focusedDay: _selectedDay,
+                    firstDay: DateTime.utc(2010, 10, 16),
+                    lastDay: DateTime.utc(2030, 3, 14),
+                    locale: 'es_ES',
+                    selectedDayPredicate: (day) {
+                      return isSameDay(day, _selectedDay);
+                    },
+                    onDaySelected: (selectedDay, focusedDay) {
+                      setState(() {
+                        _selectedDay = selectedDay;
+                        _focusedDay = focusedDay;
+                      });
+                    },
+                    rowHeight: 40.0,
+                    calendarStyle: CalendarStyle(
+                        defaultDecoration:
+                            BoxDecoration(shape: BoxShape.rectangle),
+                        cellMargin: const EdgeInsets.symmetric(
+                            vertical: 2.0, horizontal: 6.0),
+                        selectedDecoration: BoxDecoration(
+                            color: Color(0xFF0D4A85),
+                            shape: BoxShape.rectangle,
+                            borderRadius: BorderRadius.circular(5.0)),
+                        todayDecoration: BoxDecoration(
+                            color: Color(0xFF0D4A85).withOpacity(0.5),
+                            shape: BoxShape.rectangle,
+                            borderRadius: BorderRadius.circular(5.0))),
+                    headerStyle: HeaderStyle(
+                      formatButtonVisible: false,
+                      titleCentered: true,
+                      leftChevronIcon: Container(
+                        padding: EdgeInsets.all(5.0),
+                        decoration: BoxDecoration(
+                            color: Color(0xFF0D4A85),
+                            shape: BoxShape.rectangle,
+                            borderRadius: BorderRadius.circular(5.0)),
+                        child: Icon(
+                          Ionicons.chevron_back,
+                          color: Colors.white,
+                        ),
+                      ),
+                      rightChevronIcon: Container(
+                        padding: EdgeInsets.all(5.0),
+                        decoration: BoxDecoration(
+                            color: Color(0xFF0D4A85),
+                            shape: BoxShape.rectangle,
+                            borderRadius: BorderRadius.circular(5.0)),
+                        child: Icon(
+                          Ionicons.chevron_forward,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 15),
+                  TextField(
+                    decoration: InputDecoration(
+                      hintText: "Ingresa tu nombre completo",
+                      enabledBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: Color(0xFFF9B234)),
+                      ),
+                      focusedBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: Color(0xFFF9B234)),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 15),
+                  TextField(
+                    decoration: InputDecoration(
+                      hintText: "Ingresa tu número de teléfono",
+                      enabledBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: Color(0xFFF9B234)),
+                      ),
+                      focusedBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: Color(0xFFF9B234)),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 15),
+                  TextField(
+                    decoration: InputDecoration(
+                      hintText: "Ingresa tu email",
+                      enabledBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: Color(0xFFF9B234)),
+                      ),
+                      focusedBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: Color(0xFFF9B234)),
+                      ),
+                    ),
+                  ),
+                  // SizedBox(height: 15),
+                  // ListTile(
+                  //   title: const Text('Recoger'),
+                  //   leading: Radio(
+                  //     value: SingingCharacter.pick_up,
+                  //     groupValue: _character,
+                  //     onChanged: (SingingCharacter value) {
+                  //       setState(() {
+                  //         _character = value;
+                  //       });
+                  //     },
+                  //   ),
+                  // ),
+                  // ListTile(
+                  //   title: const Text('Entrega bidireccional'),
+                  //   leading: Radio(
+                  //     value: SingingCharacter.delivery,
+                  //     groupValue: _character,
+                  //     onChanged: (SingingCharacter value) {
+                  //       setState(() {
+                  //         _character = value;
+                  //       });
+                  //     },
+                  //   ),
+                  // ),
+                  // SizedBox(height: 15),
+                  // DropdownButton(
+                  //   items: _pay
+                  //       .map((String a) =>
+                  //           DropdownMenuItem(value: a, child: Text(a)))
+                  //       .toList(),
+                  //   onChanged: ((value) => {
+                  //         setState(() {
+                  //           _pay = value;
+                  //         })
+                  //       }),
+                  //   hint: Text(_primary),
+                  // )
+                ],
+              ),
             ),
-            margin: EdgeInsets.only(bottom: 16),
-            child: ListView(
-              physics: BouncingScrollPhysics(),
-              scrollDirection: Axis.horizontal,
-              children: [
-                _buildSpecificationCar("Color", "White"),
-                _buildSpecificationCar("Gearbox", "Automatic"),
-                _buildSpecificationCar("Seat", "4"),
-                _buildSpecificationCar("Motor", "v10 2.0"),
-                _buildSpecificationCar("Speed (0-100)", "3.2 sec"),
-                _buildSpecificationCar("Top Speed", "121 mph"),
-              ],
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -214,37 +350,7 @@ class _BookingCarsPageState extends State<BookingCarsPage> {
         children: [
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "12 Month",
-                style: TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 13,
-                ),
-              ),
-              SizedBox(height: 4),
-              Row(
-                children: [
-                  Text(
-                    "IDR 4,35jt",
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 15,
-                    ),
-                  ),
-                  SizedBox(width: 8),
-                  Text(
-                    "per month",
-                    style: TextStyle(
-                      color: Colors.grey,
-                      fontSize: 13,
-                    ),
-                  ),
-                ],
-              ),
-            ],
+            children: [],
           ),
           InkWell(
             onTap: () => OpenDialog.info(
@@ -262,7 +368,7 @@ class _BookingCarsPageState extends State<BookingCarsPage> {
                 child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 20),
                   child: Text(
-                    "Select This Car",
+                    "Reserva Ahora",
                     style: TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,

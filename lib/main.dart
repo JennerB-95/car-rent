@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'core.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 void main() async {
   /// Make sure you add this line here, so the plugin can access the native side
   WidgetsFlutterBinding.ensureInitialized();
-
+  initializeDateFormatting().then((_) => runApp(MyApp()));
   runApp(MyApp());
 }
 
