@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:share/share.dart';
+import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:ionicons/ionicons.dart';
 import '../../core.dart';
@@ -16,8 +17,7 @@ class BookingCarsPage extends StatefulWidget {
   State<BookingCarsPage> createState() => _BookingCarsPageState();
 }
 
-class _BookingCarsPageState extends State<BookingCarsPage> {
-  SingingCharacter _character = SingingCharacter.pick_up;
+class _BookingCarsPageState extends State<BookingCarsPage> { 
 
   final car = Get.arguments;
   DateTime _date = DateTime.now();
@@ -161,7 +161,11 @@ class _BookingCarsPageState extends State<BookingCarsPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  TableCalendar(
+                  SfDateRangePicker(
+                    selectionMode: DateRangePickerSelectionMode.range,
+                    
+                  ),
+                  /*TableCalendar( 
                     pageJumpingEnabled: true,
                     focusedDay: _selectedDay,
                     firstDay: DateTime.utc(2010, 10, 16),
@@ -216,7 +220,7 @@ class _BookingCarsPageState extends State<BookingCarsPage> {
                         ),
                       ),
                     ),
-                  ),
+                  ),*/
                   SizedBox(height: 15),
                   TextField(
                     decoration: InputDecoration(
