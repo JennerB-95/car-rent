@@ -1,6 +1,8 @@
 import 'dart:convert';
 
+import 'package:custom_date_range_picker/custom_date_range_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:get/get.dart';
 import 'package:share/share.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
@@ -17,21 +19,50 @@ class BookingCarsPage extends StatefulWidget {
   State<BookingCarsPage> createState() => _BookingCarsPageState();
 }
 
-class _BookingCarsPageState extends State<BookingCarsPage> { 
-
+class _BookingCarsPageState extends State<BookingCarsPage> {
   final car = Get.arguments;
   DateTime _date = DateTime.now();
   DateTime _selectedDay = DateTime.now();
   DateTime _focusedDay;
   var _pay = ['Depósito Bancario'];
   String _primary = 'Seleccione método de pago';
-
+  DateTime startDate = DateTime.now();
+  DateTime endDate;
   @override
   Widget build(BuildContext context) {
     print("thecar $car");
 
     return Scaffold(
-      backgroundColor: Colors.grey[200],
+      backgroundColor: Color(0xffF8F8F8),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          showDateRan(context);
+          showDateRangePicker(
+              context: context,
+              locale: Locale('es_ES'),
+              firstDate: DateTime(DateTime.now().year - 5),
+              lastDate: DateTime(DateTime.now().year + 5),
+              initialDateRange: DateTimeRange(
+                end: DateTime(DateTime.now().year, DateTime.now().month,
+                    DateTime.now().day + 13),
+                start: DateTime.now(),
+              ),
+              builder: (context, child) {
+                return Column(
+                  children: [
+                    ConstrainedBox(
+                      constraints: BoxConstraints(
+                        maxWidth: 400.0,
+                      ),
+                      child: child,
+                    )
+                  ],
+                );
+              });
+        },
+        tooltip: 'choose date Range',
+        child: const Icon(Icons.calendar_today_outlined, color: Colors.white),
+      ),
       body: Stack(
         children: [
           Container(
@@ -42,7 +73,7 @@ class _BookingCarsPageState extends State<BookingCarsPage> {
             child: SingleChildScrollView(
               child: Container(
                 width: double.infinity,
-                color: Colors.grey[200],
+                color: Color(0xffF8F8F8),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -55,6 +86,18 @@ class _BookingCarsPageState extends State<BookingCarsPage> {
         ],
       ),
       bottomNavigationBar: buildFooter(),
+      appBar: AppBar(
+        leading: GestureDetector(
+          onTap: () => Get.back(),
+          child: Icon(
+            FeatherIcons.chevronLeft,
+            color: Colors.black,
+            size: 35.0,
+          ),
+        ),
+        elevation: 0,
+        backgroundColor: Color(0xffF8F8F8),
+      ),
     );
   }
 
@@ -136,7 +179,7 @@ class _BookingCarsPageState extends State<BookingCarsPage> {
   Widget buildBody() {
     return SingleChildScrollView(
       child: Container(
-        decoration: BoxDecoration(color: Colors.grey[200]),
+        decoration: BoxDecoration(color: Color(0xffF8F8F8)),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -147,7 +190,7 @@ class _BookingCarsPageState extends State<BookingCarsPage> {
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
-                  color: Colors.grey[400],
+                  color: Colors.black,
                 ),
               ),
             ),
@@ -161,10 +204,6 @@ class _BookingCarsPageState extends State<BookingCarsPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SfDateRangePicker(
-                    selectionMode: DateRangePickerSelectionMode.range,
-                    
-                  ),
                   /*TableCalendar( 
                     pageJumpingEnabled: true,
                     focusedDay: _selectedDay,

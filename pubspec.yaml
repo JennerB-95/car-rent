@@ -55,6 +55,9 @@ dependencies:
   ionicons: ^0.2.1
   syncfusion_flutter_datepicker: ^20.4.42
   flutter_localization: ^0.1.9
+  cool_stepper: ^1.2.1
+  flutter_datetime_picker: ^1.5.1 
+  custom_date_range_picker: ^1.0.6
 
 dev_dependencies:
   flutter_test:
