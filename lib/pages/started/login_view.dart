@@ -28,6 +28,8 @@ class _LoginViewState extends State<LoginView> {
       "email": _email.text,
       "password": _password.text,
     });
+    print(response.body);
+    print(response.statusCode);
     if (response.statusCode == 200) {
       var jsondata = json.decode(response.body);
       if (jsondata["error"]) {
@@ -45,9 +47,12 @@ class _LoginViewState extends State<LoginView> {
           //save the data returned from server
           //and navigate to home page
           String uid = jsondata["uid"];
-          String first_name = jsondata["first_name"];
+          String username = jsondata["username"];
           String last_name = jsondata["last_name"];
-          print(first_name);
+          print(username);
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => MainView()));
+
           //user shared preference to save data
         } else {
           showprogress = false; //don't show progress indicator
@@ -59,7 +64,7 @@ class _LoginViewState extends State<LoginView> {
       setState(() {
         showprogress = false; //don't show progress indicator
         error = true;
-        errormsg = "Error during connecting to server.";
+        errormsg = "Error connecting to server.";
       });
     }
   }
