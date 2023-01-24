@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:share/share.dart';
+import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:ionicons/ionicons.dart';
@@ -17,14 +17,35 @@ class BookingCarsPage extends StatefulWidget {
   State<BookingCarsPage> createState() => _BookingCarsPageState();
 }
 
-class _BookingCarsPageState extends State<BookingCarsPage> { 
-
+class _BookingCarsPageState extends State<BookingCarsPage> {
   final car = Get.arguments;
-  DateTime _date = DateTime.now();
-  DateTime _selectedDay = DateTime.now();
-  DateTime _focusedDay;
+  String _dateCount;
+  String _range;
   var _pay = ['Depósito Bancario'];
   String _primary = 'Seleccione método de pago';
+
+  @override
+  void initState() {
+    _dateCount = '';
+    _range = '';
+    super.initState();
+  }
+
+  void _onSelectionChanged(DateRangePickerSelectionChangedArgs args) {
+    setState(() {
+      if (args.value is PickerDateRange) {
+        _range =
+            DateFormat('dd/MM/yyyy').format(args.value.startDate).toString() +
+                ' - ' +
+                DateFormat('dd/MM/yyyy')
+                    .format(args.value.endDate ?? args.value.startDate)
+                    .toString();
+      } else if (args.value is DateTime) {
+      } else if (args.value is List<DateTime>) {
+        _dateCount = args.value.length.toString();
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -134,6 +155,9 @@ class _BookingCarsPageState extends State<BookingCarsPage> {
   }
 
   Widget buildBody() {
+    print('onSelectrionChanged_dateCount' + _dateCount);
+    print('onSelectrionChanged_range' + _range);
+
     return SingleChildScrollView(
       child: Container(
         decoration: BoxDecoration(color: Colors.grey[200]),
@@ -162,8 +186,18 @@ class _BookingCarsPageState extends State<BookingCarsPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SfDateRangePicker(
+                    onSelectionChanged: _onSelectionChanged,
                     selectionMode: DateRangePickerSelectionMode.range,
-                    
+                    selectionColor: Color(0xFFF9B234),
+                    initialSelectedRange: PickerDateRange(
+                        DateTime.now().subtract(const Duration(days: 4)),
+                        DateTime.now().add(const Duration(days: 3))),
+                    monthCellStyle: DateRangePickerMonthCellStyle(
+                      todayTextStyle:
+                          TextStyle(color: Color.fromARGB(255, 250, 159, 1)),
+                      cellDecoration: BoxDecoration(
+                          color: Color.fromARGB(255, 255, 216, 150)),
+                    ),
                   ),
                   /*TableCalendar( 
                     pageJumpingEnabled: true,

@@ -28,7 +28,7 @@ class HomeController extends GetxController {
   }
 
   Future getData() async {
-    String key = "basededatos";
+    String key = "api-apex";
     String fileName = "getAll.php";
     String url = "http://" + key + ".ceandb.com/" + fileName;
     http.Response response = await http.get(Uri.parse(url));

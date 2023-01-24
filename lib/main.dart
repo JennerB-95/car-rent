@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'core.dart';
 import 'package:intl/date_symbol_data_local.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() async {
   /// Make sure you add this line here, so the plugin can access the native side
@@ -16,7 +15,6 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-     
       title: 'Car Rental',
       initialBinding: MainBinding(),
       initialRoute: AppPages.INITIAL,
