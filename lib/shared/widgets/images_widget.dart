@@ -30,7 +30,7 @@ class ImagesWidget extends StatelessWidget {
               : buildImagesPage(updateFn),
           images.length > 1
               ? Container(
-                  height: 30,
+                  height: 25,
                   margin: EdgeInsets.only(top: 12, bottom: 0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,

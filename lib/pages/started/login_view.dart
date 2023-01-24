@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import '../../core.dart';
@@ -16,53 +17,55 @@ class LoginView extends StatefulWidget {
 class _LoginViewState extends State<LoginView> {
   TextEditingController email = TextEditingController();
   TextEditingController password = TextEditingController();
+  String _email = '';
+  String _password = '';
 
-  Future login() async {
+  login() {
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => MainView()));
+    /*print("response $_email $_password");
+
     var url = "http://basededatos.ceandb.com/login.php";
     var response = await http.post(Uri.parse(url), body: {
-      "email": email.text,
-      "password": password.text,
+      "email": _email,
+      "password": _password,
     });
+    print(response.statusCode);
     var data = json.decode(response.body);
     if (data == "Success") {
       Fluttertoast.showToast(
         msg: 'Inicio de sesión correctamente!',
-        textColor: Colors.green,
-        fontSize: 25,
       );
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => MainView()));
     } else {
       Fluttertoast.showToast(
         msg: 'Correo y contraseña inválidos!',
-        backgroundColor: Colors.red,
-        textColor: Colors.red,
-        fontSize: 25,
       );
     }
-    return data;
+    return data;**/
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[200],
+      backgroundColor: Colors.white,
       body: Stack(
         children: [
           Container(
-            color: Colors.white,
-            height: 300,
+            color: Color(0xffF8F8F8),
+            height: 270,
           ),
           SafeArea(
             child: SingleChildScrollView(
               physics: BouncingScrollPhysics(),
               child: Container(
-                decoration: BoxDecoration(color: Colors.grey[200]),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     buildLogo(),
                     buildLoginForm(),
+                    SizedBox(height: 45.0),
                     buildLoginAction(),
                     buildRegisterAction(),
                   ],
@@ -77,7 +80,6 @@ class _LoginViewState extends State<LoginView> {
 
   Widget buildLogo() {
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 16),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.only(
@@ -88,14 +90,12 @@ class _LoginViewState extends State<LoginView> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(height: 0),
           ImagesWidget2(
             heightImages: 250,
             images: [
               "assets/images/welcome/logotipo.jpg",
             ],
           ),
-          SizedBox(height: 13),
         ],
       ),
     );
@@ -103,46 +103,70 @@ class _LoginViewState extends State<LoginView> {
 
   Widget buildLoginForm() {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 27, vertical: 20),
+      padding: const EdgeInsets.symmetric(horizontal: 27),
       margin: const EdgeInsets.only(top: 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "Correo",
-            style: TextStyle(color: Color(0xFFF9B234), fontSize: 18),
+            "Iniciar sesión",
+            style: TextStyle(color: Color(0xff333D55), fontSize: 23),
           ),
-          TextField(
-            decoration: InputDecoration(
-              hintText: "Ingresa tu correo",
-              enabledBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Color(0xFFF9B234)),
-              ),
-              focusedBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Color(0xFFF9B234)),
-              ),
+          SizedBox(height: 35),
+          Container(
+            decoration: BoxDecoration(
+                color: Color(0xffe9ecef).withOpacity(0.7),
+                borderRadius: BorderRadius.circular(10.0)),
+            child: TextField(
+              onChanged: ((value) {
+                setState(() {
+                  _email = value;
+                });
+              }),
+              decoration: InputDecoration(
+                  hintText: 'Correo electrónico',
+                  hintStyle: TextStyle(color: Colors.grey),
+                  prefixIcon: Icon(
+                    FeatherIcons.mail,
+                    color: Colors.grey,
+                  ),
+                  border: InputBorder.none,
+                  focusedBorder: InputBorder.none,
+                  enabledBorder: InputBorder.none,
+                  errorBorder: InputBorder.none,
+                  disabledBorder: InputBorder.none,
+                  contentPadding: EdgeInsets.all(18.0)),
+              controller: email,
             ),
-            controller: email,
           ),
-          SizedBox(height: 15),
-          Text(
-            "Contraseña",
-            style: TextStyle(color: Color(0xFFF9B234), fontSize: 18),
-          ),
-          TextField(
-            obscureText: true,
-            decoration: InputDecoration(
-              hintText: "***********",
-              enabledBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Color(0xFFF9B234)),
-              ),
-              focusedBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Color(0xFFF9B234)),
-              ),
+          SizedBox(height: 35),
+          Container(
+            decoration: BoxDecoration(
+                color: Color(0xffe9ecef).withOpacity(0.7),
+                borderRadius: BorderRadius.circular(10.0)),
+            child: TextField(
+              onChanged: ((value) {
+                setState(() {
+                  _password = value;
+                });
+              }),
+              obscureText: true,
+              decoration: InputDecoration(
+                  hintStyle: TextStyle(color: Colors.grey),
+                  border: InputBorder.none,
+                  focusedBorder: InputBorder.none,
+                  enabledBorder: InputBorder.none,
+                  errorBorder: InputBorder.none,
+                  disabledBorder: InputBorder.none,
+                  hintText: 'Contraseña',
+                  prefixIcon: Icon(
+                    FeatherIcons.lock,
+                    color: Colors.grey,
+                  ),
+                  contentPadding: EdgeInsets.all(18.0)),
+              controller: password,
             ),
-            controller: password,
           ),
-           
         ],
       ),
     );
@@ -155,7 +179,7 @@ class _LoginViewState extends State<LoginView> {
         padding: EdgeInsets.symmetric(horizontal: 27),
         child: Container(
           decoration: BoxDecoration(
-            color: kPrimaryColor,
+            color: Color(0xff333D55),
             borderRadius: BorderRadius.all(
               Radius.circular(15),
             ),
@@ -188,7 +212,7 @@ class _LoginViewState extends State<LoginView> {
                 child: Center(
                   child: Icon(
                     Icons.arrow_forward_ios,
-                    color: kPrimaryColor,
+                    color: Color(0xff333D55),
                   ),
                 ),
               ),
@@ -215,7 +239,7 @@ class _LoginViewState extends State<LoginView> {
                 onPressed: () => Get.toNamed(Routes.REGISTER),
                 child: Text(
                   "Regístrate",
-                  style: TextStyle(fontSize: 17, color: Color(0xFFF9B234)),
+                  style: TextStyle(fontSize: 17, color: Colors.blue),
                 )),
           ],
         ),

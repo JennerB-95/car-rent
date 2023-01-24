@@ -103,7 +103,7 @@ class BookCarView extends GetView<BookCarController> {
       child: Container(
         padding: EdgeInsets.only(right: 14, left: 14, bottom: 20.0, top: 20.0),
         decoration: BoxDecoration(
-          color: Color(0xff0C1239),
+          color: Color(0xff333D55),
           borderRadius: BorderRadius.all(
             Radius.circular(15),
           ),
