@@ -9,11 +9,12 @@ import 'package:html/parser.dart';
 import '../../core.dart';
 
 class BookCarView extends GetView<BookCarController> {
-  final car = Get.arguments;
+  final argumentData = Get.arguments;
   final heroTag = Get.parameters["heroTag"];
 
   @override
   Widget build(BuildContext context) {
+    print("argument data ${argumentData[1]["first_name"]}");
     return Scaffold(
       backgroundColor: Color(0xffF8F8F8),
       body: SafeArea(
@@ -35,7 +36,7 @@ class BookCarView extends GetView<BookCarController> {
   }
 
   Widget buildHeader(context) {
-    List carsImages = jsonDecode(car["slider_images"]);
+    List carsImages = jsonDecode(argumentData[0]["slider_images"]);
     List<String> imagesSlider = carsImages
         .map((car) =>
             "https://rentcarapex.ceandb.com/assets/img/equipments/slider-images/${car.toString()}")
@@ -53,15 +54,19 @@ class BookCarView extends GetView<BookCarController> {
             heroTag: heroTag,
           ),
           SizedBox(height: 17),
-          TitleWidget(title: car["title"], subtitle: car["name"]),
+          TitleWidget(
+              title: argumentData[0]["title"],
+              subtitle: argumentData[0]["name"]),
           SizedBox(height: 17),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Row(
               children: [
-                _buildPricePerPeriod("Q${car["per_day_price"]}/Día"),
+                _buildPricePerPeriod(
+                    "Q${argumentData[0]["per_day_price"]}/Día"),
                 SizedBox(width: 16),
-                _buildPricePerPeriod("Q${car["per_week_price"]}/Semana"),
+                _buildPricePerPeriod(
+                    "Q${argumentData[0]["per_week_price"]}/Semana"),
               ],
             ),
           ),
@@ -70,7 +75,7 @@ class BookCarView extends GetView<BookCarController> {
           SizedBox(height: 10),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Text(_parseHtmlString(car["description"]),
+            child: Text(_parseHtmlString(argumentData[0]["description"]),
                 textAlign: TextAlign.justify, style: TextStyle(fontSize: 15.0)),
           ),
           SizedBox(height: 10),
@@ -82,7 +87,7 @@ class BookCarView extends GetView<BookCarController> {
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Text(car["features"],
+            child: Text(argumentData[0]["features"],
                 textAlign: TextAlign.justify, style: TextStyle(fontSize: 15.0)),
           ),
           SizedBox(height: 17),
@@ -143,7 +148,7 @@ class BookCarView extends GetView<BookCarController> {
               ),
               SizedBox(height: 4),
               Text(
-                "Q${car["per_day_price"]}",
+                "Q${argumentData[0]["per_day_price"]}",
                 style: TextStyle(
                   color: Colors.black,
                   fontWeight: FontWeight.bold,
@@ -155,7 +160,7 @@ class BookCarView extends GetView<BookCarController> {
           InkWell(
             onTap: () => Get.toNamed(
               Routes.BOOKING_CARS,
-              arguments: car,
+              arguments: [argumentData[0], argumentData[1]] ,
             ),
             child: Container(
               height: 40,

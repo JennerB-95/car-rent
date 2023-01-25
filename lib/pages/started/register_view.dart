@@ -31,93 +31,87 @@ class _RegisterViewState extends State<RegisterView> {
   TextEditingController phone = TextEditingController();
 
   var _bornDate = DateTime.now();
+  var _licenseDate = DateTime.now();
+
   String _dateAge;
   String _driverLicenseExp;
-
+  String errormsg;
+  bool error, showprogress;
   bool showPassword = true;
+
   Future register() async {
     var url = "http://api-apex.ceandb.com/register.php";
-    final response = await http.post(Uri.parse(url), body: {
-      "username": username.text,
-      "email": email.text,
-      "password": password.text,
-      "fisrt_name": firstName.text,
-      "last_name": lastName.text,
-      "Dpi_Pasaporte": dpiPassport.text,
-      "Fecha_Nacimiento": _dateAge
-    });
+    final response = await http.post(Uri.parse(url),
+        body: jsonEncode(<String, String>{
+          "username": username.text,
+          "email": email.text,
+          "password": password.text,
+          "first_name": firstName.text,
+          "last_name": lastName.text,
+          "Dpi_Pasaporte": dpiPassport.text,
+          "Fecha_Nacimiento": _dateAge,
+          "contact_number": phone.text,
+          "address": address.text,
+          "Nit": nit.text,
+          "Licencia": driveLicence.text,
+          "Vence": _driverLicenseExp,
+        }));
+    print("body ${response.body}");
     print(response.statusCode);
-    print(response.body);
-    var data = jsonDecode(response.body ?? '[]');
-    if (data == "Error") {
-      Fluttertoast.showToast(
-        msg: 'Usuario ya registrado!',
-        textColor: Colors.red,
-        fontSize: 25,
-      );
+
+    if (response.statusCode == 200) {
+      var jsondata = json.decode(response.body);
+      print(jsondata["status"]);
+      if (jsondata["status"] == false) {
+        setState(() {
+          showprogress = false; //don't show progress indicator
+          error = true;
+          errormsg = jsondata["message"];
+        });
+      } else {
+        if (jsondata["status"] == true) {
+          setState(() {
+            error = false;
+            showprogress = false;
+          });
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => LoginView()));
+        } else {
+          showprogress = false; //don't show progress indicator
+          error = true;
+          errormsg = "Something went wrong.";
+        }
+      }
     } else {
-      Fluttertoast.showToast(
-        msg: 'Registro realizado correctamente!',
-        textColor: Colors.green,
-        fontSize: 25,
-      );
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => LoginView()));
+      setState(() {
+        showprogress = false; //don't show progress indicator
+        error = true;
+        errormsg = "Error connecting to server.";
+      });
     }
-    return data;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Stack(
-        children: [
-          Container(
-            color: Colors.white,
-            height: 270,
-          ),
-          SafeArea(
-            child: SingleChildScrollView(
-              physics: BouncingScrollPhysics(),
-              child: Container(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    buildHeader(),
-                    buildLoginForm(),
-                    buildLoginAction(),
-                    buildRegisterAction(),
-                  ],
+      bottomNavigationBar: buildFooter(),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          physics: BouncingScrollPhysics(),
+          child: Container(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                buildLoginForm(),
+                SizedBox(
+                  height: 15.0,
                 ),
-              ),
+                buildRegisterAction(),
+              ],
             ),
           ),
-        ],
-      ),
-    );
-  }
-
-  Widget buildHeader() {
-    return Container(
-      padding: EdgeInsets.symmetric(),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(30),
-          bottomRight: Radius.circular(30),
         ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ImagesWidget2(
-            heightImages: 150,
-            images: [
-              "assets/images/welcome/logotipo.jpg",
-            ],
-          ),
-        ],
       ),
     );
   }
@@ -128,6 +122,7 @@ class _RegisterViewState extends State<RegisterView> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          SizedBox(height: 25),
           Text(
             "Registro",
             style: TextStyle(color: Color(0xff333D55), fontSize: 23),
@@ -185,148 +180,6 @@ class _RegisterViewState extends State<RegisterView> {
             ],
           ),
           SizedBox(height: 15),
-          MyDateTimePicker(
-            text: 'Fecha de nacimiento',
-            ctrl: birthDate,
-            validator: (value) {
-              if (value.trim().isEmpty) {
-                return 'La fecha de nacimiento es requerida';
-              }
-              return null;
-            },
-            dateTime: _bornDate,
-            onChange: (date) {
-              setState(() {
-                _bornDate = date;
-                _dateAge = _bornDate.toString();
-              });
-            },
-          ),
-          SizedBox(height: 15),
-          /*Container(
-            decoration: BoxDecoration(
-                color: Color(0xffe9ecef).withOpacity(0.7),
-                borderRadius: BorderRadius.circular(10.0)),
-            child: TextFormField(
-              decoration: InputDecoration(
-                  hintText: "Dirección",
-                  hintStyle: TextStyle(color: Colors.grey),
-                  prefixIcon: Icon(
-                    FeatherIcons.mapPin,
-                    color: Colors.grey,
-                  ),
-                  border: InputBorder.none,
-                  focusedBorder: InputBorder.none,
-                  enabledBorder: InputBorder.none,
-                  errorBorder: InputBorder.none,
-                  disabledBorder: InputBorder.none,
-                  contentPadding: EdgeInsets.all(15.0)),
-              controller: address,
-            ),
-          ),
-          SizedBox(height: 15),
-            Container(
-            decoration: BoxDecoration(
-                color: Color(0xffe9ecef).withOpacity(0.7),
-                borderRadius: BorderRadius.circular(10.0)),
-            child: TextFormField(
-              decoration: InputDecoration(
-                  hintText: "Número de teléfono",
-                  hintStyle: TextStyle(color: Colors.grey),
-                  prefixIcon: Icon(
-                    FeatherIcons.phone,
-                    color: Colors.grey,
-                  ),
-                  border: InputBorder.none,
-                  focusedBorder: InputBorder.none,
-                  enabledBorder: InputBorder.none,
-                  errorBorder: InputBorder.none,
-                  disabledBorder: InputBorder.none,
-                  contentPadding: EdgeInsets.all(15.0)),
-              controller: phone,
-            ),
-          ),
-          SizedBox(height: 15),*/
-
-          Container(
-            decoration: BoxDecoration(
-                color: Color(0xffe9ecef).withOpacity(0.7),
-                borderRadius: BorderRadius.circular(10.0)),
-            child: TextFormField(
-              decoration: InputDecoration(
-                  hintText: "Nombre de usuario",
-                  hintStyle: TextStyle(color: Colors.grey),
-                  prefixIcon: Icon(
-                    FeatherIcons.user,
-                    color: Colors.grey,
-                  ),
-                  border: InputBorder.none,
-                  focusedBorder: InputBorder.none,
-                  enabledBorder: InputBorder.none,
-                  errorBorder: InputBorder.none,
-                  disabledBorder: InputBorder.none,
-                  contentPadding: EdgeInsets.all(15.0)),
-              controller: username,
-            ),
-          ),
-          /*Row(
-            children: [
-               
-              Expanded(
-                child: Container(
-                  decoration: BoxDecoration(
-                      color: Color(0xffe9ecef).withOpacity(0.7),
-                      borderRadius: BorderRadius.circular(10.0)),
-                  child: TextFormField(
-                      decoration: InputDecoration(
-                          prefixIcon: Icon(
-                            FeatherIcons.creditCard,
-                            color: Colors.grey,
-                          ),
-                          hintText: 'Nit',
-                          hintStyle: TextStyle(color: Colors.grey),
-                          border: InputBorder.none,
-                          focusedBorder: InputBorder.none,
-                          enabledBorder: InputBorder.none,
-                          errorBorder: InputBorder.none,
-                          disabledBorder: InputBorder.none,
-                          contentPadding: EdgeInsets.all(15.0)),
-                      controller: nit,
-                      validator: ((value) {
-                        if (value.isEmpty) return "Campo vacío";
-                        return null;
-                      })),
-                ),
-              )
-            ],
-          ),*/
-          SizedBox(height: 15),
-          Container(
-            decoration: BoxDecoration(
-                color: Color(0xffe9ecef).withOpacity(0.7),
-                borderRadius: BorderRadius.circular(10.0)),
-            child: TextFormField(
-                decoration: InputDecoration(
-                    prefixIcon: Icon(
-                      FeatherIcons.creditCard,
-                      color: Colors.grey,
-                    ),
-                    hintText: 'DPI/Pasaporte',
-                    hintStyle: TextStyle(color: Colors.grey),
-                    border: InputBorder.none,
-                    focusedBorder: InputBorder.none,
-                    enabledBorder: InputBorder.none,
-                    errorBorder: InputBorder.none,
-                    disabledBorder: InputBorder.none,
-                    contentPadding: EdgeInsets.all(15.0)),
-                controller: dpiPassport,
-                validator: ((value) {
-                  if (value.isEmpty) return "Campo vacío";
-
-                  return null;
-                })),
-          ),
-          SizedBox(height: 15),
           Container(
             decoration: BoxDecoration(
                 color: Color(0xffe9ecef).withOpacity(0.7),
@@ -377,8 +230,151 @@ class _RegisterViewState extends State<RegisterView> {
                   return null;
                 })),
           ),
-          SizedBox(height: 25),
-          /* Container(
+          SizedBox(height: 15),
+          MyDateTimePicker(
+            text: 'Fecha de nacimiento',
+            ctrl: birthDate,
+            validator: (value) {
+              if (value.trim().isEmpty) {
+                return 'La fecha de nacimiento es requerida';
+              }
+              return null;
+            },
+            dateTime: _bornDate,
+            onChange: (date) {
+              setState(() {
+                _bornDate = date;
+                _dateAge = _bornDate.toString();
+              });
+            },
+          ),
+          SizedBox(height: 15),
+          Container(
+            decoration: BoxDecoration(
+                color: Color(0xffe9ecef).withOpacity(0.7),
+                borderRadius: BorderRadius.circular(10.0)),
+            child: TextFormField(
+              decoration: InputDecoration(
+                  hintText: "Dirección",
+                  hintStyle: TextStyle(color: Colors.grey),
+                  prefixIcon: Icon(
+                    FeatherIcons.mapPin,
+                    color: Colors.grey,
+                  ),
+                  border: InputBorder.none,
+                  focusedBorder: InputBorder.none,
+                  enabledBorder: InputBorder.none,
+                  errorBorder: InputBorder.none,
+                  disabledBorder: InputBorder.none,
+                  contentPadding: EdgeInsets.all(15.0)),
+              controller: address,
+            ),
+          ),
+          SizedBox(height: 15),
+          Container(
+            decoration: BoxDecoration(
+                color: Color(0xffe9ecef).withOpacity(0.7),
+                borderRadius: BorderRadius.circular(10.0)),
+            child: TextFormField(
+              decoration: InputDecoration(
+                  hintText: "Nombre de usuario",
+                  hintStyle: TextStyle(color: Colors.grey),
+                  prefixIcon: Icon(
+                    FeatherIcons.user,
+                    color: Colors.grey,
+                  ),
+                  border: InputBorder.none,
+                  focusedBorder: InputBorder.none,
+                  enabledBorder: InputBorder.none,
+                  errorBorder: InputBorder.none,
+                  disabledBorder: InputBorder.none,
+                  contentPadding: EdgeInsets.all(15.0)),
+              controller: username,
+            ),
+          ),
+          SizedBox(height: 15),
+          Row(
+            children: [
+              Expanded(
+                child: Container(
+                  decoration: BoxDecoration(
+                      color: Color(0xffe9ecef).withOpacity(0.7),
+                      borderRadius: BorderRadius.circular(10.0)),
+                  child: TextFormField(
+                      decoration: InputDecoration(
+                          prefixIcon: Icon(
+                            FeatherIcons.creditCard,
+                            color: Colors.grey,
+                          ),
+                          hintText: 'Nit',
+                          hintStyle: TextStyle(color: Colors.grey),
+                          border: InputBorder.none,
+                          focusedBorder: InputBorder.none,
+                          enabledBorder: InputBorder.none,
+                          errorBorder: InputBorder.none,
+                          disabledBorder: InputBorder.none,
+                          contentPadding: EdgeInsets.all(15.0)),
+                      controller: nit,
+                      validator: ((value) {
+                        if (value.isEmpty) return "Campo vacío";
+                        return null;
+                      })),
+                ),
+              ),
+              VerticalDivider(),
+              Expanded(
+                child: Container(
+                  decoration: BoxDecoration(
+                      color: Color(0xffe9ecef).withOpacity(0.7),
+                      borderRadius: BorderRadius.circular(10.0)),
+                  child: TextFormField(
+                    decoration: InputDecoration(
+                        hintText: "Teléfono",
+                        hintStyle: TextStyle(color: Colors.grey),
+                        prefixIcon: Icon(
+                          FeatherIcons.phone,
+                          color: Colors.grey,
+                        ),
+                        border: InputBorder.none,
+                        focusedBorder: InputBorder.none,
+                        enabledBorder: InputBorder.none,
+                        errorBorder: InputBorder.none,
+                        disabledBorder: InputBorder.none,
+                        contentPadding: EdgeInsets.all(15.0)),
+                    controller: phone,
+                  ),
+                ),
+              )
+            ],
+          ),
+          SizedBox(height: 15),
+          Container(
+            decoration: BoxDecoration(
+                color: Color(0xffe9ecef).withOpacity(0.7),
+                borderRadius: BorderRadius.circular(10.0)),
+            child: TextFormField(
+                decoration: InputDecoration(
+                    prefixIcon: Icon(
+                      FeatherIcons.creditCard,
+                      color: Colors.grey,
+                    ),
+                    hintText: 'DPI/Pasaporte',
+                    hintStyle: TextStyle(color: Colors.grey),
+                    border: InputBorder.none,
+                    focusedBorder: InputBorder.none,
+                    enabledBorder: InputBorder.none,
+                    errorBorder: InputBorder.none,
+                    disabledBorder: InputBorder.none,
+                    contentPadding: EdgeInsets.all(15.0)),
+                controller: dpiPassport,
+                validator: ((value) {
+                  if (value.isEmpty) return "Campo vacío";
+
+                  return null;
+                })),
+          ),
+          SizedBox(height: 15),
+          Container(
             decoration: BoxDecoration(
                 color: Color(0xffe9ecef).withOpacity(0.7),
                 borderRadius: BorderRadius.circular(10.0)),
@@ -407,21 +403,21 @@ class _RegisterViewState extends State<RegisterView> {
           SizedBox(height: 15),
           MyDateTimePicker(
             text: 'Fecha de vencimiento',
-            ctrl: birthDate,
+            ctrl: driverLicenseExpires,
             validator: (value) {
               if (value.trim().isEmpty) {
                 return 'La fecha es requerida';
               }
               return null;
             },
-            dateTime: _bornDate,
+            dateTime: _licenseDate,
             onChange: (date) {
               setState(() {
-                _bornDate = date;
-                _dateAge = _bornDate.toString();
+                _licenseDate = date;
+                _driverLicenseExp = _licenseDate.toString();
               });
             },
-          ),*/
+          ),
         ],
       ),
     );
@@ -480,7 +476,9 @@ class _RegisterViewState extends State<RegisterView> {
 
   Widget buildRegisterAction() {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+      padding: const EdgeInsets.symmetric(
+        horizontal: 20,
+      ),
       margin: EdgeInsets.only(bottom: 17),
       child: Center(
         child: Row(
@@ -499,6 +497,15 @@ class _RegisterViewState extends State<RegisterView> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget buildFooter() {
+    return Container(
+      height: 80,
+      padding: EdgeInsets.symmetric(vertical: 15, horizontal: 18),
+      decoration: BoxDecoration(color: Colors.white),
+      child: buildLoginAction(),
     );
   }
 

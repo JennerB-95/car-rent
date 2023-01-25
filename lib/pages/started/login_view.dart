@@ -15,35 +15,69 @@ class LoginView extends StatefulWidget {
 }
 
 class _LoginViewState extends State<LoginView> {
-  TextEditingController email = TextEditingController();
-  TextEditingController password = TextEditingController();
-  String _email = '';
-  String _password = '';
+  String errormsg;
+  bool error, showprogress;
+  String email, password;
 
-  login() {
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => MainView()));
-    /*print("response $_email $_password");
+  TextEditingController _email = TextEditingController();
+  TextEditingController _password = TextEditingController();
+  @override
+  void initState() {
+    email = "";
+    password = "";
+    errormsg = "";
+    error = false;
+    showprogress = false;
 
-    var url = "http://basededatos.ceandb.com/login.php";
+    //_username.text = "defaulttext";
+    //_password.text = "defaultpassword";
+    super.initState();
+  }
+
+  Future login() async {
+    var url = "http://api-apex.ceandb.com/login.php";
     var response = await http.post(Uri.parse(url), body: {
-      "email": _email,
-      "password": _password,
+      "email": _email.text,
+      "password": _password.text,
     });
+    print("body ${response.body}");
     print(response.statusCode);
-    var data = json.decode(response.body);
-    if (data == "Success") {
-      Fluttertoast.showToast(
-        msg: 'Inicio de sesión correctamente!',
-      );
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => MainView()));
+    if (response.statusCode == 200) {
+      var jsondata = json.decode(response.body);
+      if (jsondata["error"]) {
+        setState(() {
+          showprogress = false; //don't show progress indicator
+          error = true;
+          errormsg = jsondata["message"];
+        });
+      } else {
+        if (jsondata["success"]) {
+          setState(() {
+            error = false;
+            showprogress = false;
+          });
+          //save the data returned from server
+          //and navigate to home page
+          String uid = jsondata["uid"];
+          String username = jsondata["username"];
+          String last_name = jsondata["last_name"];
+          print(username);
+          Get.toNamed(Routes.HOME, arguments: jsondata);
+
+          //user shared preference to save data
+        } else {
+          showprogress = false; //don't show progress indicator
+          error = true;
+          errormsg = "Something went wrong.";
+        }
+      }
     } else {
-      Fluttertoast.showToast(
-        msg: 'Correo y contraseña inválidos!',
-      );
+      setState(() {
+        showprogress = false; //don't show progress indicator
+        error = true;
+        errormsg = "Error connecting to server.";
+      });
     }
-    return data;**/
   }
 
   @override
@@ -120,7 +154,7 @@ class _LoginViewState extends State<LoginView> {
             child: TextField(
               onChanged: ((value) {
                 setState(() {
-                  _email = value;
+                  email = value;
                 });
               }),
               decoration: InputDecoration(
@@ -136,7 +170,7 @@ class _LoginViewState extends State<LoginView> {
                   errorBorder: InputBorder.none,
                   disabledBorder: InputBorder.none,
                   contentPadding: EdgeInsets.all(18.0)),
-              controller: email,
+              controller: _email,
             ),
           ),
           SizedBox(height: 35),
@@ -147,7 +181,7 @@ class _LoginViewState extends State<LoginView> {
             child: TextField(
               onChanged: ((value) {
                 setState(() {
-                  _password = value;
+                  password = value;
                 });
               }),
               obscureText: true,
@@ -164,8 +198,17 @@ class _LoginViewState extends State<LoginView> {
                     color: Colors.grey,
                   ),
                   contentPadding: EdgeInsets.all(18.0)),
-              controller: password,
+              controller: _password,
             ),
+          ),
+          SizedBox(height: 15),
+          Container(
+            //show error message here
+            margin: EdgeInsets.only(top: 30),
+            padding: EdgeInsets.all(10),
+            child: error ? errmsg(errormsg) : Container(),
+            //if error == true then show error message
+            //else set empty container as child
           ),
         ],
       ),
@@ -244,6 +287,27 @@ class _LoginViewState extends State<LoginView> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget errmsg(String text) {
+    //error message widget.
+    return Container(
+      padding: EdgeInsets.all(15.00),
+      margin: EdgeInsets.only(bottom: 10.00),
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(30),
+          color: Colors.red,
+          border: Border.all(color: Colors.red[300], width: 2)),
+      child: Row(children: <Widget>[
+        Container(
+          margin: EdgeInsets.only(right: 6.00),
+          child: Icon(Icons.info, color: Colors.white),
+        ), // icon for error message
+
+        Text(text, style: TextStyle(color: Colors.white, fontSize: 18)),
+        //show error message text
+      ]),
     );
   }
 }

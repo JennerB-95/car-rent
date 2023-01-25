@@ -20,7 +20,8 @@ class BookingCarsPage extends StatefulWidget {
 }
 
 class _BookingCarsPageState extends State<BookingCarsPage> {
-  final car = Get.arguments;
+  final argunemtData = Get.arguments;
+
   DateTime _date = DateTime.now();
   DateTime _selectedDay = DateTime.now();
   DateTime _focusedDay;
@@ -30,13 +31,11 @@ class _BookingCarsPageState extends State<BookingCarsPage> {
   DateTime endDate;
   @override
   Widget build(BuildContext context) {
-    print("thecar $car");
-
+    print(argunemtData[1]);
     return Scaffold(
       backgroundColor: Color(0xffF8F8F8),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          showDateRan(context);
           showDateRangePicker(
               context: context,
               locale: Locale('es_ES'),
@@ -186,7 +185,7 @@ class _BookingCarsPageState extends State<BookingCarsPage> {
             Padding(
               padding: EdgeInsets.only(top: 16, left: 16, right: 16),
               child: Text(
-                "Reserva de ${car["title"]}",
+                "Reserva de ${argunemtData[1]["first_name"]}",
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,

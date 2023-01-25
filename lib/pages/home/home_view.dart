@@ -5,6 +5,8 @@ import 'package:get/get.dart';
 import '../../core.dart';
 
 class HomeView extends GetView<HomeController> {
+  final user = Get.arguments;
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -57,7 +59,7 @@ class HomeView extends GetView<HomeController> {
                 width: 15.0,
               ),
               Text(
-                "Bienvenido, Username",
+                "Bienvenido, ${user["first_name"]} ${user["last_name"]}",
                 style: TextStyle(
                     fontSize: 18.0,
                     color: Color(0xff333D55),
@@ -173,7 +175,7 @@ class HomeView extends GetView<HomeController> {
                       onTap: () {
                         Get.toNamed(
                           Routes.BOOK_CAR,
-                          arguments: car,
+                          arguments: [car, user],
                           parameters: {
                             "heroTag": "home" +
                                 car["name"].toString() +
