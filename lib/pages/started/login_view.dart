@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import '../../core.dart';
 import 'package:http/http.dart' as http;
@@ -77,8 +76,6 @@ class _LoginViewState extends State<LoginView> {
     error = false;
     showprogress = false;
 
-    //_username.text = "defaulttext";
-    //_password.text = "defaultpassword";
     super.initState();
   }
 

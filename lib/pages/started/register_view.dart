@@ -4,7 +4,6 @@ import 'package:car_rental/core.dart';
 import 'package:car_rental/shared/widgets/images_widget2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 
@@ -25,31 +24,30 @@ class _RegisterViewState extends State<RegisterView> {
 
   Future register() async {
     var url = "http://api-apex.ceandb.com/register.php";
-    final response = await http.post(Uri.parse(url), body: {
-      "username": _username.text,
-      "email": _email.text,
-      "password": _password.text,
-    });
-    print(response.body);
-    print(response.statusCode);
+    final response = await http.post(Uri.parse(url),
+        body: jsonEncode(<String, String>{
+          "username": _username.text,
+          "email": _email.text,
+          "password": _password.text,
+        }));
 
     if (response.statusCode == 200) {
       var jsondata = json.decode(response.body);
-      if (jsondata["error"]) {
+      print(jsondata["status"]);
+      if (jsondata["status"] == false) {
         setState(() {
           showprogress = false; //don't show progress indicator
           error = true;
           errormsg = jsondata["message"];
         });
       } else {
-        if (jsondata["success"]) {
+        if (jsondata["status"] == true) {
           setState(() {
             error = false;
             showprogress = false;
           });
           Navigator.push(
               context, MaterialPageRoute(builder: (context) => LoginView()));
-          //user shared preference to save data
         } else {
           showprogress = false; //don't show progress indicator
           error = true;
@@ -74,8 +72,6 @@ class _RegisterViewState extends State<RegisterView> {
     error = false;
     showprogress = false;
 
-    //_username.text = "defaulttext";
-    //_password.text = "defaultpassword";
     super.initState();
   }
 
