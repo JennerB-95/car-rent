@@ -1,10 +1,8 @@
 import 'dart:convert';
 
 import 'package:car_rental/core.dart';
-import 'package:car_rental/shared/widgets/images_widget2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 

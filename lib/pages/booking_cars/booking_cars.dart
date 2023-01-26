@@ -5,6 +5,7 @@ import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:get/get.dart';
 import '../../core.dart';
 import '../../services/date_time_picker.dart';
+import 'package:http/http.dart' as http;
 
 enum SingingCharacter { pick_up, delivery }
 
@@ -28,7 +29,9 @@ class _BookingCarsPageState extends State<BookingCarsPage> {
   String contact_number;
   String start_date;
   String end_date;
-
+  String errormsg;
+  bool error, showprogress;
+  bool showPassword = true;
   var _pay = ['Depósito Bancario'];
   String _primary = 'Seleccione método de pago';
 
@@ -39,6 +42,53 @@ class _BookingCarsPageState extends State<BookingCarsPage> {
     contact_number = argunemtData[1]["contact_number"];
 
     super.initState();
+  }
+
+  Future saveBooking() async {
+    var url = "http://api-apex.ceandb.com/bookingAdd.php";
+    final response = await http.post(Uri.parse(url),
+        body: jsonEncode(<String, String>{
+          "name": name,
+          "email": email,
+          "contact_number": contact_number,
+          "start_date": start_date,
+          "end_date": end_date,
+          "user_id": "53",
+          "equipment_id": "20",
+        }));
+    print("body ${response.body}");
+    print(response.statusCode);
+
+    if (response.statusCode == 200) {
+      var jsondata = json.decode(response.body);
+      print(jsondata["status"]);
+      if (jsondata["status"] == false) {
+        setState(() {
+          showprogress = false; //don't show progress indicator
+          error = true;
+          errormsg = jsondata["message"];
+        });
+      } else {
+        if (jsondata["status"] == true) {
+          setState(() {
+            error = false;
+            showprogress = false;
+          });
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => MainView()));
+        } else {
+          showprogress = false; //don't show progress indicator
+          error = true;
+          errormsg = "Something went wrong.";
+        }
+      }
+    } else {
+      setState(() {
+        showprogress = false; //don't show progress indicator
+        error = true;
+        errormsg = "Error connecting to server.";
+      });
+    }
   }
 
   @override
@@ -210,118 +260,86 @@ class _BookingCarsPageState extends State<BookingCarsPage> {
               padding: EdgeInsets.only(
                 top: 10,
                 left: 16,
+                right: 16,
               ),
               margin: EdgeInsets.only(bottom: 16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  /*TableCalendar( 
-                    pageJumpingEnabled: true,
-                    focusedDay: _selectedDay,
-                    firstDay: DateTime.utc(2010, 10, 16),
-                    lastDay: DateTime.utc(2030, 3, 14),
-                    locale: 'es_ES',
-                    selectedDayPredicate: (day) {
-                      return isSameDay(day, _selectedDay);
-                    },
-                    onDaySelected: (selectedDay, focusedDay) {
-                      setState(() {
-                        _selectedDay = selectedDay;
-                        _focusedDay = focusedDay;
-                      });
-                    },
-                    rowHeight: 40.0,
-                    calendarStyle: CalendarStyle(
-                        defaultDecoration:
-                            BoxDecoration(shape: BoxShape.rectangle),
-                        cellMargin: const EdgeInsets.symmetric(
-                            vertical: 2.0, horizontal: 6.0),
-                        selectedDecoration: BoxDecoration(
-                            color: Color(0xFF0D4A85),
-                            shape: BoxShape.rectangle,
-                            borderRadius: BorderRadius.circular(5.0)),
-                        todayDecoration: BoxDecoration(
-                            color: Color(0xFF0D4A85).withOpacity(0.5),
-                            shape: BoxShape.rectangle,
-                            borderRadius: BorderRadius.circular(5.0))),
-                    headerStyle: HeaderStyle(
-                      formatButtonVisible: false,
-                      titleCentered: true,
-                      leftChevronIcon: Container(
-                        padding: EdgeInsets.all(5.0),
-                        decoration: BoxDecoration(
-                            color: Color(0xFF0D4A85),
-                            shape: BoxShape.rectangle,
-                            borderRadius: BorderRadius.circular(5.0)),
-                        child: Icon(
-                          Ionicons.chevron_back,
-                          color: Colors.white,
-                        ),
-                      ),
-                      rightChevronIcon: Container(
-                        padding: EdgeInsets.all(5.0),
-                        decoration: BoxDecoration(
-                            color: Color(0xFF0D4A85),
-                            shape: BoxShape.rectangle,
-                            borderRadius: BorderRadius.circular(5.0)),
-                        child: Icon(
-                          Ionicons.chevron_forward,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                  ),*/
-                  SizedBox(height: 15),
                   ListTile(
+                    visualDensity: VisualDensity(horizontal: 0, vertical: -4),
+                    horizontalTitleGap: 0.0,
+                    contentPadding:
+                        EdgeInsets.symmetric(horizontal: 0.0, vertical: 0.0),
                     leading: Icon(Icons.person),
                     title: Text('${name}'),
                   ),
                   ListTile(
+                    visualDensity: VisualDensity(horizontal: 0, vertical: -4),
+                    horizontalTitleGap: 0.0,
+                    contentPadding:
+                        EdgeInsets.symmetric(horizontal: 0.0, vertical: 0.0),
                     leading: Icon(Icons.phone),
                     title: Text('${contact_number}'),
                   ),
                   ListTile(
+                    visualDensity: VisualDensity(horizontal: 0, vertical: -4),
+                    horizontalTitleGap: 0.0,
+                    contentPadding:
+                        EdgeInsets.symmetric(horizontal: 0.0, vertical: 0.0),
                     leading: Icon(Icons.email),
                     title: Text('${email}'),
                   ),
                   SizedBox(height: 15),
-                  MyDateTimePicker(
-                    label: "De",
-                    text: 'Fecha inicio',
-                    ctrl: startDate,
-                    validator: (value) {
-                      if (value.trim().isEmpty) {
-                        return 'La fecha de inicio es requerida';
-                      }
-                      return null;
-                    },
-                    dateTime: _startDate,
-                    onChange: (date) {
-                      setState(() {
-                        _startDate = date;
-                        start_date = _startDate.toString();
-                      });
-                    },
+
+                  Row(
+                    children: [
+                      Expanded(
+                        child: MyDateTimePicker(
+                          maxNow: false,
+                          label: "De",
+                          text: 'Fecha inicio',
+                          ctrl: startDate,
+                          validator: (value) {
+                            if (value.trim().isEmpty) {
+                              return 'La fecha de inicio es requerida';
+                            }
+                            return null;
+                          },
+                          dateTime: _startDate,
+                          onChange: (date) {
+                            setState(() {
+                              _startDate = date;
+                              start_date = _startDate.toString();
+                            });
+                          },
+                        ),
+                      ),
+                      VerticalDivider(),
+                      Expanded(
+                        child: MyDateTimePicker(
+                          maxNow: false,
+                          label: "A",
+                          text: 'Fecha fin',
+                          ctrl: endDate,
+                          validator: (value) {
+                            if (value.trim().isEmpty) {
+                              return 'La fecha fin es requerida';
+                            }
+                            return null;
+                          },
+                          dateTime: _endDate,
+                          onChange: (date) {
+                            setState(() {
+                              _endDate = date;
+                              end_date = _endDate.toString();
+                            });
+                          },
+                        ),
+                      )
+                    ],
                   ),
-                  SizedBox(height: 15),
-                  MyDateTimePicker(
-                    label: "A",
-                    text: 'Fecha fin',
-                    ctrl: endDate,
-                    validator: (value) {
-                      if (value.trim().isEmpty) {
-                        return 'La fecha fin es requerida';
-                      }
-                      return null;
-                    },
-                    dateTime: _endDate,
-                    onChange: (date) {
-                      setState(() {
-                        _endDate = date;
-                        end_date = _endDate.toString();
-                      });
-                    },
-                  ),
+
                   // SizedBox(height: 15),
                   // ListTile(
                   //   title: const Text('Recoger'),
@@ -422,9 +440,7 @@ class _BookingCarsPageState extends State<BookingCarsPage> {
             children: [],
           ),
           InkWell(
-            onTap: () => OpenDialog.info(
-                lottieFilename: LottieFileName.COMING_SOON,
-                lottiePadding: EdgeInsets.only(top: 50)),
+            onTap: () => saveBooking(),
             child: Container(
               height: 40,
               decoration: BoxDecoration(
