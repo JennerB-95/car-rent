@@ -1,14 +1,10 @@
 import 'dart:convert';
 
-import 'package:custom_date_range_picker/custom_date_range_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:get/get.dart';
-import 'package:share/share.dart';
-import 'package:syncfusion_flutter_datepicker/datepicker.dart';
-import 'package:table_calendar/table_calendar.dart';
-import 'package:ionicons/ionicons.dart';
 import '../../core.dart';
+import '../../services/date_time_picker.dart';
 
 enum SingingCharacter { pick_up, delivery }
 
@@ -21,14 +17,30 @@ class BookingCarsPage extends StatefulWidget {
 
 class _BookingCarsPageState extends State<BookingCarsPage> {
   final argunemtData = Get.arguments;
+  TextEditingController startDate = TextEditingController();
+  TextEditingController endDate = TextEditingController();
 
-  DateTime _date = DateTime.now();
-  DateTime _selectedDay = DateTime.now();
-  DateTime _focusedDay;
+  var _startDate = DateTime.now();
+  var _endDate = DateTime.now();
+
+  String name;
+  String email;
+  String contact_number;
+  String start_date;
+  String end_date;
+
   var _pay = ['Depósito Bancario'];
   String _primary = 'Seleccione método de pago';
-  DateTime startDate = DateTime.now();
-  DateTime endDate;
+
+  @override
+  void initState() {
+    email = argunemtData[1]["email"];
+    name = argunemtData[1]["first_name"] + ' ' + argunemtData[1]["last_name"];
+    contact_number = argunemtData[1]["contact_number"];
+
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     print(argunemtData[1]);
@@ -260,40 +272,55 @@ class _BookingCarsPageState extends State<BookingCarsPage> {
                     ),
                   ),*/
                   SizedBox(height: 15),
-                  TextField(
-                    decoration: InputDecoration(
-                      hintText: "Ingresa tu nombre completo",
-                      enabledBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: Color(0xFFF9B234)),
-                      ),
-                      focusedBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: Color(0xFFF9B234)),
-                      ),
-                    ),
+                  ListTile(
+                    leading: Icon(Icons.person),
+                    title: Text('${name}'),
+                  ),
+                  ListTile(
+                    leading: Icon(Icons.phone),
+                    title: Text('${contact_number}'),
+                  ),
+                  ListTile(
+                    leading: Icon(Icons.email),
+                    title: Text('${email}'),
                   ),
                   SizedBox(height: 15),
-                  TextField(
-                    decoration: InputDecoration(
-                      hintText: "Ingresa tu número de teléfono",
-                      enabledBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: Color(0xFFF9B234)),
-                      ),
-                      focusedBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: Color(0xFFF9B234)),
-                      ),
-                    ),
+                  MyDateTimePicker(
+                    label: "De",
+                    text: 'Fecha inicio',
+                    ctrl: startDate,
+                    validator: (value) {
+                      if (value.trim().isEmpty) {
+                        return 'La fecha de inicio es requerida';
+                      }
+                      return null;
+                    },
+                    dateTime: _startDate,
+                    onChange: (date) {
+                      setState(() {
+                        _startDate = date;
+                        start_date = _startDate.toString();
+                      });
+                    },
                   ),
                   SizedBox(height: 15),
-                  TextField(
-                    decoration: InputDecoration(
-                      hintText: "Ingresa tu email",
-                      enabledBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: Color(0xFFF9B234)),
-                      ),
-                      focusedBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: Color(0xFFF9B234)),
-                      ),
-                    ),
+                  MyDateTimePicker(
+                    label: "A",
+                    text: 'Fecha fin',
+                    ctrl: endDate,
+                    validator: (value) {
+                      if (value.trim().isEmpty) {
+                        return 'La fecha fin es requerida';
+                      }
+                      return null;
+                    },
+                    dateTime: _endDate,
+                    onChange: (date) {
+                      setState(() {
+                        _endDate = date;
+                        end_date = _endDate.toString();
+                      });
+                    },
                   ),
                   // SizedBox(height: 15),
                   // ListTile(
