@@ -67,13 +67,13 @@ class HomeView extends GetView<HomeController> {
                         color: Color(0xff333D55),
                         fontWeight: FontWeight.bold),
                   ),
-                  Text(user["first_name"] ?? controller.first_name,
+                  Text(controller.first_name,
                       style: TextStyle(
                           fontSize: 18.0,
                           color: Color(0xff333D55),
                           fontWeight: FontWeight.bold)),
                   Text(
-                    " " + user["last_name"] ?? controller.last_name,
+                    " " + controller.last_name,
                     style: TextStyle(
                         fontSize: 18.0,
                         color: Color(0xff333D55),

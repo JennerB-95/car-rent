@@ -1,16 +1,11 @@
 import 'dart:convert';
 
 import 'package:car_rental/core.dart';
-import 'package:car_rental/shared/widgets/images_widget2.dart';
 import 'package:cool_stepper/cool_stepper.dart';
-import 'package:cupertino_stepper/cupertino_stepper.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
-import 'package:step_progress_indicator/step_progress_indicator.dart';
-
 import '../../services/date_time_picker.dart';
 
 class RegisterView extends StatefulWidget {
@@ -98,14 +93,14 @@ class _RegisterViewState extends State<RegisterView> {
           ));
           showprogress = false; //don't show progress indicator
           error = true;
-          errormsg = "Something went wrong.";
+          errormsg = "Algo salió mal.";
         }
       }
     } else {
       setState(() {
         showprogress = false; //don't show progress indicator
         error = true;
-        errormsg = "Error connecting to server.";
+        errormsg = "Error al conectar al servidor.";
       });
     }
   }
