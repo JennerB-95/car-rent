@@ -58,6 +58,8 @@ dependencies:
   cool_stepper: ^1.2.1
   flutter_datetime_picker: ^1.5.1 
   custom_date_range_picker: ^1.0.6
+  shared_preferences: ^2.0.17
+  get_storage: ^2.0.3
 
 dev_dependencies:
   flutter_test:

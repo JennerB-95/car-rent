@@ -1,6 +1,9 @@
+import 'package:car_rental/pages/started/prefs.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'core.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -9,15 +12,43 @@ void main() async {
   /// Make sure you add this line here, so the plugin can access the native side
   WidgetsFlutterBinding.ensureInitialized();
   initializeDateFormatting().then((_) => runApp(MyApp()));
+  final prefs = new UserPreferences();
+  await prefs.initPrefs();
   runApp(MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  bool initialRoute = false;
+  dynamic initialR;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    getDataUser();
+    super.initState();
+  }
+
+  getDataUser() async {
+    var prefs = await SharedPreferences.getInstance();
+    setState(() {
+      initialRoute = prefs.containsKey("user_id");
+    });
+
+    print("initial route $initialRoute $initialR");
+    print("initial route2 ${prefs.getString("user_id")}");
+  }
+
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
       title: 'Car Rental',
       initialBinding: MainBinding(),
+      //home: initialRoute ? MainView() : LoginView(),
       initialRoute: AppPages.INITIAL,
       getPages: AppPages.routes,
       theme: ThemeData(

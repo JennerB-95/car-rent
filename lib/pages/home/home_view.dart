@@ -59,7 +59,7 @@ class HomeView extends GetView<HomeController> {
                 width: 15.0,
               ),
               Text(
-                "Bienvenido, ${user["first_name"]} ${user["last_name"]}",
+                "Bienvenido, ${controller.first_name} ${controller.last_name} ",
                 style: TextStyle(
                     fontSize: 18.0,
                     color: Color(0xff333D55),
