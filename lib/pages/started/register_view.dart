@@ -1,10 +1,15 @@
 import 'dart:convert';
 
 import 'package:car_rental/core.dart';
+import 'package:car_rental/shared/widgets/images_widget2.dart';
+import 'package:cool_stepper/cool_stepper.dart';
+import 'package:cupertino_stepper/cupertino_stepper.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:step_progress_indicator/step_progress_indicator.dart';
 
 import '../../services/date_time_picker.dart';
 
@@ -12,8 +17,6 @@ class RegisterView extends StatefulWidget {
   @override
   State<RegisterView> createState() => _RegisterViewState();
 }
-
-enum LicenseTpe { A, B, C, M, E }
 
 class _RegisterViewState extends State<RegisterView> {
   TextEditingController username = TextEditingController();
@@ -39,24 +42,10 @@ class _RegisterViewState extends State<RegisterView> {
   String errormsg;
   bool error, showprogress;
   bool showPassword = true;
-  String _dropdownValue = "A";
   var licenseTypes = ['A', 'B', "C", "M", "E"];
+  int currentStep = 0;
 
   Future register() async {
-    print(username.text);
-    print(password.text);
-    print(email.text);
-    print(firstName.text);
-    print(lastName.text);
-    print(dpiPassport.text);
-    print(_dateAge);
-    print(phone.text);
-    print(address.text);
-    print(nit.text);
-    print(driveLicence.text);
-    print(_driverLicenseExp);
-    print(licenseType);
-
     var url = "http://api-apex.ceandb.com/register.php";
     final response = await http.post(Uri.parse(url),
         body: jsonEncode(<String, String>{
@@ -74,8 +63,6 @@ class _RegisterViewState extends State<RegisterView> {
           "Vence": _driverLicenseExp,
           "Tipo_Licencia": licenseType
         }));
-    print("body ${response.body}");
-    print(response.statusCode);
 
     if (response.statusCode == 200) {
       var jsondata = json.decode(response.body);
@@ -92,9 +79,23 @@ class _RegisterViewState extends State<RegisterView> {
             error = false;
             showprogress = false;
           });
-          Navigator.push(
-              context, MaterialPageRoute(builder: (context) => LoginView()));
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            behavior: SnackBarBehavior.fixed,
+            content: Text('¡Registro creado correctamente!'),
+            backgroundColor: Colors.green,
+            duration: Duration(seconds: 2),
+          ));
+          Future.delayed(Duration(seconds: 2), () {
+            Navigator.push(
+                context, MaterialPageRoute(builder: (context) => LoginView()));
+          });
         } else {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            behavior: SnackBarBehavior.fixed,
+            content: Text('¡Ha ocurrido un error, inténtelo de nuevo!'),
+            backgroundColor: Colors.red[400],
+            duration: Duration(seconds: 8),
+          ));
           showprogress = false; //don't show progress indicator
           error = true;
           errormsg = "Something went wrong.";
@@ -108,27 +109,16 @@ class _RegisterViewState extends State<RegisterView> {
       });
     }
   }
+  // buildLoginAction(),
+  //buildRegisterAction(),
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      bottomNavigationBar: buildFooter(),
       body: SafeArea(
-        child: SingleChildScrollView(
-          physics: BouncingScrollPhysics(),
-          child: Container(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                buildLoginForm(),
-                SizedBox(
-                  height: 15.0,
-                ),
-                buildRegisterAction(),
-              ],
-            ),
-          ),
+        child: Container(
+          child: buildLoginForm(),
         ),
       ),
     );
@@ -136,195 +126,295 @@ class _RegisterViewState extends State<RegisterView> {
 
   Widget buildLoginForm() {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 27),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          SizedBox(height: 25),
-          Text(
-            "Registro",
-            style: TextStyle(color: Color(0xff333D55), fontSize: 23),
+        child: CoolStepper(
+      config: CoolStepperConfig(
+          icon: Icon(
+            FeatherIcons.userCheck,
           ),
-          SizedBox(height: 15),
-          Row(
-            children: [
-              Expanded(
-                child: Container(
-                  decoration: BoxDecoration(
-                      color: Color(0xffe9ecef).withOpacity(0.7),
-                      borderRadius: BorderRadius.circular(10.0)),
-                  child: TextFormField(
-                    decoration: InputDecoration(
-                        hintText: "Nombres",
-                        hintStyle: TextStyle(color: Colors.grey),
-                        prefixIcon: Icon(
-                          FeatherIcons.user,
-                          color: Colors.grey,
-                        ),
-                        border: InputBorder.none,
-                        focusedBorder: InputBorder.none,
-                        enabledBorder: InputBorder.none,
-                        errorBorder: InputBorder.none,
-                        disabledBorder: InputBorder.none,
-                        contentPadding: EdgeInsets.all(15.0)),
-                    controller: firstName,
+          backText: "ANTERIOR",
+          nextText: 'SIGUIENTE',
+          stepText: 'PASO',
+          ofText: 'DE',
+          finalText: 'FINALIZAR'),
+      onCompleted: () => showSuccessDialog(),
+      steps: <CoolStep>[
+        CoolStep(
+            title: "Información personal",
+            subtitle:
+                "Por favor, llene la información en el formulario para poder empezar.",
+            content: SingleChildScrollView(
+              physics: BouncingScrollPhysics(),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Registro",
+                    style: TextStyle(color: Color(0xff333D55), fontSize: 23),
                   ),
-                ),
-              ),
-              VerticalDivider(),
-              Expanded(
-                child: Container(
-                  decoration: BoxDecoration(
-                      color: Color(0xffe9ecef).withOpacity(0.7),
-                      borderRadius: BorderRadius.circular(10.0)),
-                  child: TextFormField(
-                    decoration: InputDecoration(
-                        hintText: "Apellidos",
-                        hintStyle: TextStyle(color: Colors.grey),
-                        prefixIcon: Icon(
-                          FeatherIcons.user,
-                          color: Colors.grey,
-                        ),
-                        border: InputBorder.none,
-                        focusedBorder: InputBorder.none,
-                        enabledBorder: InputBorder.none,
-                        errorBorder: InputBorder.none,
-                        disabledBorder: InputBorder.none,
-                        contentPadding: EdgeInsets.all(15.0)),
-                    controller: lastName,
-                  ),
-                ),
-              )
-            ],
-          ),
-          SizedBox(height: 15),
-          Container(
-            decoration: BoxDecoration(
-                color: Color(0xffe9ecef).withOpacity(0.7),
-                borderRadius: BorderRadius.circular(10.0)),
-            child: TextFormField(
-              decoration: InputDecoration(
-                  hintText: 'Correo electrónico',
-                  hintStyle: TextStyle(color: Colors.grey),
-                  prefixIcon: Icon(
-                    FeatherIcons.mail,
-                    color: Colors.grey,
-                  ),
-                  border: InputBorder.none,
-                  focusedBorder: InputBorder.none,
-                  enabledBorder: InputBorder.none,
-                  errorBorder: InputBorder.none,
-                  disabledBorder: InputBorder.none,
-                  contentPadding: EdgeInsets.all(15.0)),
-              controller: email,
-            ),
-          ),
-          SizedBox(height: 15),
-          Container(
-            decoration: BoxDecoration(
-                color: Color(0xffe9ecef).withOpacity(0.7),
-                borderRadius: BorderRadius.circular(10.0)),
-            child: TextFormField(
-                obscureText: showPassword,
-                decoration: InputDecoration(
-                    prefixIcon: Icon(
-                      FeatherIcons.lock,
-                      color: Colors.grey,
+                  SizedBox(height: 15),
+                  Container(
+                    decoration: BoxDecoration(
+                        color: Color(0xffe9ecef).withOpacity(0.7),
+                        borderRadius: BorderRadius.circular(10.0)),
+                    child: TextFormField(
+                      decoration: InputDecoration(
+                          hintText: "Nombres",
+                          hintStyle: TextStyle(color: Colors.grey),
+                          prefixIcon: Icon(
+                            FeatherIcons.user,
+                            color: Colors.grey,
+                          ),
+                          border: InputBorder.none,
+                          focusedBorder: InputBorder.none,
+                          enabledBorder: InputBorder.none,
+                          errorBorder: InputBorder.none,
+                          disabledBorder: InputBorder.none,
+                          contentPadding: EdgeInsets.all(15.0)),
+                      controller: firstName,
                     ),
-                    suffixIcon: IconButton(
-                        onPressed: _changeShowPasswordState,
-                        icon: _suffixIcon()),
-                    hintText: 'Contraseña',
-                    hintStyle: TextStyle(color: Colors.grey),
-                    border: InputBorder.none,
-                    focusedBorder: InputBorder.none,
-                    enabledBorder: InputBorder.none,
-                    errorBorder: InputBorder.none,
-                    disabledBorder: InputBorder.none,
-                    contentPadding: EdgeInsets.all(15.0)),
-                controller: password,
-                validator: ((value) {
-                  if (value.isEmpty) return "Campo vacío";
-                  return null;
-                })),
-          ),
-          SizedBox(height: 15),
-          MyDateTimePicker(
-            text: 'Fecha de nacimiento',
-            ctrl: birthDate,
-            validator: (value) {
-              if (value.trim().isEmpty) {
-                return 'La fecha de nacimiento es requerida';
-              }
-              return null;
-            },
-            dateTime: _bornDate,
-            onChange: (date) {
-              setState(() {
-                _bornDate = date;
-                _dateAge = _bornDate.toString();
-              });
-            },
-          ),
-          SizedBox(height: 15),
-          Container(
-            decoration: BoxDecoration(
-                color: Color(0xffe9ecef).withOpacity(0.7),
-                borderRadius: BorderRadius.circular(10.0)),
-            child: TextFormField(
-              decoration: InputDecoration(
-                  hintText: "Dirección",
-                  hintStyle: TextStyle(color: Colors.grey),
-                  prefixIcon: Icon(
-                    FeatherIcons.mapPin,
-                    color: Colors.grey,
                   ),
-                  border: InputBorder.none,
-                  focusedBorder: InputBorder.none,
-                  enabledBorder: InputBorder.none,
-                  errorBorder: InputBorder.none,
-                  disabledBorder: InputBorder.none,
-                  contentPadding: EdgeInsets.all(15.0)),
-              controller: address,
-            ),
-          ),
-          SizedBox(height: 15),
-          Container(
-            decoration: BoxDecoration(
-                color: Color(0xffe9ecef).withOpacity(0.7),
-                borderRadius: BorderRadius.circular(10.0)),
-            child: TextFormField(
-              decoration: InputDecoration(
-                  hintText: "Nombre de usuario",
-                  hintStyle: TextStyle(color: Colors.grey),
-                  prefixIcon: Icon(
-                    FeatherIcons.user,
-                    color: Colors.grey,
+                  SizedBox(height: 15),
+                  Container(
+                    decoration: BoxDecoration(
+                        color: Color(0xffe9ecef).withOpacity(0.7),
+                        borderRadius: BorderRadius.circular(10.0)),
+                    child: TextFormField(
+                      decoration: InputDecoration(
+                          hintText: "Apellidos",
+                          hintStyle: TextStyle(color: Colors.grey),
+                          prefixIcon: Icon(
+                            FeatherIcons.user,
+                            color: Colors.grey,
+                          ),
+                          border: InputBorder.none,
+                          focusedBorder: InputBorder.none,
+                          enabledBorder: InputBorder.none,
+                          errorBorder: InputBorder.none,
+                          disabledBorder: InputBorder.none,
+                          contentPadding: EdgeInsets.all(15.0)),
+                      controller: lastName,
+                    ),
                   ),
-                  border: InputBorder.none,
-                  focusedBorder: InputBorder.none,
-                  enabledBorder: InputBorder.none,
-                  errorBorder: InputBorder.none,
-                  disabledBorder: InputBorder.none,
-                  contentPadding: EdgeInsets.all(15.0)),
-              controller: username,
+                  SizedBox(height: 15),
+                  Container(
+                    decoration: BoxDecoration(
+                        color: Color(0xffe9ecef).withOpacity(0.7),
+                        borderRadius: BorderRadius.circular(10.0)),
+                    child: TextFormField(
+                      decoration: InputDecoration(
+                          hintText: 'Correo electrónico',
+                          hintStyle: TextStyle(color: Colors.grey),
+                          prefixIcon: Icon(
+                            FeatherIcons.mail,
+                            color: Colors.grey,
+                          ),
+                          border: InputBorder.none,
+                          focusedBorder: InputBorder.none,
+                          enabledBorder: InputBorder.none,
+                          errorBorder: InputBorder.none,
+                          disabledBorder: InputBorder.none,
+                          contentPadding: EdgeInsets.all(15.0)),
+                      controller: email,
+                    ),
+                  ),
+                  SizedBox(height: 15),
+                  Container(
+                    decoration: BoxDecoration(
+                        color: Color(0xffe9ecef).withOpacity(0.7),
+                        borderRadius: BorderRadius.circular(10.0)),
+                    child: TextFormField(
+                        obscureText: showPassword,
+                        decoration: InputDecoration(
+                            prefixIcon: Icon(
+                              FeatherIcons.lock,
+                              color: Colors.grey,
+                            ),
+                            suffixIcon: IconButton(
+                                onPressed: _changeShowPasswordState,
+                                icon: _suffixIcon()),
+                            hintText: 'Contraseña',
+                            hintStyle: TextStyle(color: Colors.grey),
+                            border: InputBorder.none,
+                            focusedBorder: InputBorder.none,
+                            enabledBorder: InputBorder.none,
+                            errorBorder: InputBorder.none,
+                            disabledBorder: InputBorder.none,
+                            contentPadding: EdgeInsets.all(15.0)),
+                        controller: password,
+                        validator: ((value) {
+                          if (value.isEmpty) return "Campo vacío";
+                          return null;
+                        })),
+                  ),
+                  SizedBox(height: 15),
+                  MyDateTimePicker(
+                    text: 'Fecha de nacimiento',
+                    ctrl: birthDate,
+                    validator: (value) {
+                      if (value.trim().isEmpty) {
+                        return 'La fecha de nacimiento es requerida';
+                      }
+                      return null;
+                    },
+                    dateTime: _bornDate,
+                    onChange: (date) {
+                      setState(() {
+                        _bornDate = date;
+                        _dateAge = _bornDate.toString();
+                      });
+                    },
+                  ),
+                  SizedBox(height: 15),
+                  Container(
+                    decoration: BoxDecoration(
+                        color: Color(0xffe9ecef).withOpacity(0.7),
+                        borderRadius: BorderRadius.circular(10.0)),
+                    child: TextFormField(
+                      decoration: InputDecoration(
+                          hintText: "Dirección",
+                          hintStyle: TextStyle(color: Colors.grey),
+                          prefixIcon: Icon(
+                            FeatherIcons.mapPin,
+                            color: Colors.grey,
+                          ),
+                          border: InputBorder.none,
+                          focusedBorder: InputBorder.none,
+                          enabledBorder: InputBorder.none,
+                          errorBorder: InputBorder.none,
+                          disabledBorder: InputBorder.none,
+                          contentPadding: EdgeInsets.all(15.0)),
+                      controller: address,
+                    ),
+                  ),
+                  SizedBox(height: 15),
+                  Container(
+                    decoration: BoxDecoration(
+                        color: Color(0xffe9ecef).withOpacity(0.7),
+                        borderRadius: BorderRadius.circular(10.0)),
+                    child: TextFormField(
+                      decoration: InputDecoration(
+                          hintText: "Nombre de usuario. ej: usuario10",
+                          hintStyle: TextStyle(color: Colors.grey),
+                          prefixIcon: Icon(
+                            FeatherIcons.user,
+                            color: Colors.grey,
+                          ),
+                          border: InputBorder.none,
+                          focusedBorder: InputBorder.none,
+                          enabledBorder: InputBorder.none,
+                          errorBorder: InputBorder.none,
+                          disabledBorder: InputBorder.none,
+                          contentPadding: EdgeInsets.all(15.0)),
+                      controller: username,
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-          SizedBox(height: 15),
-          Row(
-            children: [
-              Expanded(
-                child: Container(
-                  decoration: BoxDecoration(
-                      color: Color(0xffe9ecef).withOpacity(0.7),
-                      borderRadius: BorderRadius.circular(10.0)),
-                  child: TextFormField(
+            validation: () {
+              return;
+            }),
+        CoolStep(
+            title: "Información personal",
+            subtitle: "",
+            content: SingleChildScrollView(
+              physics: BouncingScrollPhysics(),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text(
+                    "Información adicional",
+                    style: TextStyle(color: Color(0xff333D55), fontSize: 23),
+                  ),
+                  SizedBox(
+                    height: 15.0,
+                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                        color: Color(0xffe9ecef).withOpacity(0.7),
+                        borderRadius: BorderRadius.circular(10.0)),
+                    child: TextFormField(
+                        decoration: InputDecoration(
+                            prefixIcon: Icon(
+                              FeatherIcons.creditCard,
+                              color: Colors.grey,
+                            ),
+                            hintText: 'Nit',
+                            hintStyle: TextStyle(color: Colors.grey),
+                            border: InputBorder.none,
+                            focusedBorder: InputBorder.none,
+                            enabledBorder: InputBorder.none,
+                            errorBorder: InputBorder.none,
+                            disabledBorder: InputBorder.none,
+                            contentPadding: EdgeInsets.all(15.0)),
+                        controller: nit,
+                        validator: ((value) {
+                          if (value.isEmpty) return "Campo vacío";
+                          return null;
+                        })),
+                  ),
+                  SizedBox(
+                    height: 15.0,
+                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                        color: Color(0xffe9ecef).withOpacity(0.7),
+                        borderRadius: BorderRadius.circular(10.0)),
+                    child: TextFormField(
+                      decoration: InputDecoration(
+                          hintText: "Teléfono",
+                          hintStyle: TextStyle(color: Colors.grey),
+                          prefixIcon: Icon(
+                            FeatherIcons.phone,
+                            color: Colors.grey,
+                          ),
+                          border: InputBorder.none,
+                          focusedBorder: InputBorder.none,
+                          enabledBorder: InputBorder.none,
+                          errorBorder: InputBorder.none,
+                          disabledBorder: InputBorder.none,
+                          contentPadding: EdgeInsets.all(15.0)),
+                      controller: phone,
+                    ),
+                  ),
+                  SizedBox(height: 15),
+                  Container(
+                    decoration: BoxDecoration(
+                        color: Color(0xffe9ecef).withOpacity(0.7),
+                        borderRadius: BorderRadius.circular(10.0)),
+                    child: TextFormField(
+                        decoration: InputDecoration(
+                            prefixIcon: Icon(
+                              FeatherIcons.creditCard,
+                              color: Colors.grey,
+                            ),
+                            hintText: 'DPI/Pasaporte',
+                            hintStyle: TextStyle(color: Colors.grey),
+                            border: InputBorder.none,
+                            focusedBorder: InputBorder.none,
+                            enabledBorder: InputBorder.none,
+                            errorBorder: InputBorder.none,
+                            disabledBorder: InputBorder.none,
+                            contentPadding: EdgeInsets.all(15.0)),
+                        controller: dpiPassport,
+                        validator: ((value) {
+                          if (value.isEmpty) return "Campo vacío";
+
+                          return null;
+                        })),
+                  ),
+                  SizedBox(height: 15),
+                  Container(
+                    decoration: BoxDecoration(
+                        color: Color(0xffe9ecef).withOpacity(0.7),
+                        borderRadius: BorderRadius.circular(10.0)),
+                    child: TextFormField(
                       decoration: InputDecoration(
                           prefixIcon: Icon(
                             FeatherIcons.creditCard,
                             color: Colors.grey,
                           ),
-                          hintText: 'Nit',
+                          hintText: "Número de licencia",
                           hintStyle: TextStyle(color: Colors.grey),
                           border: InputBorder.none,
                           focusedBorder: InputBorder.none,
@@ -332,197 +422,118 @@ class _RegisterViewState extends State<RegisterView> {
                           errorBorder: InputBorder.none,
                           disabledBorder: InputBorder.none,
                           contentPadding: EdgeInsets.all(15.0)),
-                      controller: nit,
+                      controller: driveLicence,
                       validator: ((value) {
                         if (value.isEmpty) return "Campo vacío";
+                        if (value != password)
+                          return "No coincide la contraseña";
                         return null;
-                      })),
-                ),
-              ),
-              VerticalDivider(),
-              Expanded(
-                child: Container(
-                  decoration: BoxDecoration(
-                      color: Color(0xffe9ecef).withOpacity(0.7),
-                      borderRadius: BorderRadius.circular(10.0)),
-                  child: TextFormField(
-                    decoration: InputDecoration(
-                        hintText: "Teléfono",
-                        hintStyle: TextStyle(color: Colors.grey),
-                        prefixIcon: Icon(
-                          FeatherIcons.phone,
-                          color: Colors.grey,
-                        ),
-                        border: InputBorder.none,
-                        focusedBorder: InputBorder.none,
-                        enabledBorder: InputBorder.none,
-                        errorBorder: InputBorder.none,
-                        disabledBorder: InputBorder.none,
-                        contentPadding: EdgeInsets.all(15.0)),
-                    controller: phone,
-                  ),
-                ),
-              )
-            ],
-          ),
-          SizedBox(height: 15),
-          Container(
-            decoration: BoxDecoration(
-                color: Color(0xffe9ecef).withOpacity(0.7),
-                borderRadius: BorderRadius.circular(10.0)),
-            child: TextFormField(
-                decoration: InputDecoration(
-                    prefixIcon: Icon(
-                      FeatherIcons.creditCard,
-                      color: Colors.grey,
+                      }),
                     ),
-                    hintText: 'DPI/Pasaporte',
-                    hintStyle: TextStyle(color: Colors.grey),
-                    border: InputBorder.none,
-                    focusedBorder: InputBorder.none,
-                    enabledBorder: InputBorder.none,
-                    errorBorder: InputBorder.none,
-                    disabledBorder: InputBorder.none,
-                    contentPadding: EdgeInsets.all(15.0)),
-                controller: dpiPassport,
-                validator: ((value) {
-                  if (value.isEmpty) return "Campo vacío";
-
-                  return null;
-                })),
-          ),
-          SizedBox(height: 15),
-          Container(
-            decoration: BoxDecoration(
-                color: Color(0xffe9ecef).withOpacity(0.7),
-                borderRadius: BorderRadius.circular(10.0)),
-            child: TextFormField(
-              decoration: InputDecoration(
-                  prefixIcon: Icon(
-                    FeatherIcons.creditCard,
-                    color: Colors.grey,
                   ),
-                  hintText: "Número de licencia",
-                  hintStyle: TextStyle(color: Colors.grey),
-                  border: InputBorder.none,
-                  focusedBorder: InputBorder.none,
-                  enabledBorder: InputBorder.none,
-                  errorBorder: InputBorder.none,
-                  disabledBorder: InputBorder.none,
-                  contentPadding: EdgeInsets.all(15.0)),
-              controller: driveLicence,
-              validator: ((value) {
-                if (value.isEmpty) return "Campo vacío";
-                if (value != password) return "No coincide la contraseña";
-                return null;
-              }),
-            ),
-          ),
-          SizedBox(height: 15),
-          MyDateTimePicker(
-            text: 'Fecha de vencimiento',
-            ctrl: driverLicenseExpires,
-            validator: (value) {
-              if (value.trim().isEmpty) {
-                return 'La fecha es requerida';
-              }
-              return null;
-            },
-            dateTime: _licenseDate,
-            onChange: (date) {
-              setState(() {
-                _licenseDate = date;
-                _driverLicenseExp = _licenseDate.toString();
-              });
-            },
-          ),
-          SizedBox(height: 15),
-          Text(
-            "Tipo de licencia",
-            style: TextStyle(fontSize: 19.0),
-          ),
-          SizedBox(height: 5),
-          Wrap(
-            alignment: WrapAlignment.start,
-            spacing: 15.0,
-            children: licenseTypes
-                .map(
-                  (item) => ChoiceChip(
-                    elevation: 2.0,
-                    padding: EdgeInsets.symmetric(horizontal: 15.0),
-                    label: Text('$item',
-                        style: TextStyle(
-                            fontSize: 23.0,
-                            color: (licenseType == item)
-                                ? Colors.white
-                                : Colors.black)),
-                    onSelected: (value) {
-                      setState(() {
-                        licenseType = item.toString();
-                      });
-                      print(
-                          "${licenseType.runtimeType} $_isVisible ${licenseType == item}");
+                  SizedBox(height: 15),
+                  MyDateTimePicker(
+                    text: 'Fecha de vencimiento',
+                    ctrl: driverLicenseExpires,
+                    validator: (value) {
+                      if (value.trim().isEmpty) {
+                        return 'La fecha es requerida';
+                      }
+                      return null;
                     },
-                    selected: licenseType == item,
-                    selectedColor: Color(0xff333D55),
+                    dateTime: _licenseDate,
+                    onChange: (date) {
+                      setState(() {
+                        _licenseDate = date;
+                        _driverLicenseExp = _licenseDate.toString();
+                      });
+                    },
                   ),
-                )
-                .toList(),
-          ),
-        ],
-      ),
-    );
+                  SizedBox(height: 25),
+                  Divider(),
+                  Text(
+                    "Tipo de licencia",
+                    style: TextStyle(fontSize: 19.0),
+                  ),
+                  SizedBox(height: 5),
+                  Wrap(
+                    alignment: WrapAlignment.start,
+                    spacing: 15.0,
+                    children: licenseTypes
+                        .map(
+                          (item) => Container(
+                            margin: EdgeInsets.symmetric(vertical: 5.0),
+                            child: ChoiceChip(
+                              backgroundColor: Colors.transparent,
+                              shape: StadiumBorder(
+                                  side: BorderSide(color: Colors.grey)),
+                              elevation: 0.0,
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 25.0, vertical: 10.0),
+                              label: Text('$item',
+                                  style: TextStyle(
+                                      fontSize: 17.0,
+                                      color: (licenseType == item)
+                                          ? Colors.white
+                                          : Colors.black)),
+                              onSelected: (value) {
+                                setState(() {
+                                  licenseType = item.toString();
+                                });
+                                print(
+                                    "${licenseType.runtimeType} $_isVisible ${licenseType == item}");
+                              },
+                              selected: licenseType == item,
+                              selectedColor: Color(0xff333D55),
+                            ),
+                          ),
+                        )
+                        .toList(),
+                  ),
+                  Divider(),
+                  SizedBox(
+                    height: 5.0,
+                  ),
+                  buildRegisterAction()
+                ],
+              ),
+            ),
+            validation: () {
+              return;
+            })
+      ],
+    ));
   }
 
-  Widget buildLoginAction() {
-    return GestureDetector(
-      onTap: () => register(),
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 27),
-        child: Container(
-          decoration: BoxDecoration(
-            color: Color(0xff333D55),
-            borderRadius: BorderRadius.all(
-              Radius.circular(15),
+  showSuccessDialog() {
+    showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text("Registrando..."),
+                SizedBox(
+                  height: 15.0,
+                ),
+                Center(
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2.0,
+                    valueColor: new AlwaysStoppedAnimation<Color>(
+                      Color(0xff333D55),
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ),
-          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-          height: 60,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(left: 8.0),
-                child: Text(
-                  "Registrar",
-                  style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(10),
-                  ),
-                ),
-                height: 40,
-                width: 40,
-                child: Center(
-                  child: Icon(
-                    Icons.arrow_forward_ios,
-                    color: Color(0xff333D55),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
+          );
+        });
+    Future.delayed(Duration(seconds: 3), () {
+      Navigator.pop(context);
+      register();
+    });
   }
 
   Widget buildRegisterAction() {
@@ -548,15 +559,6 @@ class _RegisterViewState extends State<RegisterView> {
           ],
         ),
       ),
-    );
-  }
-
-  Widget buildFooter() {
-    return Container(
-      height: 80,
-      padding: EdgeInsets.symmetric(vertical: 15, horizontal: 18),
-      decoration: BoxDecoration(color: Colors.white),
-      child: buildLoginAction(),
     );
   }
 

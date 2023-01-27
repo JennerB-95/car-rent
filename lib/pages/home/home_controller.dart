@@ -39,7 +39,7 @@ class HomeController extends GetxController {
     displayCar = cars[2];
   }
 
-  Future getUserData() async {
+  Future<void> getUserData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     uid = prefs.getString("user_id");
     username = prefs.getString("username");
@@ -54,7 +54,6 @@ class HomeController extends GetxController {
 
     print(
         " user data $uid $username $first_name $last_name $contact_number $emailU $dpiPasaporte $licencia $tipoLicencia $nit");
-    return;
   }
 
   Future getData() async {

@@ -57,7 +57,6 @@ class _LoginViewState extends State<LoginView> {
             showprogress = false;
           });
           String uid = jsondata["id"];
-          print("josn data $jsondata");
           String username = jsondata["username"];
           String first_name = jsondata["first_name"];
           String last_name = jsondata["last_name"];
@@ -86,6 +85,12 @@ class _LoginViewState extends State<LoginView> {
           showprogress = false; //don't show progress indicator
           error = true;
           errormsg = "Something went wrong.";
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            behavior: SnackBarBehavior.fixed,
+            content: Text('¡Ha ocurrido un error, inténtelo de nuevo!'),
+            backgroundColor: Colors.red[400],
+            duration: Duration(seconds: 8),
+          ));
         }
       }
     } else {
@@ -234,7 +239,7 @@ class _LoginViewState extends State<LoginView> {
 
   Widget buildLoginAction() {
     return GestureDetector(
-      onTap: () => login(),
+      onTap: () => showSuccessDialog(),
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 27),
         child: Container(
@@ -281,6 +286,37 @@ class _LoginViewState extends State<LoginView> {
         ),
       ),
     );
+  }
+
+  showSuccessDialog() {
+    showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text("Iniciando sesión..."),
+                SizedBox(
+                  height: 15.0,
+                ),
+                Center(
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2.0,
+                    valueColor: new AlwaysStoppedAnimation<Color>(
+                      Color(0xff333D55),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        });
+    Future.delayed(Duration(seconds: 3), () {
+      Navigator.pop(context);
+      login();
+    });
   }
 
   Widget buildRegisterAction() {
