@@ -23,26 +23,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  bool initialRoute = false;
-  dynamic initialR;
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    getDataUser();
-    super.initState();
-  }
-
-  getDataUser() async {
-    var prefs = await SharedPreferences.getInstance();
-    setState(() {
-      initialRoute = prefs.containsKey("user_id");
-    });
-
-    print("initial route $initialRoute $initialR");
-    print("initial route2 ${prefs.getString("user_id")}");
-  }
-
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
