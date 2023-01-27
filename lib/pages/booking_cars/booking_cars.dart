@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../core.dart';
 import '../../services/date_time_picker.dart';
 import 'package:http/http.dart' as http;
@@ -17,6 +18,43 @@ class BookingCarsPage extends StatefulWidget {
 }
 
 class _BookingCarsPageState extends State<BookingCarsPage> {
+  String uid,
+      username,
+      first_name,
+      last_name,
+      contact_number,
+      emailU,
+      dpiPasaporte,
+      licencia,
+      tipoLicencia,
+      nit;
+  @override
+  void initState() {
+    // TODO: implement initState
+    getUserData();
+    super.initState();
+  }
+
+  getUserData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      uid = prefs.getString("user_id");
+      username = prefs.getString("username");
+      first_name = prefs.getString("first_name");
+      last_name = prefs.getString("last_name");
+      contact_number = prefs.getString("contact_number");
+      emailU = prefs.getString("email");
+      dpiPasaporte = prefs.getString("dpiPasaporte");
+      licencia = prefs.getString("licencia");
+      tipoLicencia = prefs.getString("tipoLicencia");
+      nit = prefs.getString("nit");
+    });
+
+    print(
+        " user data $uid $username $first_name $last_name $contact_number $emailU $dpiPasaporte $licencia $tipoLicencia $nit");
+    return;
+  }
+
   final argunemtData = Get.arguments;
   TextEditingController startDate = TextEditingController();
   TextEditingController endDate = TextEditingController();
@@ -26,7 +64,7 @@ class _BookingCarsPageState extends State<BookingCarsPage> {
 
   String name;
   String email;
-  String contact_number;
+  // String contact_number2;
   String start_date;
   String end_date;
   String errormsg;
@@ -34,15 +72,6 @@ class _BookingCarsPageState extends State<BookingCarsPage> {
   bool showPassword = true;
   var _pay = ['Depósito Bancario'];
   String _primary = 'Seleccione método de pago';
-
-  @override
-  void initState() {
-    email = argunemtData[1]["email"];
-    name = argunemtData[1]["first_name"] + ' ' + argunemtData[1]["last_name"];
-    contact_number = argunemtData[1]["contact_number"];
-
-    super.initState();
-  }
 
   Future saveBooking() async {
     var url = "http://api-apex.ceandb.com/bookingAdd.php";
@@ -247,7 +276,7 @@ class _BookingCarsPageState extends State<BookingCarsPage> {
             Padding(
               padding: EdgeInsets.only(top: 16, left: 16, right: 16),
               child: Text(
-                "Reserva de ${argunemtData[1]["first_name"]}",
+                "Reserva de ${username}",
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,

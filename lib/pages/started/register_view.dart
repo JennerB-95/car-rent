@@ -13,6 +13,8 @@ class RegisterView extends StatefulWidget {
   State<RegisterView> createState() => _RegisterViewState();
 }
 
+enum LicenseTpe { A, B, C, M, E }
+
 class _RegisterViewState extends State<RegisterView> {
   TextEditingController username = TextEditingController();
   TextEditingController firstName = TextEditingController();
@@ -30,12 +32,15 @@ class _RegisterViewState extends State<RegisterView> {
 
   var _bornDate = DateTime.now();
   var _licenseDate = DateTime.now();
-
+  bool _isVisible = false;
+  String licenseType = "";
   String _dateAge;
   String _driverLicenseExp;
   String errormsg;
   bool error, showprogress;
   bool showPassword = true;
+  String _dropdownValue = "A";
+  var licenseTypes = ['A', 'B', "C", "M", "E"];
 
   Future register() async {
     var url = "http://api-apex.ceandb.com/register.php";
@@ -53,6 +58,7 @@ class _RegisterViewState extends State<RegisterView> {
           "Nit": nit.text,
           "Licencia": driveLicence.text,
           "Vence": _driverLicenseExp,
+          "Tipo_Licencia": "a ver qe pasa"
         }));
     print("body ${response.body}");
     print(response.statusCode);
@@ -118,7 +124,7 @@ class _RegisterViewState extends State<RegisterView> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 27),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           SizedBox(height: 25),
           Text(
@@ -415,6 +421,38 @@ class _RegisterViewState extends State<RegisterView> {
                 _driverLicenseExp = _licenseDate.toString();
               });
             },
+          ),
+          SizedBox(height: 15),
+          Text(
+            "Tipo de licencia",
+            style: TextStyle(fontSize: 19.0),
+          ),
+          SizedBox(height: 5),
+          Wrap(
+            alignment: WrapAlignment.start,
+            spacing: 15.0,
+            children: licenseTypes
+                .map(
+                  (item) => ChoiceChip(
+                    elevation: 2.0,
+                    padding: EdgeInsets.symmetric(horizontal: 15.0),
+                    label: Text('$item',
+                        style: TextStyle(
+                            fontSize: 23.0,
+                            color: (licenseType == item)
+                                ? Colors.white
+                                : Colors.black)),
+                    onSelected: (value) {
+                      setState(() {
+                        licenseType = item.toString();
+                      });
+                      print("$licenseType $_isVisible ${licenseType == item}");
+                    },
+                    selected: licenseType == item,
+                    selectedColor: Color(0xff333D55),
+                  ),
+                )
+                .toList(),
           ),
         ],
       ),

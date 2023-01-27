@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../core.dart';
 import 'package:http/http.dart' as http;
 
@@ -28,19 +30,17 @@ class _LoginViewState extends State<LoginView> {
     errormsg = "";
     error = false;
     showprogress = false;
-
-    //_username.text = "defaulttext";
-    //_password.text = "defaultpassword";
     super.initState();
   }
 
   Future login() async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     var url = "http://api-apex.ceandb.com/login.php";
     var response = await http.post(Uri.parse(url), body: {
       "email": _email.text,
       "password": _password.text,
     });
-    print("body ${response.body}");
+
     print(response.statusCode);
     if (response.statusCode == 200) {
       var jsondata = json.decode(response.body);
@@ -56,15 +56,32 @@ class _LoginViewState extends State<LoginView> {
             error = false;
             showprogress = false;
           });
-          //save the data returned from server
-          //and navigate to home page
-          String uid = jsondata["uid"];
+          String uid = jsondata["id"];
+          print("josn data $jsondata");
           String username = jsondata["username"];
+          String first_name = jsondata["first_name"];
           String last_name = jsondata["last_name"];
-          print(username);
-          Get.toNamed(Routes.HOME, arguments: jsondata);
+          String contact_number = jsondata["contact_number"];
+          String email = jsondata["email"];
+          String dpiPasaporte = jsondata["Dpi_Pasaporte"];
+          String licencia = jsondata["Licencia"];
+          String tipoLicencia = jsondata["Tipo_Licencia"];
+          String nit = jsondata["Nit"];
 
-          //user shared preference to save data
+          setState(() {
+            sharedPreferences.setString('user_id', uid);
+            sharedPreferences.setString('username', username ?? " ");
+            sharedPreferences.setString('first_name', first_name ?? " ");
+            sharedPreferences.setString('last_name', last_name ?? " ");
+            sharedPreferences.setString(
+                'contact_number', contact_number ?? " 0");
+            sharedPreferences.setString('email', email ?? " ");
+            sharedPreferences.setString('dpiPasaporte', dpiPasaporte ?? " ");
+            sharedPreferences.setString('licencia', tipoLicencia ?? " ");
+            sharedPreferences.setString('tipoLicencia', licencia ?? " ");
+            sharedPreferences.setString('nit', nit ?? " ");
+          });
+          Get.toNamed(Routes.HOME, arguments: jsondata);
         } else {
           showprogress = false; //don't show progress indicator
           error = true;
@@ -99,7 +116,7 @@ class _LoginViewState extends State<LoginView> {
                   children: [
                     buildLogo(),
                     buildLoginForm(),
-                    SizedBox(height: 45.0),
+                    SizedBox(height: 5.0),
                     buildLoginAction(),
                     buildRegisterAction(),
                   ],
