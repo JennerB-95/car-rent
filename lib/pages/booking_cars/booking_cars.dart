@@ -318,7 +318,6 @@ class _BookingCarsPageState extends State<BookingCarsPage> {
                     title: Text('${emailU}'),
                   ),
                   SizedBox(height: 15),
-
                   Row(
                     children: [
                       Expanded(
@@ -366,6 +365,8 @@ class _BookingCarsPageState extends State<BookingCarsPage> {
                       )
                     ],
                   ),
+                  SizedBox(height: 15),
+                  buildActionButton(),
 
                   // SizedBox(height: 15),
                   // ListTile(
@@ -492,6 +493,51 @@ class _BookingCarsPageState extends State<BookingCarsPage> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget buildActionButton() {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 0),
+        child: ElevatedButton(
+          child: const Text('Agregar conductores autorizados'),
+          onPressed: () {
+            showModalBottomSheet<void>(
+              context: context,
+              isScrollControlled: true,
+              builder: (BuildContext context) {
+                return Container(
+                  height: MediaQuery.of(context).size.height,
+                  color: Colors.white,
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        const Text('Modal BottomSheet'),
+                        ElevatedButton(
+                          child: const Text('Close BottomSheet'),
+                          onPressed: () => Navigator.pop(context),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            );
+          },
+          style: ElevatedButton.styleFrom(
+            primary: Color(0xff333D55),
+            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+            elevation: 0.2,
+            textStyle: TextStyle(
+              fontSize: 15,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ),
       ),
     );
   }
