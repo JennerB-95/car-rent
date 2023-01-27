@@ -43,6 +43,20 @@ class _RegisterViewState extends State<RegisterView> {
   var licenseTypes = ['A', 'B', "C", "M", "E"];
 
   Future register() async {
+    print(username.text);
+    print(password.text);
+    print(email.text);
+    print(firstName.text);
+    print(lastName.text);
+    print(dpiPassport.text);
+    print(_dateAge);
+    print(phone.text);
+    print(address.text);
+    print(nit.text);
+    print(driveLicence.text);
+    print(_driverLicenseExp);
+    print(licenseType);
+
     var url = "http://api-apex.ceandb.com/register.php";
     final response = await http.post(Uri.parse(url),
         body: jsonEncode(<String, String>{
@@ -58,7 +72,7 @@ class _RegisterViewState extends State<RegisterView> {
           "Nit": nit.text,
           "Licencia": driveLicence.text,
           "Vence": _driverLicenseExp,
-          "Tipo_Licencia": "a ver qe pasa"
+          "Tipo_Licencia": licenseType
         }));
     print("body ${response.body}");
     print(response.statusCode);
@@ -446,7 +460,8 @@ class _RegisterViewState extends State<RegisterView> {
                       setState(() {
                         licenseType = item.toString();
                       });
-                      print("$licenseType $_isVisible ${licenseType == item}");
+                      print(
+                          "${licenseType.runtimeType} $_isVisible ${licenseType == item}");
                     },
                     selected: licenseType == item,
                     selectedColor: Color(0xff333D55),

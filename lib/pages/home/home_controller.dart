@@ -23,6 +23,7 @@ class HomeController extends GetxController {
       licencia,
       tipoLicencia,
       nit;
+
   @override
   void onInit() async {
     super.onInit();
@@ -38,7 +39,7 @@ class HomeController extends GetxController {
     displayCar = cars[2];
   }
 
-  getUserData() async {
+  Future getUserData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     uid = prefs.getString("user_id");
     username = prefs.getString("username");

@@ -14,7 +14,6 @@ class BookCarView extends GetView<BookCarController> {
 
   @override
   Widget build(BuildContext context) {
-    print("argument data ${argumentData[1]["first_name"]}");
     return Scaffold(
       backgroundColor: Color(0xffF8F8F8),
       body: SafeArea(
@@ -160,7 +159,7 @@ class BookCarView extends GetView<BookCarController> {
           InkWell(
             onTap: () => Get.toNamed(
               Routes.BOOKING_CARS,
-              arguments: [argumentData[0], argumentData[1]] ,
+              arguments: [argumentData[0], argumentData[1]],
             ),
             child: Container(
               height: 40,

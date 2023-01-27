@@ -62,9 +62,6 @@ class _BookingCarsPageState extends State<BookingCarsPage> {
   var _startDate = DateTime.now();
   var _endDate = DateTime.now();
 
-  String name;
-  String email;
-  // String contact_number2;
   String start_date;
   String end_date;
   String errormsg;
@@ -74,16 +71,17 @@ class _BookingCarsPageState extends State<BookingCarsPage> {
   String _primary = 'Seleccione método de pago';
 
   Future saveBooking() async {
+    print(argunemtData[0]['equipment_id']);
     var url = "http://api-apex.ceandb.com/bookingAdd.php";
     final response = await http.post(Uri.parse(url),
         body: jsonEncode(<String, String>{
-          "name": name,
-          "email": email,
+          "name": first_name + last_name,
+          "email": emailU,
           "contact_number": contact_number,
           "start_date": start_date,
           "end_date": end_date,
-          "user_id": "53",
-          "equipment_id": "20",
+          "user_id": uid,
+          "equipment_id": argunemtData[0]['equipment_id'],
         }));
     print("body ${response.body}");
     print(response.statusCode);
@@ -301,7 +299,7 @@ class _BookingCarsPageState extends State<BookingCarsPage> {
                     contentPadding:
                         EdgeInsets.symmetric(horizontal: 0.0, vertical: 0.0),
                     leading: Icon(Icons.person),
-                    title: Text('${name}'),
+                    title: Text('${first_name}' + ' ' + '${last_name}'),
                   ),
                   ListTile(
                     visualDensity: VisualDensity(horizontal: 0, vertical: -4),
@@ -317,7 +315,7 @@ class _BookingCarsPageState extends State<BookingCarsPage> {
                     contentPadding:
                         EdgeInsets.symmetric(horizontal: 0.0, vertical: 0.0),
                     leading: Icon(Icons.email),
-                    title: Text('${email}'),
+                    title: Text('${emailU}'),
                   ),
                   SizedBox(height: 15),
 
