@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:get/get.dart';
 import 'package:share/share.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:ionicons/ionicons.dart';
@@ -20,6 +21,43 @@ class BookingCarsPage extends StatefulWidget {
 }
 
 class _BookingCarsPageState extends State<BookingCarsPage> {
+  String uid,
+      username,
+      first_name,
+      last_name,
+      contact_number,
+      emailU,
+      dpiPasaporte,
+      licencia,
+      tipoLicencia,
+      nit;
+  @override
+  void initState() {
+    // TODO: implement initState
+    getUserData();
+    super.initState();
+  }
+
+  getUserData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      uid = prefs.getString("user_id");
+      username = prefs.getString("username");
+      first_name = prefs.getString("first_name");
+      last_name = prefs.getString("last_name");
+      contact_number = prefs.getString("contact_number");
+      emailU = prefs.getString("email");
+      dpiPasaporte = prefs.getString("dpiPasaporte");
+      licencia = prefs.getString("licencia");
+      tipoLicencia = prefs.getString("tipoLicencia");
+      nit = prefs.getString("nit");
+    });
+
+    print(
+        " user data $uid $username $first_name $last_name $contact_number $emailU $dpiPasaporte $licencia $tipoLicencia $nit");
+    return;
+  }
+
   final argunemtData = Get.arguments;
 
   DateTime _date = DateTime.now();
@@ -185,7 +223,7 @@ class _BookingCarsPageState extends State<BookingCarsPage> {
             Padding(
               padding: EdgeInsets.only(top: 16, left: 16, right: 16),
               child: Text(
-                "Reserva de ${argunemtData[1]["first_name"]}",
+                "Reserva de ${username}",
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
