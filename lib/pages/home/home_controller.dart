@@ -26,10 +26,12 @@ class HomeController extends GetxController {
 
   @override
   void onInit() async {
-    super.onInit();
+    Get.delete();
+    Get.put(HomeController());
     loadData();
     getData();
     getUserData();
+    super.onInit();
   }
 
   loadData() {

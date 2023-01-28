@@ -18,10 +18,10 @@ class ImagesWidget3 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return isExpanded ? Expanded(child: buildBody()) : buildBody();
+    return isExpanded ? Expanded(child: buildBody(context)) : buildBody(context);
   }
 
-  ValueBuilder<int> buildBody() {
+  ValueBuilder<int> buildBody(context) {
     return ValueBuilder<int>(
       initialValue: 0,
       builder: (currentImage, updateFn) => Stack(
@@ -55,7 +55,7 @@ class ImagesWidget3 extends StatelessWidget {
                 )
               : Container(),
           GestureDetector(
-            onTap: () => Get.back(),
+            onTap: () => Navigator.pop(context),
             child: Container(
               margin: EdgeInsets.all(10.0),
               height: 40,
