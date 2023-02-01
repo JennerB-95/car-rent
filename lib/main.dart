@@ -5,6 +5,7 @@ import 'package:car_rental/pages/started/prefs.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -17,7 +18,7 @@ Future<void> main() async {
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
   ]);
-  SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
+
   runApp(MyApp());
 }
 
@@ -25,6 +26,14 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      localizationsDelegates: [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ],
+      supportedLocales: [
+        const Locale('es'),
+      ],
+      locale: const Locale('es'),
       debugShowCheckedModeBanner: false,
       title: 'Material App',
       //initialRoute: "initial-route",
@@ -86,62 +95,3 @@ class _SaveSessionState extends State<SaveSession> {
     );
   }
 }
-
-
-/*import 'package:car_rental/pages/started/prefs.dart';
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'core.dart';
-
-void main() async {
-  /// Make sure you add this line here, so the plugin can access the native side
-  WidgetsFlutterBinding.ensureInitialized();
-  final prefs = new UserPreferences();
-  await prefs.initPrefs();
-  final sessionManager = SessionManager();
-  Get.put(sessionManager);
-  runApp(GetMaterialApp(
-    title: 'Car Rental',
-    initialBinding: MainBinding(),
-    //home: initialRoute ? MainView() : LoginView(),
-    initialRoute: _getInitialRoute(sessionManager),
-    getPages: AppPages.routes,
-    theme: ThemeData(
-      primarySwatch: Colors.blue,
-      visualDensity: VisualDensity.adaptivePlatformDensity,
-      textTheme: GoogleFonts.mulishTextTheme(),
-    ),
-    debugShowCheckedModeBanner: false,
-    defaultTransition: Transition.cupertino,
-    opaqueRoute: Get.isOpaqueRouteDefault,
-    popGesture: Get.isPopGestureEnable,
-    transitionDuration: Duration(milliseconds: 230),
-  ));
-}
-
-String _getInitialRoute(SessionManager sessionManager) {
-  final session = sessionManager.getSession();
-  print("the session ${session}");
-  if (session != null) {
-    print("home print");
-    return '/';
-  } else {
-    print("login print");
-    return '/login';
-  }
-}
-
-class SessionManager {
-  Future<void> saveSession(String session) async {
-    final prefs = await SharedPreferences.getInstance();
-    prefs.setString('session', session);
-  }
-
-  Future<String> getSession() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('session');
-  }
-}
-*/

@@ -338,7 +338,7 @@ class _LoginViewState extends State<LoginView> {
               style: TextStyle(fontSize: 17),
             ),
             TextButton(
-                onPressed: () => Get.toNamed(Routes.REGISTER),
+                onPressed: () => Navigator.pushNamed(context, "/register"),
                 child: Text(
                   "Regístrate",
                   style: TextStyle(fontSize: 17, color: Colors.blue),
