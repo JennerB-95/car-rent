@@ -1,17 +1,20 @@
 import 'dart:convert';
 
+import 'package:animate_do/animate_do.dart';
 import 'package:car_rental/models/equipment.dart';
+import 'package:car_rental/pages/booking_cars/booking_cars.dart';
 import 'package:car_rental/services/equipment_service.dart';
 import 'package:car_rental/shared/widgets/images_widget3.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:get/get.dart';
+import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:share/share.dart';
 import 'package:html/parser.dart';
 import '../../core.dart';
 
 class BookCarView extends StatefulWidget {
-  final car;
+  final Equipment car;
 
   const BookCarView({Key key, @required this.car}) : super(key: key);
   @override
@@ -59,39 +62,50 @@ class _BookCarViewState extends State<BookCarView> {
             isExpanded: false,
           ),
           SizedBox(height: 17),
-          TitleWidget(title: widget.car.title, subtitle: widget.car.name),
-          SizedBox(height: 17),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Row(
+          FadeInUp(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildPricePerPeriod("Q${widget.car.per_day_price}/Día"),
-                SizedBox(width: 16),
-                _buildPricePerPeriod("Q${widget.car.per_week_price}/Semana"),
+                TitleWidget(title: widget.car.title, subtitle: widget.car.name),
+                SizedBox(height: 17),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Row(
+                    children: [
+                      _buildPricePerPeriod("Q${widget.car.per_day_price}/Día"),
+                      SizedBox(width: 16),
+                      _buildPricePerPeriod(
+                          "Q${widget.car.per_week_price}/Semana"),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 10),
+                Divider(),
+                SizedBox(height: 10),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Text(_parseHtmlString(widget.car.description),
+                      textAlign: TextAlign.justify,
+                      style: TextStyle(fontSize: 15.0)),
+                ),
+                SizedBox(height: 10),
+                Divider(),
+                SizedBox(height: 10),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child:
+                      Text("Características", style: TextStyle(fontSize: 25.0)),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Text(widget.car.features,
+                      textAlign: TextAlign.justify,
+                      style: TextStyle(fontSize: 15.0)),
+                ),
+                SizedBox(height: 17),
               ],
             ),
           ),
-          SizedBox(height: 10),
-          Divider(),
-          SizedBox(height: 10),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Text(_parseHtmlString(widget.car.description),
-                textAlign: TextAlign.justify, style: TextStyle(fontSize: 15.0)),
-          ),
-          SizedBox(height: 10),
-          Divider(),
-          SizedBox(height: 10),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Text("Características", style: TextStyle(fontSize: 25.0)),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Text(widget.car.features,
-                textAlign: TextAlign.justify, style: TextStyle(fontSize: 15.0)),
-          ),
-          SizedBox(height: 17),
         ],
       ),
     );
@@ -136,7 +150,12 @@ class _BookCarViewState extends State<BookCarView> {
             ],
           ),
           InkWell(
-            onTap: () {},
+            onTap: () {
+              PersistentNavBarNavigator.pushNewScreen(context,
+                  screen: BookingCarsPage(
+                    car: widget.car,
+                  ));
+            },
             child: Container(
               height: 40,
               decoration: BoxDecoration(

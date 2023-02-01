@@ -42,7 +42,7 @@ class _RegisterViewState extends State<RegisterView> {
   String errormsg;
   bool error, showprogress;
   bool showPassword = true;
-  var licenseTypes = ['A', 'B', "C", "M", "E"];
+  var licenseTypes = ['A', 'B', "C"];
   int currentStep = 0;
 
   Future register() async {
@@ -433,6 +433,7 @@ class _RegisterViewState extends State<RegisterView> {
                   ),
                   SizedBox(height: 15),
                   MyDateTimePicker(
+                    maxNow: false,
                     text: 'Fecha de vencimiento',
                     ctrl: driverLicenseExpires,
                     validator: (value) {

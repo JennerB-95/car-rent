@@ -72,7 +72,11 @@ class ImagesWidget extends StatelessWidget {
                           }
                           return Center(
                             child: CircularProgressIndicator(
+                              strokeWidth: 2.0,
                               backgroundColor: Colors.white,
+                              valueColor: new AlwaysStoppedAnimation<Color>(
+                                Color(0xff333D55),
+                              ),
                               value: loadingProgress.expectedTotalBytes != null
                                   ? loadingProgress.cumulativeBytesLoaded /
                                       loadingProgress.expectedTotalBytes
@@ -95,12 +99,16 @@ class ImagesWidget extends StatelessWidget {
                         }
                         return Center(
                           child: CircularProgressIndicator(
-                            backgroundColor: Colors.white,
-                            value: loadingProgress.expectedTotalBytes != null
-                                ? loadingProgress.cumulativeBytesLoaded /
-                                    loadingProgress.expectedTotalBytes
-                                : null,
-                          ),
+                              strokeWidth: 2.0,
+                              backgroundColor: Colors.white,
+                              valueColor: new AlwaysStoppedAnimation<Color>(
+                                Color(0xff333D55),
+                              ),
+                              value: loadingProgress.expectedTotalBytes != null
+                                  ? loadingProgress.cumulativeBytesLoaded /
+                                      loadingProgress.expectedTotalBytes
+                                  : null,
+                            ),
                         );
                       },
                       //height: 100.0,

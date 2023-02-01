@@ -18,7 +18,9 @@ class ImagesWidget3 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return isExpanded ? Expanded(child: buildBody(context)) : buildBody(context);
+    return isExpanded
+        ? Expanded(child: buildBody(context))
+        : buildBody(context);
   }
 
   ValueBuilder<int> buildBody(context) {
@@ -98,7 +100,11 @@ class ImagesWidget3 extends StatelessWidget {
                         }
                         return Center(
                           child: CircularProgressIndicator(
+                            strokeWidth: 2.0,
                             backgroundColor: Colors.white,
+                            valueColor: new AlwaysStoppedAnimation<Color>(
+                              Color(0xff333D55),
+                            ),
                             value: loadingProgress.expectedTotalBytes != null
                                 ? loadingProgress.cumulativeBytesLoaded /
                                     loadingProgress.expectedTotalBytes
@@ -118,7 +124,11 @@ class ImagesWidget3 extends StatelessWidget {
                       }
                       return Center(
                         child: CircularProgressIndicator(
+                          strokeWidth: 2.0,
                           backgroundColor: Colors.white,
+                          valueColor: new AlwaysStoppedAnimation<Color>(
+                            Color(0xff333D55),
+                          ),
                           value: loadingProgress.expectedTotalBytes != null
                               ? loadingProgress.cumulativeBytesLoaded /
                                   loadingProgress.expectedTotalBytes
