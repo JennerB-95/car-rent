@@ -31,13 +31,6 @@ class ImagesWidget3 extends StatelessWidget {
           isExpanded
               ? Expanded(child: buildImagesPage(updateFn))
               : buildImagesPage(updateFn),
-          IgnorePointer(
-            child: Container(
-              height: 300,
-              width: double.infinity,
-              color: Colors.black.withOpacity(0.3),
-            ),
-          ),
           images.length > 1
               ? Positioned.fill(
                   child: Align(
@@ -56,22 +49,6 @@ class ImagesWidget3 extends StatelessWidget {
                   ),
                 )
               : Container(),
-          GestureDetector(
-            onTap: () => Navigator.pop(context),
-            child: Container(
-              margin: EdgeInsets.all(10.0),
-              height: 40,
-              width: 40,
-              alignment: Alignment.topLeft,
-              decoration: BoxDecoration(
-                  shape: BoxShape.circle, color: Colors.black.withOpacity(0.5)),
-              child: Icon(
-                FeatherIcons.chevronLeft,
-                color: Colors.white,
-                size: 35.0,
-              ),
-            ),
-          ),
         ],
       ),
     );

@@ -67,16 +67,13 @@ class _BookingListState extends State<BookingList> {
       body: Stack(
         children: [
           SafeArea(
-            child: SingleChildScrollView(
-              physics: BouncingScrollPhysics(),
-              child: Container(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    buildHeader(),
-                    buildList(context),
-                  ],
-                ),
+            child: Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  buildHeader(),
+                  buildList(context),
+                ],
               ),
             ),
           ),
@@ -134,7 +131,7 @@ class _BookingListState extends State<BookingList> {
         padding: EdgeInsets.zero,
         itemCount: entries.length,
         itemBuilder: (BuildContext context, int index) {
-          return Container();
+          return buildContain(context);
         },
         separatorBuilder: (BuildContext context, int index) => const Divider(),
       ),
@@ -158,7 +155,49 @@ class _BookingListState extends State<BookingList> {
               albumImage,
               fit: BoxFit.fitHeight,
             ),
-          )
+          ),
+          Expanded(
+              child: Container(
+            padding: EdgeInsets.only(top: 20, left: 10, right: 10),
+            child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "Nombre de algo",
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      height: 1.5,
+                    ),
+                  )
+                ],
+              ),
+              Text("Nombre de algo en pequeno",
+                  style: TextStyle(
+                    color: Colors.blue,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    height: 1.5,
+                  )),
+              SizedBox(height: 5),
+              Row(
+                children: [
+                  Text("\Q",
+                      style: TextStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                      )),
+                  Text("100.00",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      )),
+                ],
+              )
+            ]),
+          ))
         ],
       ),
     );

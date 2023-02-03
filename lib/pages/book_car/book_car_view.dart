@@ -111,7 +111,7 @@ class _BookCarViewState extends State<BookCarView>
           color: _iconColorTween.value,
         ),
         automaticallyImplyLeading: false,
-        elevation: 5.0,
+        elevation: 0.0,
         backgroundColor: _colorTween.value,
         expandedHeight: 255.0,
         floating: true,
@@ -127,9 +127,7 @@ class _BookCarViewState extends State<BookCarView>
                 IgnorePointer(
                   child: Container(
                     decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.4),
-                      borderRadius:
-                          BorderRadius.vertical(bottom: Radius.circular(23.0)),
+                      color: Colors.black.withOpacity(0.3),
                     ),
                     alignment: Alignment.bottomCenter,
                     height: 300.0,
@@ -154,6 +152,7 @@ class _BookCarViewState extends State<BookCarView>
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            SizedBox(height: 10),
             TitleWidget(title: widget.car.title, subtitle: widget.car.name),
             SizedBox(height: 17),
             Padding(
