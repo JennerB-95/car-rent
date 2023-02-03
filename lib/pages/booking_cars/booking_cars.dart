@@ -70,42 +70,6 @@ class _BookingCarsPageState extends State<BookingCarsPage> {
       licencia,
       tipoLicencia,
       nit;
-  @override
-  void initState() {
-    // TODO: implement initState
-    getUserData();
-    super.initState();
-  }
-
-  getUserData() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      total = widget.car.per_day_price;
-      uid = prefs.getString("user_id");
-      username = prefs.getString("username");
-      first_name = prefs.getString("first_name");
-      last_name = prefs.getString("last_name");
-      contact_number = prefs.getString("contact_number");
-      emailU = prefs.getString("email");
-      dpiPasaporte = prefs.getString("dpiPasaporte");
-      licencia = prefs.getString("licencia");
-      tipoLicencia = prefs.getString("tipoLicencia");
-      nit = prefs.getString("nit");
-    });
-
-    return;
-  }
-
-  TextEditingController startDate = TextEditingController();
-  TextEditingController endDate = TextEditingController();
-
-  var _startDate = DateTime.now();
-  var _endDate = DateTime.now();
-
-  String start_date;
-  String end_date;
-  var _pay = ['Depósito Bancario'];
-  String _primary = 'Seleccione método de pago';
 
   Future register() async {
     var url = "http://api-apex.ceandb.com/register.php";
@@ -162,11 +126,6 @@ class _BookingCarsPageState extends State<BookingCarsPage> {
           showprogress = false; //don't show progress indicator
           error = true;
           errormsg = "Algo salió mal.";
-          Future.delayed(Duration(seconds: 2), () {
-            Navigator.pop(context);
-            // Navigator.push(
-            //     context, MaterialPageRoute(builder: (context) => LoginView()));
-          });
         }
       }
     } else {
@@ -177,6 +136,43 @@ class _BookingCarsPageState extends State<BookingCarsPage> {
       });
     }
   }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    getUserData();
+    super.initState();
+  }
+
+  getUserData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      total = widget.car.per_day_price;
+      uid = prefs.getString("user_id");
+      username = prefs.getString("username");
+      first_name = prefs.getString("first_name");
+      last_name = prefs.getString("last_name");
+      contact_number = prefs.getString("contact_number");
+      emailU = prefs.getString("email");
+      dpiPasaporte = prefs.getString("dpiPasaporte");
+      licencia = prefs.getString("licencia");
+      tipoLicencia = prefs.getString("tipoLicencia");
+      nit = prefs.getString("nit");
+    });
+
+    return;
+  }
+
+  TextEditingController startDate = TextEditingController();
+  TextEditingController endDate = TextEditingController();
+
+  var _startDate = DateTime.now();
+  var _endDate = DateTime.now();
+
+  String start_date;
+  String end_date;
+  var _pay = ['Depósito Bancario'];
+  String _primary = 'Seleccione método de pago';
 
   Future saveBooking() async {
     print(widget.car.equipment_id);
@@ -494,7 +490,6 @@ class _BookingCarsPageState extends State<BookingCarsPage> {
                     },
                   ),
                   SizedBox(height: 15),
-
                   Visibility(
                       visible: numberOfDays,
                       child: FadeInUp(
@@ -508,7 +503,6 @@ class _BookingCarsPageState extends State<BookingCarsPage> {
                         ),
                       )),
                   SizedBox(height: 15),
-
                   Row(
                     children: [
                       Expanded(
@@ -585,11 +579,8 @@ class _BookingCarsPageState extends State<BookingCarsPage> {
                           child: Icon(FeatherIcons.userPlus)),
                     ),
                   ),
-
                   SizedBox(height: 15),
                   buildActionButton(),
-
-                
                 ],
               ),
             ),
@@ -1176,48 +1167,10 @@ class _BookingCarsPageState extends State<BookingCarsPage> {
     );
   }
 
-  Widget buildActionButton() {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 0),
-        child: ElevatedButton(
-          child: const Text('Agregar conductores autorizados'),
-          onPressed: () {
-            showModalBottomSheet<void>(
-              context: context,
-              isScrollControlled: true,
-              builder: (BuildContext context) {
-                return Container(
-                  height: MediaQuery.of(context).size.height,
-                  color: Colors.white,
-                  child: Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        const Text('Modal BottomSheet'),
-                        ElevatedButton(
-                          child: const Text('Close BottomSheet'),
-                          onPressed: () => Navigator.pop(context),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              },
-            );
-          },
-          style: ElevatedButton.styleFrom(
-            primary: Color(0xff333D55),
-            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
-            elevation: 0.2,
-            textStyle: TextStyle(
-              fontSize: 15,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ),
-      ),
-    );
+  Widget _suffixIcon() =>
+      Icon(showPassword ? FeatherIcons.eye : FeatherIcons.eyeOff);
+
+  void _changeShowPasswordState() {
+    setState(() => showPassword = !showPassword);
   }
 }

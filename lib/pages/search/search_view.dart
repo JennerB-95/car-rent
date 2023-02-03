@@ -1,148 +1,166 @@
+import 'dart:convert';
+
 import 'package:car_rental/pages/search/search_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../core.dart';
+import 'dart:ui';
+import 'package:http/http.dart' as http;
 
-class SearchView extends GetView<SearchController> {
+const albumImage =
+    'https://raw.githubusercontent.com/digitaljoni/examples_flutter/master/music_player/images/album.png';
+
+class BookingList extends StatefulWidget {
+  const BookingList({Key key}) : super(key: key);
+
+  @override
+  State<BookingList> createState() => _BookingListState();
+}
+
+class _BookingListState extends State<BookingList> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  var booking = [];
+  final List<String> entries = <String>['A', 'B', 'C'];
+
+  Future myBookings() async {
+    var url = "http://api-apex.ceandb.com/bookingList.php";
+    final response = await http.post(Uri.parse(url),
+        body: jsonEncode(<String, String>{
+          "user_id": "29",
+        }));
+
+    if (response.statusCode == 200) {
+      var jsondata = json.decode(response.body);
+      print("responses ${jsondata}");
+      print("responses ${jsondata["data"]}");
+
+      print(jsondata["status"]);
+      if (jsondata["status"] == false) {
+        print('No se pudo realizar la consulta, error.');
+      } else {
+        if (jsondata["status"] == true) {
+          print('Exito.');
+          setState(() {
+            booking = jsondata["data"];
+          });
+        } else {
+          print('Algo salió mal.');
+        }
+      }
+    } else {
+      print('Error al conectar al servidor.');
+    }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    myBookings();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.white,
-      child: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Container(
-              padding: EdgeInsets.only(bottom: 10),
-              child: Padding(
-                padding: EdgeInsets.all(16),
-                child: TextField(
-                  decoration: InputDecoration(
-                    hintText: 'Search',
-                    hintStyle: TextStyle(fontSize: 16),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(15),
-                      borderSide: BorderSide(
-                        width: 0,
-                        style: BorderStyle.none,
-                      ),
-                    ),
-                    filled: true,
-                    fillColor: Colors.grey[200],
-                    contentPadding: EdgeInsets.only(
-                      left: 30,
-                    ),
-                    suffixIcon: Padding(
-                      padding: EdgeInsets.only(right: 24.0, left: 16.0),
-                      child: Icon(
-                        Icons.search,
-                        color: Colors.black,
-                        size: 24,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            Expanded(
+    return Scaffold(
+      key: _scaffoldKey,
+      backgroundColor: Color(0xffF8F8F8),
+      body: Stack(
+        children: [
+          SafeArea(
+            child: SingleChildScrollView(
+              physics: BouncingScrollPhysics(),
               child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.grey[200],
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(30),
-                    topRight: Radius.circular(30),
-                  ),
-                ),
-                child: SingleChildScrollView(
-                  physics: BouncingScrollPhysics(),
-                  child: Column(
-                    children: [
-                      SizedBox(height: 8),
-                      buildRecentSearch(),
-                      SizedBox(height: 25),
-                      Divider(
-                        thickness: 1,
-                        indent: 15,
-                        endIndent: 15,
-                      ),
-                      SizedBox(height: 30),
-                    ],
-                  ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    buildHeader(),
+                    buildList(context),
+                  ],
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+          SafeArea(
+            child: Image.asset(
+              "assets/images/header.png",
+              //fit: BoxFit.scaleDown,
+            ),
+          ),
+        ],
       ),
     );
   }
 
-  Widget buildRecentSearch() {
-    return Column(
-      children: [
-        Padding(
-          padding: EdgeInsets.all(16),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  Widget buildHeader() {
+    return Container(
+      margin: EdgeInsets.only(top: 40),
+      padding: EdgeInsets.symmetric(horizontal: 25),
+      child: Column(children: [
+        SizedBox(
+          height: 35.0,
+        ),
+        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "RECENT SEACRH",
+                "Mis Reservaciones",
                 style: TextStyle(
-                  fontSize: 22,
+                  fontSize: 25,
+                  color: Color(0xff333D55),
                   fontWeight: FontWeight.bold,
-                  color: Colors.grey[400],
                 ),
               ),
-              Row(
-                children: [
-                  Text(
-                    "view all",
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                      color: kPrimaryColor,
-                    ),
-                  ),
-                  SizedBox(
-                    width: 8,
-                  ),
-                  Icon(
-                    Icons.arrow_forward_ios,
-                    size: 12,
-                    color: kPrimaryColor,
-                  ),
-                ],
-              ),
             ],
-          ),
-        ),
-        Container(
-          height: 280,
-          child: ListView(
-            physics: BouncingScrollPhysics(),
-            scrollDirection: Axis.horizontal,
-            children: controller.cars
-                .map((car) => GestureDetector(
-                      onTap: () {
-                        Get.toNamed(
-                          Routes.BOOK_CAR,
-                          arguments: car,
-                          parameters: {
-                            "heroTag":
-                                "search" + car.id.toString() + car.images[0],
-                          },
-                        );
-                      },
-                      child: CarWidget(
-                        car: car,
-                        index: controller.cars.indexOf(car),
-                        heroTag: "search" + car.id.toString() + car.images[0],
-                      ),
-                    ))
-                .toList(),
-          ),
-        ),
-      ],
+          )
+        ]),
+        SizedBox(height: 5),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              "Jenner Otoniel Bamac Gomez",
+              style: TextStyle(fontSize: 16),
+            ),
+          ],
+        )
+      ]),
+    );
+  }
+
+  Widget buildList(BuildContext context) {
+    return Expanded(
+      child: ListView.separated(
+        padding: EdgeInsets.zero,
+        itemCount: entries.length,
+        itemBuilder: (BuildContext context, int index) {
+          return Container();
+        },
+        separatorBuilder: (BuildContext context, int index) => const Divider(),
+      ),
+    );
+  }
+
+  Widget buildContain(BuildContext context) {
+    return Container(
+      height: 110,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: EdgeInsets.all(5),
+            width: 110,
+            height: 110,
+            child: Image.asset(
+              albumImage,
+              fit: BoxFit.fitHeight,
+            ),
+          )
+        ],
+      ),
     );
   }
 }

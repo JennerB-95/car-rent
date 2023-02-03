@@ -77,7 +77,7 @@ class _HomeViewState extends State<HomeView> {
   }
 
   List<Widget> _buildScreens() {
-    return [Home(), SearchView(), ProfileView()];
+    return [Home(), BookingList(), ProfileView()];
   }
 
   List<PersistentBottomNavBarItem> _navBarsItems() {
