@@ -129,25 +129,16 @@ class _BookingListState extends State<BookingList> {
   }
 
   Widget buildList(BuildContext context) {
-    return Container(
-        padding: EdgeInsets.symmetric(horizontal: 25),
-        width: double.infinity,
-        height: 100.0,
-        child: Expanded(
-          child: PageView(
-            children: [
-              ListView.separated(
-                padding: EdgeInsets.zero,
-                itemCount: entries.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return Container();
-                },
-                separatorBuilder: (BuildContext context, int index) =>
-                    const Divider(),
-              )
-            ],
-          ),
-        ));
+    return Expanded(
+      child: ListView.separated(
+        padding: EdgeInsets.zero,
+        itemCount: entries.length,
+        itemBuilder: (BuildContext context, int index) {
+          return Container();
+        },
+        separatorBuilder: (BuildContext context, int index) => const Divider(),
+      ),
+    );
   }
 
   Widget buildContain(BuildContext context) {
