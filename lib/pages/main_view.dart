@@ -14,7 +14,7 @@ class MainView extends GetView<MainController> {
         physics: NeverScrollableScrollPhysics(),
         children: [
           HomeView(),
-          SearchView(),
+          BookingList(),
           NotificationView(),
           ProfileView(),
         ],

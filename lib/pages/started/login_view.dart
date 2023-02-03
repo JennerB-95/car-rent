@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:car_rental/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -35,6 +36,7 @@ class _LoginViewState extends State<LoginView> {
 
   Future login() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+
     var url = "http://api-apex.ceandb.com/login.php";
     var response = await http.post(Uri.parse(url), body: {
       "email": _email.text,
@@ -43,7 +45,9 @@ class _LoginViewState extends State<LoginView> {
 
     print(response.statusCode);
     if (response.statusCode == 200) {
+      print("responses ${response.body}");
       var jsondata = json.decode(response.body);
+
       if (jsondata["error"]) {
         setState(() {
           showprogress = false; //don't show progress indicator
@@ -56,18 +60,19 @@ class _LoginViewState extends State<LoginView> {
             error = false;
             showprogress = false;
           });
-          String uid = jsondata["id"];
-          String username = jsondata["username"];
-          String first_name = jsondata["first_name"];
-          String last_name = jsondata["last_name"];
-          String contact_number = jsondata["contact_number"];
-          String email = jsondata["email"];
-          String dpiPasaporte = jsondata["Dpi_Pasaporte"];
-          String licencia = jsondata["Licencia"];
-          String tipoLicencia = jsondata["Tipo_Licencia"];
-          String nit = jsondata["Nit"];
 
           setState(() {
+            String uid = jsondata["id"];
+            String username = jsondata["username"];
+            String first_name = jsondata["first_name"];
+            String last_name = jsondata["last_name"];
+            String contact_number = jsondata["contact_number"];
+            String email = jsondata["email"];
+            String dpiPasaporte = jsondata["Dpi_Pasaporte"];
+            String licencia = jsondata["Licencia"];
+            String tipoLicencia = jsondata["Tipo_Licencia"];
+            String nit = jsondata["Nit"];
+            sharedPreferences.setString('session', uid);
             sharedPreferences.setString('user_id', uid);
             sharedPreferences.setString('username', username ?? " ");
             sharedPreferences.setString('first_name', first_name ?? " ");
@@ -80,7 +85,8 @@ class _LoginViewState extends State<LoginView> {
             sharedPreferences.setString('tipoLicencia', licencia ?? " ");
             sharedPreferences.setString('nit', nit ?? " ");
           });
-          Get.toNamed(Routes.HOME, arguments: jsondata);
+          Navigator.pushNamedAndRemoveUntil(context, '/home', (_) => false,
+              arguments: {"data": jsondata});
         } else {
           showprogress = false; //don't show progress indicator
           error = true;
@@ -332,7 +338,7 @@ class _LoginViewState extends State<LoginView> {
               style: TextStyle(fontSize: 17),
             ),
             TextButton(
-                onPressed: () => Get.toNamed(Routes.REGISTER),
+                onPressed: () => Navigator.pushNamed(context, "/register"),
                 child: Text(
                   "Regístrate",
                   style: TextStyle(fontSize: 17, color: Colors.blue),
