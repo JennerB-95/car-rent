@@ -21,7 +21,7 @@ class _LoginViewState extends State<LoginView> {
   String errormsg;
   bool error, showprogress;
   String email, password;
-
+  bool loginAsAdmin = false;
   TextEditingController _email = TextEditingController();
   TextEditingController _password = TextEditingController();
   @override
@@ -112,30 +112,40 @@ class _LoginViewState extends State<LoginView> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Stack(
-        children: [
-          Container(
-            color: Color(0xffF8F8F8),
-            height: 270,
-          ),
-          SafeArea(
-            child: SingleChildScrollView(
-              physics: BouncingScrollPhysics(),
-              child: Container(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          physics: BouncingScrollPhysics(),
+          child: Container(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                buildLogo(),
+                buildLoginForm(),
+                Row(
                   children: [
-                    buildLogo(),
-                    buildLoginForm(),
-                    SizedBox(height: 5.0),
-                    buildLoginAction(),
-                    buildRegisterAction(),
+                    Expanded(
+                      child: CheckboxListTile(
+                          value: loginAsAdmin,
+                          title: Padding(
+                            padding: const EdgeInsets.only(left: 15.0),
+                            child: Text("Iniciar sesión como administrador"),
+                          ),
+                          activeColor: Colors.amber,
+                          onChanged: (value) {
+                            setState(() {
+                              loginAsAdmin = value;
+                            });
+                          }),
+                    )
                   ],
                 ),
-              ),
+                SizedBox(height: 15.0),
+                buildLoginAction(),
+                buildRegisterAction(),
+              ],
             ),
           ),
-        ],
+        ),
       ),
     );
   }
@@ -230,13 +240,16 @@ class _LoginViewState extends State<LoginView> {
             ),
           ),
           SizedBox(height: 15),
-          Container(
-            //show error message here
-            margin: EdgeInsets.only(top: 30),
-            padding: EdgeInsets.all(10),
-            child: error ? errmsg(errormsg) : Container(),
-            //if error == true then show error message
-            //else set empty container as child
+          Visibility(
+            visible: error,
+            child: Container(
+              //show error message here
+              margin: EdgeInsets.only(top: 30),
+              padding: EdgeInsets.all(10),
+              child: error ? errmsg(errormsg) : Container(),
+              //if error == true then show error message
+              //else set empty container as child
+            ),
           ),
         ],
       ),

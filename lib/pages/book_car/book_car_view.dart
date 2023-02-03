@@ -21,26 +21,177 @@ class BookCarView extends StatefulWidget {
   State<BookCarView> createState() => _BookCarViewState();
 }
 
-class _BookCarViewState extends State<BookCarView> {
+class _BookCarViewState extends State<BookCarView>
+    with TickerProviderStateMixin {
+  AnimationController _colorAnimationController;
+  Animation _colorTween, _iconColorTween;
+  // ScrollController      _scrollController;
+  AnimationController _controller;
+  Duration _duration = Duration(milliseconds: 500);
+  Tween<Offset> _tween = Tween(begin: Offset(0, 1), end: Offset(0, 0));
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    // TODO: implement initState
+    _colorAnimationController =
+        AnimationController(vsync: this, duration: Duration(seconds: 0));
+    _colorTween = ColorTween(begin: Colors.white, end: Colors.white)
+        .animate(_colorAnimationController);
+    _iconColorTween = ColorTween(begin: Colors.white, end: Colors.black)
+        .animate(_colorAnimationController);
+    super.initState();
+    // _scrollController = new ScrollController();
+    _controller = AnimationController(vsync: this, duration: _duration);
+    super.initState();
+  }
+
+  bool _scrollListener(ScrollNotification scrollInfo) {
+    if (scrollInfo.metrics.axis == Axis.vertical) {
+      _colorAnimationController.animateTo(scrollInfo.metrics.pixels / 350);
+      return true;
+    }
+    return true;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xffF8F8F8),
-      body: SafeArea(
-        child: SingleChildScrollView(
+      body: _body(),
+      bottomNavigationBar: buildFooter(),
+    );
+  }
+
+  Widget _body() {
+    return SizedBox.expand(
+      child: NotificationListener<ScrollNotification>(
+          onNotification: _scrollListener,
+          child: CustomScrollView(
+            slivers: [
+              _images(),
+              SliverList(delegate: SliverChildListDelegate([_description()]))
+            ],
+          )),
+    );
+  }
+
+  Widget _images() {
+    List carsImages = jsonDecode(widget.car.slider_images);
+    List<String> imagesSlider = carsImages
+        .map((car) =>
+            "https://rentcarapex.ceandb.com/assets/img/equipments/slider-images/${car.toString()}")
+        .toList();
+    return Container(
+        child: AnimatedBuilder(
+      animation: _colorAnimationController,
+      builder: (BuildContext context, child) => SliverAppBar(
+        leading: GestureDetector(
+          onTap: () => Navigator.pop(context),
           child: Container(
-            width: double.infinity,
-            color: Colors.grey[200],
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                buildHeader(context),
-              ],
+            margin: EdgeInsets.all(10.0),
+            height: 40,
+            width: 40,
+            alignment: Alignment.topLeft,
+            decoration: BoxDecoration(
+                shape: BoxShape.circle, color: Colors.black.withOpacity(0.5)),
+            child: Icon(
+              FeatherIcons.chevronLeft,
+              color: Colors.white,
+              size: 35.0,
             ),
           ),
         ),
+        /* IconButton(
+            onPressed: () => Navigator.pop(context),
+            icon:
+                Icon(FeatherIcons.x, color: _iconColorTween.value, size: 25.0)),*/
+        actionsIconTheme: IconThemeData(
+          size: 35.0,
+          color: _iconColorTween.value,
+        ),
+        automaticallyImplyLeading: false,
+        elevation: 5.0,
+        backgroundColor: _colorTween.value,
+        expandedHeight: 255.0,
+        floating: true,
+        pinned: true,
+        flexibleSpace: FlexibleSpaceBar(
+            centerTitle: true,
+            background: Stack(
+              children: <Widget>[
+                ImagesWidget3(
+                  images: imagesSlider,
+                  isExpanded: false,
+                ),
+                IgnorePointer(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.4),
+                      borderRadius:
+                          BorderRadius.vertical(bottom: Radius.circular(23.0)),
+                    ),
+                    alignment: Alignment.bottomCenter,
+                    height: 300.0,
+                  ),
+                )
+              ],
+            )),
       ),
-      bottomNavigationBar: buildFooter(),
+    ));
+    /*
+    return Container(
+      child: ImagesWidget3(
+        images: imagesSlider,
+        isExpanded: false,
+      ),
+    );*/
+  }
+
+  Widget _description() {
+    return Container(
+      child: FadeInUp(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            TitleWidget(title: widget.car.title, subtitle: widget.car.name),
+            SizedBox(height: 17),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Row(
+                children: [
+                  _buildPricePerPeriod("Q${widget.car.per_day_price}/Día"),
+                  SizedBox(width: 16),
+                  _buildPricePerPeriod("Q${widget.car.per_week_price}/Semana"),
+                ],
+              ),
+            ),
+            SizedBox(height: 10),
+            Divider(),
+            SizedBox(height: 10),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Text(_parseHtmlString(widget.car.description),
+                  textAlign: TextAlign.justify,
+                  style: TextStyle(fontSize: 15.0)),
+            ),
+            SizedBox(height: 10),
+            Divider(),
+            SizedBox(height: 10),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Text("Características", style: TextStyle(fontSize: 25.0)),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Text(widget.car.features,
+                  textAlign: TextAlign.justify,
+                  style: TextStyle(fontSize: 15.0)),
+            ),
+            SizedBox(height: 17),
+          ],
+        ),
+      ),
     );
   }
 
