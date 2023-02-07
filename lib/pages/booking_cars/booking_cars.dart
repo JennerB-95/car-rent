@@ -675,7 +675,7 @@ class _BookingCarsPageState extends State<BookingCarsPage> {
                             Navigator.pop(context);
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Color(0xff333D55),
+                            // backgroundColor: Color(0xff333D55),
                             padding: const EdgeInsets.symmetric(
                                 vertical: 14.0, horizontal: 40.0),
                             elevation: 0.0,
@@ -759,7 +759,7 @@ class _BookingCarsPageState extends State<BookingCarsPage> {
           );
         },
         style: ElevatedButton.styleFrom(
-          backgroundColor: Color(0xff333D55),
+          // backgroundColor: Color(0xff333D55),
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
           padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 20),

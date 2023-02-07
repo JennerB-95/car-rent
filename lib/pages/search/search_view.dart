@@ -1,6 +1,8 @@
 import 'dart:convert';
 
+import 'package:car_rental/models/my_booking.dart';
 import 'package:car_rental/pages/search/search_controller.dart';
+import 'package:car_rental/services/my_booking.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../core.dart';
@@ -22,40 +24,9 @@ class _BookingListState extends State<BookingList> {
   var booking = [];
   final List<String> entries = <String>['A', 'B', 'C'];
 
-  Future myBookings() async {
-    var url = "http://api-apex.ceandb.com/bookingList.php";
-    final response = await http.post(Uri.parse(url),
-        body: jsonEncode(<String, String>{
-          "user_id": "29",
-        }));
-
-    if (response.statusCode == 200) {
-      var jsondata = json.decode(response.body);
-      print("responses ${jsondata}");
-      print("responses ${jsondata["data"]}");
-
-      print(jsondata["status"]);
-      if (jsondata["status"] == false) {
-        print('No se pudo realizar la consulta, error.');
-      } else {
-        if (jsondata["status"] == true) {
-          print('Exito.');
-          setState(() {
-            booking = jsondata["data"];
-          });
-        } else {
-          print('Algo salió mal.');
-        }
-      }
-    } else {
-      print('Error al conectar al servidor.');
-    }
-  }
-
   @override
   void initState() {
     // TODO: implement initState
-    myBookings();
     super.initState();
   }
 
@@ -67,14 +38,12 @@ class _BookingListState extends State<BookingList> {
       body: Stack(
         children: [
           SafeArea(
-            child: Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  buildHeader(),
-                  buildList(context),
-                ],
-              ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                buildHeader(),
+                buildList(context),
+              ],
             ),
           ),
           SafeArea(
@@ -126,80 +95,113 @@ class _BookingListState extends State<BookingList> {
   }
 
   Widget buildList(BuildContext context) {
-    return Expanded(
-      child: ListView.separated(
-        padding: EdgeInsets.zero,
-        itemCount: entries.length,
-        itemBuilder: (BuildContext context, int index) {
-          return buildContain(context);
-        },
-        separatorBuilder: (BuildContext context, int index) => const Divider(),
-      ),
-    );
-  }
-
-  Widget buildContain(BuildContext context) {
     return Container(
-      height: 110,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Row(
-        children: [
-          Container(
-            padding: EdgeInsets.all(5),
-            width: 110,
-            height: 110,
-            child: Image.asset(
-              albumImage,
-              fit: BoxFit.fitHeight,
-            ),
-          ),
-          Expanded(
-              child: Container(
-            padding: EdgeInsets.only(top: 20, left: 10, right: 10),
-            child:
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "Nombre de algo",
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      height: 1.5,
-                    ),
-                  )
-                ],
-              ),
-              Text("Nombre de algo en pequeno",
-                  style: TextStyle(
-                    color: Colors.blue,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    height: 1.5,
-                  )),
-              SizedBox(height: 5),
-              Row(
-                children: [
-                  Text("\Q",
-                      style: TextStyle(
-                        fontSize: 10,
-                        fontWeight: FontWeight.bold,
-                      )),
-                  Text("100.00",
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      )),
-                ],
-              )
-            ]),
-          ))
-        ],
-      ),
+      child: FutureBuilder(
+          future: MisReservasService.fetchAll(),
+          builder: (BuildContext context, AsyncSnapshot snapshot) {
+            if (snapshot.data == null) {
+              return Container();
+            } else {
+              List<MisReservas> _misReservas = [];
+              _misReservas = snapshot.data;
+              print("$_misReservas jjkjkjkjjjkjjk");
+              _misReservas.map((e) {
+                print("${e.user_id} este es el user_id");
+                return e;
+              });
+              return Container();
+              // return Column(
+              //   children: _misReservas.map((e) {
+              //     Container(
+              //       height: 110,
+              //       decoration: BoxDecoration(
+              //         color: Colors.white,
+              //         borderRadius: BorderRadius.circular(20),
+              //       ),
+              //       child: Row(
+              //         children: [
+              //           Container(
+              //             padding: EdgeInsets.all(5),
+              //             width: 110,
+              //             height: 110,
+              //             child: Image.network(
+              //               "https://rentcarapex.ceandb.com/assets/img/equipments/thumbnail-images/" +
+              //                   e.thumbnail_image.toString(),
+              //               height: 120.0,
+              //               loadingBuilder: (BuildContext context, Widget child,
+              //                   ImageChunkEvent loadingProgress) {
+              //                 if (loadingProgress == null) {
+              //                   return child;
+              //                 }
+              //                 return Center(
+              //                   child: CircularProgressIndicator(
+              //                     strokeWidth: 2.0,
+              //                     backgroundColor: Colors.white,
+              //                     valueColor: new AlwaysStoppedAnimation<Color>(
+              //                       Color(0xff333D55),
+              //                     ),
+              //                     value: loadingProgress.expectedTotalBytes !=
+              //                             null
+              //                         ? loadingProgress.cumulativeBytesLoaded /
+              //                             loadingProgress.expectedTotalBytes
+              //                         : null,
+              //                   ),
+              //                 );
+              //               },
+              //             ),
+              //           ),
+              //           Expanded(
+              //               child: Container(
+              //             padding:
+              //                 EdgeInsets.only(top: 20, left: 10, right: 10),
+              //             child: Column(
+              //                 crossAxisAlignment: CrossAxisAlignment.start,
+              //                 children: [
+              //                   Row(
+              //                     mainAxisAlignment:
+              //                         MainAxisAlignment.spaceBetween,
+              //                     children: [
+              //                       Text(
+              //                         "Nombre de algo",
+              //                         style: TextStyle(
+              //                           fontSize: 16,
+              //                           fontWeight: FontWeight.bold,
+              //                           height: 1.5,
+              //                         ),
+              //                       )
+              //                     ],
+              //                   ),
+              //                   Text("Nombre de algo en pequeno",
+              //                       style: TextStyle(
+              //                         color: Colors.blue,
+              //                         fontSize: 16,
+              //                         fontWeight: FontWeight.bold,
+              //                         height: 1.5,
+              //                       )),
+              //                   SizedBox(height: 5),
+              //                   Row(
+              //                     children: [
+              //                       Text("\Q",
+              //                           style: TextStyle(
+              //                             fontSize: 10,
+              //                             fontWeight: FontWeight.bold,
+              //                           )),
+              //                       Text("100.00",
+              //                           style: TextStyle(
+              //                             fontSize: 18,
+              //                             fontWeight: FontWeight.bold,
+              //                           )),
+              //                     ],
+              //                   )
+              //                 ]),
+              //           ))
+              //         ],
+              //       ),
+              //     );
+              //   }).toList(),
+              // );
+            }
+          }),
     );
   }
 }
