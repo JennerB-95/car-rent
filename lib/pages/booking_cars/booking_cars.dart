@@ -1,12 +1,16 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:animate_do/animate_do.dart';
+import 'package:car_rental/models/conductor_auth.dart';
 import 'package:car_rental/models/equipment.dart';
+import 'package:car_rental/services/conductor_auth_service.dart';
 import 'package:car_rental/services/date_time_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 
 import 'package:intl/intl.dart';
+import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import '../../core.dart';
@@ -24,21 +28,20 @@ class BookingCarsPage extends StatefulWidget {
 }
 
 class _BookingCarsPageState extends State<BookingCarsPage> {
-  TextEditingController _username = TextEditingController();
-  TextEditingController _firstName = TextEditingController();
-  TextEditingController _lastName = TextEditingController();
-  TextEditingController _address = TextEditingController();
-  TextEditingController _dpiPassport = TextEditingController();
-  TextEditingController _driveLicence = TextEditingController();
-  TextEditingController _driveLicenceDate = TextEditingController();
+  TextEditingController _nombreAux = TextEditingController();
+  TextEditingController _direccionAux = TextEditingController();
+  TextEditingController _telefonoAux = TextEditingController();
+  TextEditingController _fechaNacimientoAux = TextEditingController();
+  TextEditingController _driveLicenceAux = TextEditingController();
+  TextEditingController _driveLicenceDateAux = TextEditingController();
   TextEditingController _birthDate = TextEditingController();
-  TextEditingController _email = TextEditingController();
   TextEditingController _password = TextEditingController();
-  TextEditingController _nit = TextEditingController();
+  TextEditingController _nitAux = TextEditingController();
   TextEditingController _driverLicenseExpires = TextEditingController();
   TextEditingController _phone = TextEditingController();
   TextEditingController _locationDelivery = TextEditingController();
-
+  TextEditingController _dpiPassportAux = TextEditingController();
+  String _choiceChip = " ";
   var _bornDate = DateTime.now();
   var _licenseDate = DateTime.now();
   bool _isVisible = false;
@@ -69,25 +72,30 @@ class _BookingCarsPageState extends State<BookingCarsPage> {
       dpiPasaporte,
       licencia,
       tipoLicencia,
-      nit;
+      nit,
+      dpiPassAuth;
+
+  List<String> _filters = [];
 
   Future register() async {
-    var url = "http://api-apex.ceandb.com/register.php";
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      behavior: SnackBarBehavior.fixed,
+      content: Text('Registrando...'),
+      duration: Duration(seconds: 4),
+    ));
+    var url = "http://api-apex.ceandb.com/createConductorAux.php";
     final response = await http.post(Uri.parse(url),
-        body: jsonEncode(<String, String>{
-          "username": _username.text,
-          "email": _email.text,
-          "password": _password.text,
-          "first_name": _firstName.text,
-          "last_name": _lastName.text,
-          "Dpi_Pasaporte": _dpiPassport.text,
-          "Fecha_Nacimiento": _dateAge,
-          "contact_number": _phone.text,
-          "address": _address.text,
-          "Nit": _nit.text,
-          "Licencia": _driveLicence.text,
-          "Vence": _driverLicenseExp,
-          "Tipo_Licencia": licenseType
+        body: jsonEncode(<String, dynamic>{
+          "id_user": uid,
+          "nombre_aux": _nombreAux.text,
+          "direccion_aux": _direccionAux.text,
+          "telefono_aux": _phone.text,
+          "fecha_nacimiento": _bornDate.toString(),
+          "dpi_pass_aux": _dpiPassportAux.text,
+          "licencia_aux": _driveLicenceAux.text,
+          "licencia_vence_aux": _driverLicenseExp,
+          "tipo_licenca_aux": licenseType,
+          "nit_aux": _nitAux.text,
         }));
 
     if (response.statusCode == 200) {
@@ -111,6 +119,8 @@ class _BookingCarsPageState extends State<BookingCarsPage> {
             backgroundColor: Colors.green,
             duration: Duration(seconds: 2),
           ));
+          ConductorAuthService.fetchAll();
+
           Future.delayed(Duration(seconds: 2), () {
             Navigator.pop(context);
             // Navigator.push(
@@ -171,21 +181,23 @@ class _BookingCarsPageState extends State<BookingCarsPage> {
 
   String start_date;
   String end_date;
-  var _pay = ['Depósito Bancario'];
-  String _primary = 'Seleccione método de pago';
 
   Future saveBooking() async {
     print(widget.car.equipment_id);
     var url = "http://api-apex.ceandb.com/bookingAdd.php";
     final response = await http.post(Uri.parse(url),
-        body: jsonEncode(<String, String>{
+        body: json.encode(<String, dynamic>{
           "name": first_name + last_name,
           "email": emailU,
           "contact_number": contact_number,
-          "start_date": start_date,
-          "end_date": end_date,
+          "start_date": _startDate.toString(),
+          "end_date": end_date.toString(),
           "user_id": uid,
           "equipment_id": widget.car.equipment_id.toString(),
+          "grand_total": total,
+          "created_at": DateTime.now().toString(),
+          "updated_at": DateTime.now().toString(),
+          "booking_number": _generateRandomBookingNumber()
         }));
     print("body ${response.body}");
     print(response.statusCode);
@@ -205,8 +217,8 @@ class _BookingCarsPageState extends State<BookingCarsPage> {
             error = false;
             showprogress = false;
           });
-          Navigator.push(
-              context, MaterialPageRoute(builder: (context) => MainView()));
+          PersistentNavBarNavigator.pushNewScreen(context,
+              withNavBar: true, screen: BookingList());
         } else {
           showprogress = false; //don't show progress indicator
           error = true;
@@ -220,6 +232,15 @@ class _BookingCarsPageState extends State<BookingCarsPage> {
         errormsg = "Error connecting to server.";
       });
     }
+  }
+
+  String _generateRandomBookingNumber() {
+    var random = new Random();
+    int min = 10;
+    int max = 100000;
+    int result = min + random.nextInt(max - min);
+
+    return result.toString();
   }
 
   @override
@@ -555,7 +576,75 @@ class _BookingCarsPageState extends State<BookingCarsPage> {
                     'Conductores autorizados (opcional)',
                     style: TextStyle(fontSize: 17.0, color: Colors.grey),
                   ),
-                  SizedBox(height: 15),
+                  Text(
+                    'Nota: Solo puedes seleccionar a 2.',
+                    style: TextStyle(fontSize: 15.0, color: Colors.grey),
+                  ),
+                  Divider(),
+                  FutureBuilder(
+                    future: ConductorAuthService.fetchAll(),
+                    builder: (BuildContext context, AsyncSnapshot snapshot) {
+                      if (snapshot.data == null) {
+                        return Container();
+                      } else {
+                        List<ConductorAutorizado> _drivers = snapshot.data;
+                        if (_drivers.length == 0) {
+                          return Text(
+                            "No tienes conductores autorizados registrados.",
+                            style: TextStyle(color: Colors.grey),
+                          );
+                        } else {
+                          return Container(
+                            child: Wrap(
+                              children: _drivers
+                                  .map(
+                                    (e) => Padding(
+                                      padding: const EdgeInsets.all(4.0),
+                                      child: FilterChip(
+                                        backgroundColor: Colors.white,
+                                        side: BorderSide(color: Colors.grey),
+                                        label: Padding(
+                                          padding: const EdgeInsets.all(5.0),
+                                          child: Text("${e.nombre_aux} ",
+                                              style: TextStyle(
+                                                  fontSize: 15.0,
+                                                  color:
+                                                      (_filters.contains(e.id))
+                                                          ? Colors.white
+                                                          : Colors.black)),
+                                        ),
+                                        selected: _filters.contains(e.id),
+                                        selectedColor: Color(0xff333D55),
+                                        checkmarkColor: Colors.white,
+                                        onSelected: (bool selected) {
+                                          setState(() {
+                                            if (_filters.length < 2) {
+                                              if (selected) {
+                                                _filters.add(e.id);
+                                              } else {
+                                                _filters
+                                                    .removeWhere((String id) {
+                                                  return id == e.id;
+                                                });
+                                              }
+                                            } else {
+                                              _filters.removeWhere((String id) {
+                                                return id == e.id;
+                                              });
+                                            }
+                                          });
+                                        },
+                                      ),
+                                    ),
+                                  )
+                                  .toList(),
+                            ),
+                          );
+                        }
+                      }
+                    },
+                  ),
+                  SizedBox(height: 10.0),
                   Align(
                     alignment: Alignment.center,
                     child: GestureDetector(
@@ -579,8 +668,9 @@ class _BookingCarsPageState extends State<BookingCarsPage> {
                           child: Icon(FeatherIcons.userPlus)),
                     ),
                   ),
-                  SizedBox(height: 15),
-                  buildActionButton(),
+                  SizedBox(
+                    height: 15.0,
+                  ),
                 ],
               ),
             ),
@@ -734,75 +824,6 @@ class _BookingCarsPageState extends State<BookingCarsPage> {
     return total;
   }
 
-  Widget buildActionButton() {
-    return Center(
-      child: ElevatedButton(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text('Conductores autorizados'),
-            VerticalDivider(),
-            Icon(FeatherIcons.userPlus)
-          ],
-        ),
-        onPressed: () {
-          showModalBottomSheet<void>(
-            context: context,
-            isScrollControlled: true,
-            builder: (BuildContext context) {
-              return Container(
-                height: MediaQuery.of(context).size.height,
-                color: Colors.white,
-                child: buildDriverForm(),
-              );
-            },
-          );
-        },
-        style: ElevatedButton.styleFrom(
-          // backgroundColor: Color(0xff333D55),
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
-          padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 20),
-          elevation: 0.2,
-          textStyle: TextStyle(
-            fontSize: 18,
-          ),
-        ),
-      ),
-    );
-  }
-
-  showSuccessDialog() {
-    showDialog(
-        barrierDismissible: false,
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text("Registrando..."),
-                SizedBox(
-                  height: 15.0,
-                ),
-                Center(
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2.0,
-                    valueColor: new AlwaysStoppedAnimation<Color>(
-                      Color(0xff333D55),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          );
-        });
-    Future.delayed(Duration(seconds: 3), () {
-      Navigator.pop(context);
-      register();
-    });
-  }
-
   Widget buildDriverForm() {
     return StatefulBuilder(builder: (context, setState) {
       return SingleChildScrollView(
@@ -849,7 +870,7 @@ class _BookingCarsPageState extends State<BookingCarsPage> {
                       errorBorder: InputBorder.none,
                       disabledBorder: InputBorder.none,
                       contentPadding: EdgeInsets.all(15.0)),
-                  controller: _firstName,
+                  controller: _nombreAux,
                 ),
               ),
               SizedBox(height: 15),
@@ -889,7 +910,7 @@ class _BookingCarsPageState extends State<BookingCarsPage> {
                       errorBorder: InputBorder.none,
                       disabledBorder: InputBorder.none,
                       contentPadding: EdgeInsets.all(15.0)),
-                  controller: _address,
+                  controller: _direccionAux,
                 ),
               ),
               SizedBox(
@@ -900,6 +921,7 @@ class _BookingCarsPageState extends State<BookingCarsPage> {
                     color: Color(0xffe9ecef).withOpacity(0.7),
                     borderRadius: BorderRadius.circular(10.0)),
                 child: TextFormField(
+                    keyboardType: TextInputType.number,
                     decoration: InputDecoration(
                         prefixIcon: Icon(
                           FeatherIcons.creditCard,
@@ -913,10 +935,12 @@ class _BookingCarsPageState extends State<BookingCarsPage> {
                         errorBorder: InputBorder.none,
                         disabledBorder: InputBorder.none,
                         contentPadding: EdgeInsets.all(15.0)),
-                    controller: _dpiPassport,
+                    controller: _dpiPassportAux,
                     validator: ((value) {
                       if (value.isEmpty) return "Campo vacío";
-
+                      setState(() {
+                        dpiPassAuth = value;
+                      });
                       return null;
                     })),
               ),
@@ -929,6 +953,7 @@ class _BookingCarsPageState extends State<BookingCarsPage> {
                           color: Color(0xffe9ecef).withOpacity(0.7),
                           borderRadius: BorderRadius.circular(10.0)),
                       child: TextFormField(
+                        keyboardType: TextInputType.number,
                         decoration: InputDecoration(
                             hintText: "Teléfono",
                             hintStyle: TextStyle(color: Colors.grey),
@@ -953,6 +978,7 @@ class _BookingCarsPageState extends State<BookingCarsPage> {
                           color: Color(0xffe9ecef).withOpacity(0.7),
                           borderRadius: BorderRadius.circular(10.0)),
                       child: TextFormField(
+                          keyboardType: TextInputType.number,
                           decoration: InputDecoration(
                               prefixIcon: Icon(
                                 FeatherIcons.creditCard,
@@ -966,7 +992,7 @@ class _BookingCarsPageState extends State<BookingCarsPage> {
                               errorBorder: InputBorder.none,
                               disabledBorder: InputBorder.none,
                               contentPadding: EdgeInsets.all(15.0)),
-                          controller: _nit,
+                          controller: _nitAux,
                           validator: ((value) {
                             if (value.isEmpty) return "Campo vacío";
                             return null;
@@ -981,6 +1007,7 @@ class _BookingCarsPageState extends State<BookingCarsPage> {
                     color: Color(0xffe9ecef).withOpacity(0.7),
                     borderRadius: BorderRadius.circular(10.0)),
                 child: TextFormField(
+                  keyboardType: TextInputType.number,
                   decoration: InputDecoration(
                       prefixIcon: Icon(
                         FeatherIcons.creditCard,
@@ -994,7 +1021,7 @@ class _BookingCarsPageState extends State<BookingCarsPage> {
                       errorBorder: InputBorder.none,
                       disabledBorder: InputBorder.none,
                       contentPadding: EdgeInsets.all(15.0)),
-                  controller: _driveLicence,
+                  controller: _driveLicenceAux,
                   validator: ((value) {
                     if (value.isEmpty) return "Campo vacío";
                     if (value != _password) return "No coincide la contraseña";
@@ -1095,7 +1122,7 @@ class _BookingCarsPageState extends State<BookingCarsPage> {
 
   Widget buildSaveAction() {
     return TextButton(
-      onPressed: () => showSuccessDialog(),
+      onPressed: () => register(),
       child: Text(
         "Guardar",
         style: TextStyle(color: Colors.white, fontSize: 15.0),
@@ -1165,12 +1192,5 @@ class _BookingCarsPageState extends State<BookingCarsPage> {
         ],
       ),
     );
-  }
-
-  Widget _suffixIcon() =>
-      Icon(showPassword ? FeatherIcons.eye : FeatherIcons.eyeOff);
-
-  void _changeShowPasswordState() {
-    setState(() => showPassword = !showPassword);
   }
 }
