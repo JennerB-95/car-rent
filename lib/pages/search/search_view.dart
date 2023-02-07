@@ -151,7 +151,7 @@ class _BookingListState extends State<BookingList> {
             padding: EdgeInsets.all(5),
             width: 110,
             height: 110,
-            child: Image.asset(
+            child: Image.network(
               albumImage,
               fit: BoxFit.fitHeight,
             ),

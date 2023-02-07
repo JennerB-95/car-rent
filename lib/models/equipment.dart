@@ -11,13 +11,6 @@ class Equipment {
   String name;
   String per_day_price;
   String per_week_price;
-  /*String city;
-  String address;
-  bool alive;
-  bool active;
-  int entity;
-  int cabin;
-  String email;*/
 
   Equipment({
     this.id,
