@@ -1,18 +1,13 @@
-import 'dart:convert';
-
-import 'package:animate_do/animate_do.dart';
 import 'package:car_rental/models/equipment.dart';
-import 'package:car_rental/pages/home/widgets/header_appbar.dart';
+import 'package:car_rental/pages/admin/admin_view.dart';
 import 'package:car_rental/services/equipment_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
-import 'package:get/get.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../core.dart';
 
 import 'dart:async';
-import "package:http/http.dart" as http;
 
 class HomeView extends StatefulWidget {
   static const routeName = '/home';
@@ -24,10 +19,26 @@ class HomeView extends StatefulWidget {
 class _HomeViewState extends State<HomeView> {
   PersistentTabController _controller =
       PersistentTabController(initialIndex: 0);
+
+  bool adminLogin = false;
   @override
   void dispose() {
     super.dispose();
     _controller.dispose();
+  }
+
+  @override
+  void initState() {
+    getInitialInfo();
+    super.initState();
+  }
+
+  getInitialInfo() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      adminLogin = prefs.getBool("is_admin");
+    });
+    print("admin $adminLogin");
   }
 
   @override
@@ -39,8 +50,8 @@ class _HomeViewState extends State<HomeView> {
     return PersistentTabView(
       context,
       controller: _controller,
-      screens: _buildScreens(),
-      items: _navBarsItems(),
+      screens: adminLogin ? _buildScreensAdmin() : _buildScreens(),
+      items: adminLogin ? _navBarsItemsAdmin() : _navBarsItems(),
       onItemSelected: (i) {
         setState(() {
           _controller.index = i;
@@ -80,6 +91,10 @@ class _HomeViewState extends State<HomeView> {
     return [Home(), BookingList(), ProfileView()];
   }
 
+  List<Widget> _buildScreensAdmin() {
+    return [Home(), BookingList(), AdminView(), ProfileView()];
+  }
+
   List<PersistentBottomNavBarItem> _navBarsItems() {
     return [
       PersistentBottomNavBarItem(
@@ -110,6 +125,43 @@ class _HomeViewState extends State<HomeView> {
   }
 }
 
+List<PersistentBottomNavBarItem> _navBarsItemsAdmin() {
+  return [
+    PersistentBottomNavBarItem(
+      iconSize: 30.0,
+      //textStyle: GoogleFonts.nunito(fontWeight: FontWeight.bold,),
+      icon: Icon(FeatherIcons.home),
+      //title: 'Inicio',
+      activeColorPrimary: Color(0xff333D55),
+      inactiveColorPrimary: Colors.grey,
+    ),
+    PersistentBottomNavBarItem(
+      iconSize: 30.0,
+      // textStyle: GoogleFonts.nunito(fontWeight: FontWeight.bold, ),
+      icon: Icon(FeatherIcons.calendar),
+      // title: 'Buscar',
+      activeColorPrimary: Color(0xff333D55),
+      inactiveColorPrimary: Colors.grey,
+    ),
+    PersistentBottomNavBarItem(
+      iconSize: 30.0,
+      // textStyle: GoogleFonts.nunito(fontWeight: FontWeight.bold),
+      icon: Icon(FeatherIcons.clipboard),
+      // title: 'Ajustes',
+      activeColorPrimary: Color(0xff333D55),
+      inactiveColorPrimary: Colors.grey,
+    ),
+    PersistentBottomNavBarItem(
+      iconSize: 30.0,
+      // textStyle: GoogleFonts.nunito(fontWeight: FontWeight.bold),
+      icon: Icon(FeatherIcons.user),
+      // title: 'Ajustes',
+      activeColorPrimary: Color(0xff333D55),
+      inactiveColorPrimary: Colors.grey,
+    ),
+  ];
+}
+
 class Home extends StatefulWidget {
   @override
   _HomeState createState() => _HomeState();
@@ -118,6 +170,7 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   List theData = [];
+  bool isAdmin = false;
   String uid,
       username,
       first_name,
@@ -130,7 +183,6 @@ class _HomeState extends State<Home> {
       nit;
   @override
   void initState() {
-    // TODO: implement initState
     getUserData();
     super.initState();
   }
@@ -147,8 +199,8 @@ class _HomeState extends State<Home> {
       licencia = prefs.getString("licencia");
       tipoLicencia = prefs.getString("tipoLicencia");
       nit = prefs.getString("nit");
+      isAdmin = prefs.getBool("is_admin");
     });
-    print("last name $last_name");
   }
 
   @override
@@ -286,7 +338,8 @@ class _HomeState extends State<Home> {
                                 PersistentNavBarNavigator.pushNewScreen(context,
                                     screen: BookCarView(
                                       car: car,
-                                    ));
+                                    ),
+                                    withNavBar: true);
                               },
                               child: Container(
                                 margin: EdgeInsets.symmetric(vertical: 5.0),

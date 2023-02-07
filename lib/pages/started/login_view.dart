@@ -1,13 +1,10 @@
 import 'dart:convert';
 
-import 'package:car_rental/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
+
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../core.dart';
+
 import 'package:http/http.dart' as http;
 
 import '../../shared/widgets/images_widget2.dart';
@@ -21,6 +18,8 @@ class _LoginViewState extends State<LoginView> {
   String errormsg;
   bool error, showprogress;
   String email, password;
+  bool showPassword = true;
+
   bool loginAsAdmin = false;
   TextEditingController _email = TextEditingController();
   TextEditingController _password = TextEditingController();
@@ -32,6 +31,71 @@ class _LoginViewState extends State<LoginView> {
     error = false;
     showprogress = false;
     super.initState();
+  }
+
+  Future loginAdmin() async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+
+    var url = "http://api-apex.ceandb.com/loginAdmin.php";
+    var response = await http.post(Uri.parse(url), body: {
+      "email": _email.text,
+      "password": _password.text,
+    });
+
+    print(response.statusCode);
+    if (response.statusCode == 200) {
+      print("responses ${response.body}");
+      var jsondata = json.decode(response.body);
+
+      if (jsondata["error"]) {
+        setState(() {
+          showprogress = false; //don't show progress indicator
+          error = true;
+          errormsg = jsondata["message"];
+        });
+      } else {
+        if (jsondata["success"]) {
+          setState(() {
+            error = false;
+            showprogress = false;
+          });
+
+          setState(() {
+            String uid = jsondata["id"];
+            String username = jsondata["username"];
+            String first_name = jsondata["first_name"];
+            String last_name = jsondata["last_name"];
+            String role_id = jsondata["role_id"];
+
+            sharedPreferences.setBool("is_admin", loginAsAdmin);
+            sharedPreferences.setString('session', uid);
+            sharedPreferences.setString('user_id', uid);
+            sharedPreferences.setString('username', username ?? " ");
+            sharedPreferences.setString('first_name', first_name ?? " ");
+            sharedPreferences.setString('last_name', last_name ?? " ");
+            sharedPreferences.setString('role_id', role_id ?? " 0");
+          });
+          Navigator.pushNamedAndRemoveUntil(context, '/home', (_) => false,
+              arguments: {"data": jsondata});
+        } else {
+          showprogress = false; //don't show progress indicator
+          error = true;
+          errormsg = "Something went wrong.";
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            behavior: SnackBarBehavior.fixed,
+            content: Text('¡Ha ocurrido un error, inténtelo de nuevo!'),
+            backgroundColor: Colors.red[400],
+            duration: Duration(seconds: 8),
+          ));
+        }
+      }
+    } else {
+      setState(() {
+        showprogress = false; //don't show progress indicator
+        error = true;
+        errormsg = "Error connecting to server.";
+      });
+    }
   }
 
   Future login() async {
@@ -72,6 +136,8 @@ class _LoginViewState extends State<LoginView> {
             String licencia = jsondata["Licencia"];
             String tipoLicencia = jsondata["Tipo_Licencia"];
             String nit = jsondata["Nit"];
+
+            sharedPreferences.setBool("is_admin", loginAsAdmin);
             sharedPreferences.setString('session', uid);
             sharedPreferences.setString('user_id', uid);
             sharedPreferences.setString('username', username ?? " ");
@@ -222,7 +288,7 @@ class _LoginViewState extends State<LoginView> {
                   password = value;
                 });
               }),
-              obscureText: true,
+              obscureText: showPassword,
               decoration: InputDecoration(
                   hintStyle: TextStyle(color: Colors.grey),
                   border: InputBorder.none,
@@ -235,6 +301,8 @@ class _LoginViewState extends State<LoginView> {
                     FeatherIcons.lock,
                     color: Colors.grey,
                   ),
+                  suffixIcon: IconButton(
+                      onPressed: _changeShowPasswordState, icon: _suffixIcon()),
                   contentPadding: EdgeInsets.all(18.0)),
               controller: _password,
             ),
@@ -334,7 +402,16 @@ class _LoginViewState extends State<LoginView> {
         });
     Future.delayed(Duration(seconds: 3), () {
       Navigator.pop(context);
-      login();
+      print("login as admin $loginAsAdmin");
+      if (loginAsAdmin) {
+        setState(() {
+          loginAdmin();
+        });
+      } else {
+        setState(() {
+          login();
+        });
+      }
     });
   }
 
@@ -381,5 +458,12 @@ class _LoginViewState extends State<LoginView> {
         //show error message text
       ]),
     );
+  }
+
+  Widget _suffixIcon() =>
+      Icon(showPassword ? FeatherIcons.eye : FeatherIcons.eyeOff);
+
+  void _changeShowPasswordState() {
+    setState(() => showPassword = !showPassword);
   }
 }
