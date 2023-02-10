@@ -122,9 +122,9 @@ class _BookingListState extends State<BookingList> {
                                                       .spaceBetween,
                                               children: [
                                                 Text(
-                                                  e.user_id,
+                                                  e.title,
                                                   style: TextStyle(
-                                                    fontSize: 16,
+                                                    fontSize: 20,
                                                     fontWeight: FontWeight.bold,
                                                     height: 1.5,
                                                   ),
@@ -140,7 +140,7 @@ class _BookingListState extends State<BookingList> {
                                                             e.end_date)),
                                                 style: TextStyle(
                                                   color: Colors.blue,
-                                                  fontSize: 16,
+                                                  fontSize: 15,
                                                   fontWeight: FontWeight.bold,
                                                   height: 1.5,
                                                 )),
@@ -149,14 +149,14 @@ class _BookingListState extends State<BookingList> {
                                               children: [
                                                 Text("\Q",
                                                     style: TextStyle(
-                                                      fontSize: 10,
+                                                      fontSize: 12,
                                                       fontWeight:
                                                           FontWeight.bold,
                                                     )),
                                                 Text(
                                                     e.grand_total ?? "Sin info",
                                                     style: TextStyle(
-                                                      fontSize: 16,
+                                                      fontSize: 15,
                                                       fontWeight:
                                                           FontWeight.bold,
                                                     )),
