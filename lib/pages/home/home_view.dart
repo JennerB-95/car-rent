@@ -36,7 +36,7 @@ class _HomeViewState extends State<HomeView> {
   getInitialInfo() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
-      adminLogin = prefs.getBool("is_admin");
+      adminLogin = prefs.getBool("is_admin") ?? false;
     });
     print("admin $adminLogin");
   }
