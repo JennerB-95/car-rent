@@ -4,6 +4,7 @@ import 'package:car_rental/core.dart';
 import 'package:car_rental/pages/started/prefs.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
@@ -19,7 +20,7 @@ Future<void> main() async {
     DeviceOrientation.portraitUp,
   ]);
 
-  runApp(MyApp());
+  runApp(Phoenix(child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {

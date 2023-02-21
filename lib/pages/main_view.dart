@@ -16,7 +16,7 @@ class MainView extends GetView<MainController> {
           HomeView(),
           BookingList(),
           NotificationView(),
-          ProfileView(),
+          ProfilePage(),
         ],
       ),
       bottomNavigationBar: ValueBuilder<int>(

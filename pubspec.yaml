@@ -64,6 +64,9 @@ dependencies:
   persistent_bottom_nav_bar: ^5.0.2
   animate_do: ^3.0.2
   dio: ^4.0.6
+  flutter_phoenix: ^1.1.0
+  material_design_icons_flutter: ^6.0.7096
+  image_picker: ^0.8.6+2
   
 dev_dependencies:
   flutter_test:

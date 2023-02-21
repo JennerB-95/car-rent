@@ -61,7 +61,6 @@ class _BookingListState extends State<BookingList> {
                         } else {
                           List<MisReservas> _misReservas = [];
                           _misReservas = snapshot.data;
-                          print("reservas $_misReservas");
                           return Column(
                             children: _misReservas.map((e) {
                               return Container(
@@ -212,15 +211,6 @@ class _BookingListState extends State<BookingList> {
           )
         ]),
         SizedBox(height: 5),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              "Jenner Otoniel Bamac Gomez",
-              style: TextStyle(fontSize: 16),
-            ),
-          ],
-        )
       ]),
     );
   }

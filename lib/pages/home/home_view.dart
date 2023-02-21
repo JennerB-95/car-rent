@@ -88,11 +88,11 @@ class _HomeViewState extends State<HomeView> {
   }
 
   List<Widget> _buildScreens() {
-    return [Home(), BookingList(), ProfileView()];
+    return [Home(), BookingList(), ProfilePage()];
   }
 
   List<Widget> _buildScreensAdmin() {
-    return [Home(), BookingList(), AdminView(), ProfileView()];
+    return [Home(), BookingList(), AdminView(), ProfilePage()];
   }
 
   List<PersistentBottomNavBarItem> _navBarsItems() {
@@ -180,7 +180,8 @@ class _HomeState extends State<Home> {
       dpiPasaporte,
       licencia,
       tipoLicencia,
-      nit;
+      nit,
+      fechaNacimiento;
   @override
   void initState() {
     getUserData();
@@ -199,6 +200,8 @@ class _HomeState extends State<Home> {
       licencia = prefs.getString("licencia");
       tipoLicencia = prefs.getString("tipoLicencia");
       nit = prefs.getString("nit");
+      fechaNacimiento = prefs.getString("fecha_nacimiento");
+
       isAdmin = prefs.getBool("is_admin");
     });
   }

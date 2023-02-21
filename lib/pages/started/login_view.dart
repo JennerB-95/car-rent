@@ -115,9 +115,14 @@ class _LoginViewState extends State<LoginView> {
       if (jsondata["error"]) {
         setState(() {
           showprogress = false; //don't show progress indicator
-          error = true;
           errormsg = jsondata["message"];
         });
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          behavior: SnackBarBehavior.fixed,
+          content: Text(errormsg),
+          backgroundColor: Colors.red[400],
+          duration: Duration(seconds: 8),
+        ));
       } else {
         if (jsondata["success"]) {
           setState(() {
@@ -136,9 +141,12 @@ class _LoginViewState extends State<LoginView> {
             String licencia = jsondata["Licencia"];
             String tipoLicencia = jsondata["Tipo_Licencia"];
             String nit = jsondata["Nit"];
+            String born_date = jsondata["Fecha_Nacimiento"];
 
             sharedPreferences.setBool("is_admin", loginAsAdmin);
             sharedPreferences.setString('session', uid);
+            sharedPreferences.setString('fecha_nacimiento', born_date ?? " ");
+
             sharedPreferences.setString('user_id', uid);
             sharedPreferences.setString('username', username ?? " ");
             sharedPreferences.setString('first_name', first_name ?? " ");
@@ -308,17 +316,6 @@ class _LoginViewState extends State<LoginView> {
             ),
           ),
           SizedBox(height: 15),
-          Visibility(
-            visible: error,
-            child: Container(
-              //show error message here
-              margin: EdgeInsets.only(top: 30),
-              padding: EdgeInsets.all(10),
-              child: error ? errmsg(errormsg) : Container(),
-              //if error == true then show error message
-              //else set empty container as child
-            ),
-          ),
         ],
       ),
     );

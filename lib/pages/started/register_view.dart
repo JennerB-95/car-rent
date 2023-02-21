@@ -40,26 +40,29 @@ class _RegisterViewState extends State<RegisterView> {
   var licenseTypes = ['A', 'B', "C"];
   int currentStep = 0;
 
-  Future register() async {
+  Future<List> register() async {
     var url = "http://api-apex.ceandb.com/register.php";
-    final response = await http.post(Uri.parse(url),
-        body: jsonEncode(<String, String>{
-          "username": username.text,
-          "email": email.text,
-          "password": password.text,
-          "first_name": firstName.text,
-          "last_name": lastName.text,
-          "Dpi_Pasaporte": dpiPassport.text,
-          "Fecha_Nacimiento": _dateAge,
-          "contact_number": phone.text,
-          "address": address.text,
-          "Nit": nit.text,
-          "Licencia": driveLicence.text,
-          "Vence": _driverLicenseExp,
-          "Tipo_Licencia": licenseType
-        }));
+    final response = await http.post(Uri.parse(url), body: {
+      "username": username.text,
+      "email": email.text,
+      "password": password.text,
+      "first_name": firstName.text,
+      "last_name": lastName.text,
+      "Dpi_Pasaporte": dpiPassport.text,
+      "Fecha_Nacimiento": _dateAge,
+      "contact_number": phone.text,
+      "address": address.text,
+      "Nit": nit.text,
+      "Licencia": driveLicence.text,
+      "Vence": _driverLicenseExp,
+      "Tipo_Licencia": licenseType
+    });
 
-    if (response.statusCode == 200) {
+    var datauser = json.decode(response.body);
+
+    print("data user $datauser");
+
+    /*if (response.statusCode == 200) {
       var jsondata = json.decode(response.body);
       print(jsondata["status"]);
       if (jsondata["status"] == false) {
@@ -102,7 +105,7 @@ class _RegisterViewState extends State<RegisterView> {
         error = true;
         errormsg = "Error al conectar al servidor.";
       });
-    }
+    }*/
   }
   // buildLoginAction(),
   //buildRegisterAction(),
