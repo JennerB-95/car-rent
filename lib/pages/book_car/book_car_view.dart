@@ -32,8 +32,6 @@ class _BookCarViewState extends State<BookCarView>
 
   @override
   void initState() {
-    // TODO: implement initState
-    // TODO: implement initState
     _colorAnimationController =
         AnimationController(vsync: this, duration: Duration(seconds: 0));
     _colorTween = ColorTween(begin: Colors.white, end: Colors.white)
@@ -113,27 +111,29 @@ class _BookCarViewState extends State<BookCarView>
         automaticallyImplyLeading: false,
         elevation: 0.0,
         backgroundColor: _colorTween.value,
-        expandedHeight: 255.0,
+        expandedHeight: 300.0,
         floating: true,
         pinned: true,
         flexibleSpace: FlexibleSpaceBar(
             centerTitle: true,
-            background: Stack(
-              children: <Widget>[
-                ImagesWidget3(
-                  images: imagesSlider,
-                  isExpanded: false,
-                ),
-                IgnorePointer(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.3),
-                    ),
-                    alignment: Alignment.bottomCenter,
-                    height: 300.0,
+            background: SafeArea(
+              child: Stack(
+                children: <Widget>[
+                  ImagesWidget3(
+                    images: imagesSlider,
+                    isExpanded: false,
                   ),
-                )
-              ],
+                  IgnorePointer(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(0.3),
+                      ),
+                      alignment: Alignment.bottomCenter,
+                      height: 300.0,
+                    ),
+                  )
+                ],
+              ),
             )),
       ),
     ));

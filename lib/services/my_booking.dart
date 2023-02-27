@@ -10,7 +10,7 @@ class MisReservasService {
 
     String user_id = prefs.getString("user_id");
     final response = await http.post(Uri.parse(url),
-        body: jsonEncode(<String, String>{"user_id": user_id}));
+        body: {"id_user": user_id});
     if (response.statusCode != 200) {
       throw response.body;
     }

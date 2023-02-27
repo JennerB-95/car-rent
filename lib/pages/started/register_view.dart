@@ -62,7 +62,7 @@ class _RegisterViewState extends State<RegisterView> {
 
     print("data user $datauser");
 
-    /*if (response.statusCode == 200) {
+    if (response.statusCode == 200) {
       var jsondata = json.decode(response.body);
       print(jsondata["status"]);
       if (jsondata["status"] == false) {
@@ -105,7 +105,7 @@ class _RegisterViewState extends State<RegisterView> {
         error = true;
         errormsg = "Error al conectar al servidor.";
       });
-    }*/
+    }
   }
   // buildLoginAction(),
   //buildRegisterAction(),

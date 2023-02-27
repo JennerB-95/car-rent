@@ -183,28 +183,28 @@ class _BookingCarsPageState extends State<BookingCarsPage> {
   String end_date;
 
   Future saveBooking() async {
-    print(widget.car.equipment_id);
     var url = "http://api-apex.ceandb.com/bookingAdd.php";
-    final response = await http.post(Uri.parse(url),
-        body: json.encode(<String, dynamic>{
-          "name": first_name + last_name,
-          "email": emailU,
-          "contact_number": contact_number,
-          "start_date": _startDate.toString(),
-          "end_date": end_date.toString(),
-          "user_id": uid,
-          "equipment_id": widget.car.equipment_id.toString(),
-          "grand_total": total,
-          "created_at": DateTime.now().toString(),
-          "updated_at": DateTime.now().toString(),
-          "booking_number": _generateRandomBookingNumber()
-        }));
+    final response = await http.post(Uri.parse(url), body: {
+      "id_user": uid,
+      "booking_number": _generateRandomBookingNumber(),
+      "name": "$first_name $last_name",
+      "contact_number": contact_number,
+      "email": emailU,
+      "equipment_id": widget.car.equipment_id.toString(),
+      "start_date": _startDate.toString(),
+      "end_date": end_date.toString(),
+      "grand_total": total,
+      "created_at": DateTime.now().toString(),
+      "updated_at": DateTime.now().toString(),
+      "location": _locationDelivery.text
+    });
     print("body ${response.body}");
     print(response.statusCode);
 
     if (response.statusCode == 200) {
       var jsondata = json.decode(response.body);
-      print(jsondata["status"]);
+      PersistentNavBarNavigator.pushNewScreen(context,
+          screen: BookingList(), withNavBar: true);
       if (jsondata["status"] == false) {
         setState(() {
           showprogress = false; //don't show progress indicator

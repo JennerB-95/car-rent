@@ -1,306 +1,38 @@
-import 'package:car_rental/models/equipment.dart';
-import 'package:car_rental/pages/admin/admin_view.dart';
-import 'package:car_rental/services/equipment_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import '../../core.dart';
 
-import 'dart:async';
+import '../../models/equipment.dart';
+import '../../services/equipment_service.dart';
+import '../book_car/book_car_view.dart';
 
-class HomeView extends StatefulWidget {
-  static const routeName = '/home';
+class EquipmentsPage extends StatefulWidget {
+  const EquipmentsPage({Key key}) : super(key: key);
 
   @override
-  _HomeViewState createState() => _HomeViewState();
+  State<EquipmentsPage> createState() => _EquipmentsPageState();
 }
 
-class _HomeViewState extends State<HomeView> {
-  PersistentTabController _controller =
-      PersistentTabController(initialIndex: 0);
-
-  bool adminLogin = false;
-  @override
-  void dispose() {
-    super.dispose();
-    _controller.dispose();
-  }
-
-  @override
-  void initState() {
-    getInitialInfo();
-    super.initState();
-  }
-
-  getInitialInfo() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      adminLogin = prefs.getBool("is_admin") ?? false;
-    });
-    print("admin $adminLogin");
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(body: _buildPersistentBottomNavigationNavBar());
-  }
-
-  Widget _buildPersistentBottomNavigationNavBar() {
-    return PersistentTabView(
-      context,
-      controller: _controller,
-      screens: adminLogin ? _buildScreensAdmin() : _buildScreens(),
-      items: adminLogin ? _navBarsItemsAdmin() : _navBarsItems(),
-      onItemSelected: (i) {
-        setState(() {
-          _controller.index = i;
-        });
-      },
-      confineInSafeArea: true,
-      backgroundColor: Colors.white,
-      handleAndroidBackButtonPress: true,
-      resizeToAvoidBottomInset:
-          true, // This needs to be true if you want to move up the screen when keyboard appears.
-      stateManagement: true,
-      hideNavigationBarWhenKeyboardShows:
-          true, // Recommended to set 'resizeToAvoidBottomInset' as true while using this argument.
-      decoration: NavBarDecoration(
-        borderRadius: BorderRadius.circular(10.0),
-        colorBehindNavBar: Colors.white,
-      ),
-      popAllScreensOnTapOfSelectedTab: true,
-      popActionScreens: PopActionScreensType.all,
-      itemAnimationProperties: ItemAnimationProperties(
-        // Navigation Bar's items animation properties.
-        duration: Duration(milliseconds: 200),
-        curve: Curves.ease,
-      ),
-      screenTransitionAnimation: ScreenTransitionAnimation(
-        // Screen transition animation on change of selected tab.
-        animateTabTransition: true,
-        curve: Curves.ease,
-        duration: Duration(milliseconds: 200),
-      ),
-      navBarStyle: NavBarStyle.style3,
-      // margin: EdgeInsets.only(bottom: 10.0)
-    );
-  }
-
-  List<Widget> _buildScreens() {
-    return [Home(), BookingList(), ProfilePage()];
-  }
-
-  List<Widget> _buildScreensAdmin() {
-    return [Home(), BookingList(), AdminView(), ProfilePage()];
-  }
-
-  List<PersistentBottomNavBarItem> _navBarsItems() {
-    return [
-      PersistentBottomNavBarItem(
-        iconSize: 30.0,
-        //textStyle: GoogleFonts.nunito(fontWeight: FontWeight.bold,),
-        icon: Icon(FeatherIcons.home),
-        //title: 'Inicio',
-        activeColorPrimary: Color(0xff333D55),
-        inactiveColorPrimary: Colors.grey,
-      ),
-      PersistentBottomNavBarItem(
-        iconSize: 30.0,
-        // textStyle: GoogleFonts.nunito(fontWeight: FontWeight.bold, ),
-        icon: Icon(FeatherIcons.calendar),
-        // title: 'Buscar',
-        activeColorPrimary: Color(0xff333D55),
-        inactiveColorPrimary: Colors.grey,
-      ),
-      PersistentBottomNavBarItem(
-        iconSize: 30.0,
-        // textStyle: GoogleFonts.nunito(fontWeight: FontWeight.bold),
-        icon: Icon(FeatherIcons.user),
-        // title: 'Ajustes',
-        activeColorPrimary: Color(0xff333D55),
-        inactiveColorPrimary: Colors.grey,
-      ),
-    ];
-  }
-}
-
-List<PersistentBottomNavBarItem> _navBarsItemsAdmin() {
-  return [
-    PersistentBottomNavBarItem(
-      iconSize: 30.0,
-      //textStyle: GoogleFonts.nunito(fontWeight: FontWeight.bold,),
-      icon: Icon(FeatherIcons.home),
-      //title: 'Inicio',
-      activeColorPrimary: Color(0xff333D55),
-      inactiveColorPrimary: Colors.grey,
-    ),
-    PersistentBottomNavBarItem(
-      iconSize: 30.0,
-      // textStyle: GoogleFonts.nunito(fontWeight: FontWeight.bold, ),
-      icon: Icon(FeatherIcons.calendar),
-      // title: 'Buscar',
-      activeColorPrimary: Color(0xff333D55),
-      inactiveColorPrimary: Colors.grey,
-    ),
-    PersistentBottomNavBarItem(
-      iconSize: 30.0,
-      // textStyle: GoogleFonts.nunito(fontWeight: FontWeight.bold),
-      icon: Icon(FeatherIcons.clipboard),
-      // title: 'Ajustes',
-      activeColorPrimary: Color(0xff333D55),
-      inactiveColorPrimary: Colors.grey,
-    ),
-    PersistentBottomNavBarItem(
-      iconSize: 30.0,
-      // textStyle: GoogleFonts.nunito(fontWeight: FontWeight.bold),
-      icon: Icon(FeatherIcons.user),
-      // title: 'Ajustes',
-      activeColorPrimary: Color(0xff333D55),
-      inactiveColorPrimary: Colors.grey,
-    ),
-  ];
-}
-
-class Home extends StatefulWidget {
-  @override
-  _HomeState createState() => _HomeState();
-}
-
-class _HomeState extends State<Home> {
-  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-  List theData = [];
-  bool isAdmin = false;
-  String uid,
-      username,
-      first_name,
-      last_name,
-      contact_number,
-      emailU,
-      dpiPasaporte,
-      licencia,
-      tipoLicencia,
-      nit,
-      fechaNacimiento;
-  @override
-  void initState() {
-    getUserData();
-    super.initState();
-  }
-
-  Future getUserData() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      username = prefs.getString("username");
-      first_name = prefs.getString("first_name");
-      last_name = prefs.getString("last_name");
-      contact_number = prefs.getString("contact_number");
-      emailU = prefs.getString("email");
-      dpiPasaporte = prefs.getString("dpiPasaporte");
-      licencia = prefs.getString("licencia");
-      tipoLicencia = prefs.getString("tipoLicencia");
-      nit = prefs.getString("nit");
-      fechaNacimiento = prefs.getString("fecha_nacimiento");
-
-      isAdmin = prefs.getBool("is_admin");
-    });
-  }
-
+class _EquipmentsPageState extends State<EquipmentsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      key: _scaffoldKey,
       backgroundColor: Color(0xffF8F8F8),
-      body: Stack(
-        children: [
-          SafeArea(
-            child: SingleChildScrollView(
-              physics: BouncingScrollPhysics(),
-              child: Container(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    buildHeader(),
-                    buildTopDeals(),
-                  ],
-                ),
-              ),
-            ),
-          ),
-          SafeArea(
-            child: Image.asset(
-              "assets/images/header.png",
-              //fit: BoxFit.scaleDown,
-              width: MediaQuery.of(context).size.width,
-            ),
-          ),
-        ],
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0.0,
+        leading: IconButton(
+            onPressed: () => Navigator.pop(context),
+            icon: Icon(
+              FeatherIcons.chevronLeft,
+              color: Colors.black,
+            )),
       ),
+      body: _body(),
     );
   }
 
-  Widget buildHeader() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        SizedBox(
-          height: MediaQuery.of(context).size.width > 500 ? 125.0 : 70.0,
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 15.0),
-          child: Row(
-            children: [
-              CircleAvatar(
-                maxRadius: 25,
-                backgroundColor: Colors.white,
-                backgroundImage: NetworkImage(
-                    "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?20150327203541"),
-              ),
-              SizedBox(
-                width: 15.0,
-              ),
-              Text(
-                "Bienvenido $first_name $last_name",
-                style: TextStyle(
-                    fontSize: 18.0,
-                    color: Color(0xff333D55),
-                    fontWeight: FontWeight.bold),
-              )
-            ],
-          ),
-        ),
-        SizedBox(height: 18),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 15.0),
-          child: Text(
-            "Los mejores vehículos para ti",
-            style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: Color(0xffBEBEBE),
-                fontSize: 18),
-          ),
-        ),
-        FutureBuilder(
-            future: EquipmentService.fetchAll(),
-            builder: (context, snapshot) {
-              if (snapshot.data == null) {
-                return Container();
-              } else {
-                List<Equipment> equipments = snapshot.data;
-
-                return ImagesWidget(
-                    images: equipments
-                        .map((car) =>
-                            "https://rentcarapex.ceandb.com/assets/img/equipments/thumbnail-images/" +
-                            car.thumbnail_image)
-                        .toList());
-              }
-            }),
-      ],
-    );
-  }
-
-  Widget buildTopDeals() {
+  Widget _body() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
