@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:car_rental/core.dart';
+import 'package:car_rental/pages/admin/admin_view.dart';
 import 'package:car_rental/pages/booking_cars/select_equipment.dart';
 import 'package:car_rental/pages/started/prefs.dart';
 import 'package:flutter/material.dart';
@@ -49,6 +50,7 @@ class MyApp extends StatelessWidget {
         '/register': (BuildContext context) => RegisterView(),
         '/book_car': (BuildContext context) => BookCarView(),
         '/equipment_page': (BuildContext context) => EquipmentsPage(),
+        '/admin_view': (BuildContext context) => AdminView(),
 
       },
     );

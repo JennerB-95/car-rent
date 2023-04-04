@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import '../../core.dart';
 
 class AuthController extends GetxController {
-  User userProfile;
+ 
   static AuthController to = Get.find();
 
   final GlobalKey<FormState> keyLoginForm = GlobalKey<FormState>();
@@ -31,15 +31,12 @@ class AuthController extends GetxController {
     fillUserDataForm();
   }
 
-  loadData() async {
-    userProfile = UserService().getProfile();
+  loadData() async { 
   }
 
   void fillUserDataForm() async {
     isUsernameAvailable = true;
-    firstnameCtrl.text = userProfile?.firstname ?? "";
-    lastnameCtrl.text = userProfile?.lastname ?? "";
-
+  
     update();
   }
 

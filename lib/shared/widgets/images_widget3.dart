@@ -29,8 +29,8 @@ class ImagesWidget3 extends StatelessWidget {
       builder: (currentImage, updateFn) => Stack(
         children: [
           isExpanded
-              ? Expanded(child: buildImagesPage(updateFn))
-              : buildImagesPage(updateFn),
+              ? Expanded(child: buildImagesPage(updateFn, context))
+              : buildImagesPage(updateFn, context),
           images.length > 1
               ? Positioned.fill(
                   child: Align(
@@ -54,9 +54,10 @@ class ImagesWidget3 extends StatelessWidget {
     );
   }
 
-  Widget buildImagesPage(ValueBuilderUpdateCallback<int> updateFn) {
+  Widget buildImagesPage(
+      ValueBuilderUpdateCallback<int> updateFn, BuildContext context) {
     return Container(
-      height: 300.0,
+      height: MediaQuery.of(context).size.width > 500 ? 600 : 300,
       child: PageView(
         physics: BouncingScrollPhysics(),
         onPageChanged: updateFn,

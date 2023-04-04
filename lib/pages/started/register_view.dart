@@ -113,6 +113,20 @@ class _RegisterViewState extends State<RegisterView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+            onPressed: () => Navigator.pop(context),
+            icon: Icon(
+              FeatherIcons.chevronLeft,
+              color: Colors.grey,
+            )),
+        backgroundColor: Colors.white,
+        elevation: 0.0,
+        title: Text(
+          "Registro",
+          style: TextStyle(color: Colors.black),
+        ),
+      ),
       backgroundColor: Colors.white,
       body: SafeArea(
         child: Container(

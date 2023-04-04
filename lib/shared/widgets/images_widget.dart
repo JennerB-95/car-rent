@@ -17,17 +17,19 @@ class ImagesWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return isExpanded ? Expanded(child: buildBody()) : buildBody();
+    return isExpanded
+        ? Expanded(child: buildBody(context))
+        : buildBody(context);
   }
 
-  ValueBuilder<int> buildBody() {
+  ValueBuilder<int> buildBody(BuildContext context) {
     return ValueBuilder<int>(
       initialValue: 0,
       builder: (currentImage, updateFn) => Column(
         children: [
           isExpanded
-              ? Expanded(child: buildImagesPage(updateFn))
-              : buildImagesPage(updateFn),
+              ? Expanded(child: buildImagesPage(updateFn, context))
+              : buildImagesPage(updateFn, context),
           images.length > 1
               ? Container(
                   height: 25,
@@ -46,9 +48,10 @@ class ImagesWidget extends StatelessWidget {
     );
   }
 
-  Widget buildImagesPage(ValueBuilderUpdateCallback<int> updateFn) {
+  Widget buildImagesPage(
+      ValueBuilderUpdateCallback<int> updateFn, BuildContext context) {
     return Container(
-      height: 275.0,
+      height: MediaQuery.of(context).size.width > 500 ? 600 : 350,
       child: PageView(
         physics: BouncingScrollPhysics(),
         onPageChanged: updateFn,
@@ -99,16 +102,16 @@ class ImagesWidget extends StatelessWidget {
                         }
                         return Center(
                           child: CircularProgressIndicator(
-                              strokeWidth: 2.0,
-                              backgroundColor: Colors.white,
-                              valueColor: new AlwaysStoppedAnimation<Color>(
-                                Color(0xff333D55),
-                              ),
-                              value: loadingProgress.expectedTotalBytes != null
-                                  ? loadingProgress.cumulativeBytesLoaded /
-                                      loadingProgress.expectedTotalBytes
-                                  : null,
+                            strokeWidth: 2.0,
+                            backgroundColor: Colors.white,
+                            valueColor: new AlwaysStoppedAnimation<Color>(
+                              Color(0xff333D55),
                             ),
+                            value: loadingProgress.expectedTotalBytes != null
+                                ? loadingProgress.cumulativeBytesLoaded /
+                                    loadingProgress.expectedTotalBytes
+                                : null,
+                          ),
                         );
                       },
                       //height: 100.0,

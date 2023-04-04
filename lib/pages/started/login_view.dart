@@ -237,7 +237,7 @@ class _LoginViewState extends State<LoginView> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ImagesWidget2(
-            heightImages: 250,
+            heightImages: 230,
             images: [
               "assets/images/welcome/logotipo.jpg",
             ],
@@ -250,7 +250,6 @@ class _LoginViewState extends State<LoginView> {
   Widget buildLoginForm() {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 27),
-      margin: const EdgeInsets.only(top: 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

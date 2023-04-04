@@ -8,7 +8,7 @@ import "package:http/http.dart" as http;
 
 class HomeController extends GetxController {
   static HomeController to = Get.find();
-  User userProfile;
+ 
   List<Car> cars = [];
   List<Dealer> dealers = [];
   Car displayCar;
@@ -35,7 +35,6 @@ class HomeController extends GetxController {
   }
 
   loadData() {
-    userProfile = UserService().getProfile();
     cars = CarService().getCarList();
     dealers = DealerService().getDealerList();
     displayCar = cars[2];

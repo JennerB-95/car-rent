@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:animate_do/animate_do.dart';
@@ -15,6 +16,10 @@ import 'package:path/path.dart';
 
 import 'dart:io';
 
+import '../../services/report_service.dart';
+import '../../snackbar.dart';
+import 'admin_view.dart';
+
 class CreateReportView extends StatefulWidget {
   const CreateReportView({Key key}) : super(key: key);
 
@@ -30,7 +35,8 @@ class _CreateReportViewState extends State<CreateReportView> {
   var _dateTime = DateTime.now();
   final _imagePicker = ImagePicker();
   File photo;
-
+  String _dateHour;
+  bool loading = false;
   @override
   void initState() {
     getAdminData();
@@ -44,6 +50,47 @@ class _CreateReportViewState extends State<CreateReportView> {
     });
   }
 
+  Future<void> uploadImage(
+      BuildContext context,
+      String imagePath,
+      String idAdmin,
+      String empresa,
+      String observacion,
+      String fechaHora) async {
+
+    var url = Uri.parse(
+        'http://api-apex.ceandb.com/createReport.php'); // Reemplaza "yourserver.com" con la URL de tu servidor
+    var request = http.MultipartRequest('POST', url);
+    request.fields.addAll({
+      'id_admin': idAdmin,
+      'empresa': empresa,
+      'observacion': observacion,
+      'fecha_hora': fechaHora,
+    });
+    request.files
+        .add(await http.MultipartFile.fromPath('fotografia', imagePath));
+    var response = await request.send();
+    if (response.statusCode == 200) {
+      var responseData = await response.stream.transform(utf8.decoder).join();
+      var data = jsonDecode(responseData);
+      if (data['status']) {
+        showSnackBar(context, Icons.check_circle,
+            "Reporte creado correctamente!", Colors.green);
+        setState(() => loading = false);
+        setState(() {
+          ReportsService.fetchAll();
+        });
+        Navigator.pop(context);
+      } else {
+        showSnackBar(context, Icons.check_circle,
+            "Reporte creado correctamente!", ThemeData.light().errorColor);
+        setState(() => loading = false);
+      }
+    } else {
+      // Ha habido un error al realizar la solicitud HTTP
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -53,8 +100,7 @@ class _CreateReportViewState extends State<CreateReportView> {
         title: Text(
           "Crear reporte",
           style: TextStyle(color: Colors.black),
-        ),
-        centerTitle: true,
+        ), 
         elevation: 0.0,
         leading: IconButton(
             onPressed: () => Navigator.pop(context),
@@ -64,22 +110,23 @@ class _CreateReportViewState extends State<CreateReportView> {
             )),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-      floatingActionButton: FloatingActionButton.extended(
+      floatingActionButton: FloatingActionButton(
         heroTag: adminId,
         backgroundColor: Color(0xff333D55),
-        onPressed: () {},
-        label: Row(
-          children: [
-            Icon(
-              FeatherIcons.save,
-              color: Colors.white,
-            ),
-            VerticalDivider(
-              width: 7.0,
-            ),
-            Text("Guardar")
-          ],
-        ),
+        onPressed: photo?.path != null
+            ? () async {
+                await uploadImage(context, photo?.path, adminId, _entity.text,
+                    _observation.text, _dateHour);
+              }
+            : null,
+        child: loading
+            ? CircularProgressIndicator(
+                color: Colors.white,
+              )
+            : Icon(
+                FeatherIcons.save,
+                color: Colors.white,
+              ),
       ),
       body: Body(),
     );
@@ -155,6 +202,7 @@ class _CreateReportViewState extends State<CreateReportView> {
                   setState(() {
                     _dateTime = date;
                     _date.text = _dateTime.toString();
+                    _dateHour = _dateTime.toString();
                   });
                 },
               ),
@@ -165,7 +213,7 @@ class _CreateReportViewState extends State<CreateReportView> {
                   onTap: () async {
                     try {
                       var image = await _imagePicker.pickImage(
-                          source: ImageSource.camera, imageQuality: 10);
+                          source: ImageSource.camera);
 
                       setState(() => photo = File(image.path));
                       print("photo ${photo}");
@@ -193,33 +241,7 @@ class _CreateReportViewState extends State<CreateReportView> {
     } else {
       return Container(
           child: CircleAvatar(
-              radius: 50.0, backgroundImage: new FileImage(photo)));
-    }
-  }
-
-  Future addProduct(File imageFile) async {
-// ignore: deprecated_member_use
-    var stream =
-        new http.ByteStream(DelegatingStream.typed(imageFile.openRead()));
-    var length = await imageFile.length();
-    var uri = Uri.parse("http://10.0.2.2/foodsystem/uploadg.php");
-
-    var request = new http.MultipartRequest("POST", uri);
-
-    var multipartFile = new http.MultipartFile("image", stream, length,
-        filename: basename(imageFile.path));
-
-    request.files.add(multipartFile);
-    request.fields['id_admin'] = adminId;
-    request.fields['empresa'] = _entity.text;
-    request.fields['observacion'] = _observation.text;
-    request.fields['fecha_hora'] = _date.text;
-
-    var respond = await request.send();
-    if (respond.statusCode == 200) {
-      print("Image Uploaded");
-    } else {
-      print("Upload Failed");
+              radius: 50.0, backgroundImage: new FileImage(File(photo.path))));
     }
   }
 }

@@ -29,10 +29,22 @@ class _ProfilePageState extends State<ProfilePage> {
       tipoLicencia,
       fechaNacimiento,
       nit;
+  bool adminLogin = false;
+
   @override
   void initState() {
+    getInitialInfo();
     getUserData();
     super.initState();
+  }
+
+  getInitialInfo() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      adminLogin = prefs.getBool("is_admin") ?? false;
+    });
+
+    print("is admin login $adminLogin");
   }
 
   Future getUserData() async {
@@ -150,7 +162,9 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
               Divider(),
               FutureBuilder(
-                  future: MisReservasService.fetchAll(),
+                  future: adminLogin
+                      ? MisReservasService.fetch()
+                      : MisReservasService.fetchAll(),
                   builder: (BuildContext context, AsyncSnapshot snapshot) {
                     if (snapshot.data == null) {
                       return Center(

@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import '../../core.dart';
 
 class ProfileController extends GetxController {
-  User userProfile;
+ 
   static ProfileController to = Get.find();
 
   final GlobalKey<FormState> keyEditProfileForm = GlobalKey<FormState>();
@@ -39,24 +39,13 @@ class ProfileController extends GetxController {
     fillUserDataForm();
   }
 
-  loadData() async {
-    userProfile = UserService().getProfile();
+  loadData() async { 
   }
 
   void fillUserDataForm() async {
     isUsernameAvailable = true;
-    firstnameCtrl.text = userProfile?.firstname ?? "";
-    lastnameCtrl.text = userProfile?.lastname ?? "";
-    genderCtrl.text = userProfile?.gender ?? "";
-    streetCtrl.text = userProfile?.address?.street ?? "";
-    cityCtrl.text = userProfile?.address?.city ?? "";
-    provinceCtrl.text = userProfile?.address?.province ?? "";
-    countryCtrl.text = userProfile?.address?.country ?? "Indonesia";
-    postalCodeCtrl.text = userProfile?.address?.postalCode ?? "";
-
-    phoneCtrl.text = ConverterHelper.removePhoneCode(userProfile?.phone) ?? "";
-    dobCtrl.text = ConverterHelper.stringFormatDmy(userProfile?.dob) ?? "";
-
+ 
+  
     update();
   }
 

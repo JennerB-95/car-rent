@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'dart:math';
 
 import 'package:animate_do/animate_do.dart';
@@ -8,13 +9,16 @@ import 'package:car_rental/services/conductor_auth_service.dart';
 import 'package:car_rental/services/date_time_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
+import 'package:image_picker/image_picker.dart';
 
 import 'package:intl/intl.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import '../../core.dart';
 import 'package:http/http.dart' as http;
+import 'dart:math' as math;
 
 enum SingingCharacter { pick_up, delivery }
 
@@ -41,6 +45,7 @@ class _BookingCarsPageState extends State<BookingCarsPage> {
   TextEditingController _phone = TextEditingController();
   TextEditingController _locationDelivery = TextEditingController();
   TextEditingController _dpiPassportAux = TextEditingController();
+  var _firstNameCtrl = TextEditingController();
   String _choiceChip = " ";
   var _bornDate = DateTime.now();
   var _licenseDate = DateTime.now();
@@ -61,6 +66,7 @@ class _BookingCarsPageState extends State<BookingCarsPage> {
   int _numberOfDays = 0;
   String _maxOfDays = "";
   String total = "";
+  bool loading = false;
   bool deliveryCar = false;
   String days = "Seleccione la fecha de la reserva";
   String uid,
@@ -74,8 +80,20 @@ class _BookingCarsPageState extends State<BookingCarsPage> {
       tipoLicencia,
       nit,
       dpiPassAuth;
-
+  bool isAdmin = false;
+  String selectedValue;
   List<String> _filters = [];
+  String selectedUser;
+  String _userName = "";
+  String _userLastName = "";
+
+  String selecterAuth1;
+  String selecterAuth2;
+  final _imagePicker = ImagePicker();
+  File dpiFrontPhoto;
+  File dpiBackPhoto;
+  File licenseFront;
+  File licenseBack;
 
   Future register() async {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -149,14 +167,22 @@ class _BookingCarsPageState extends State<BookingCarsPage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     getUserData();
+
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _firstNameCtrl.dispose();
+    super.dispose();
   }
 
   getUserData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
+
     setState(() {
+      _locationDelivery.text = "Recoger";
       total = widget.car.per_day_price;
       uid = prefs.getString("user_id");
       username = prefs.getString("username");
@@ -168,6 +194,7 @@ class _BookingCarsPageState extends State<BookingCarsPage> {
       licencia = prefs.getString("licencia");
       tipoLicencia = prefs.getString("tipoLicencia");
       nit = prefs.getString("nit");
+      isAdmin = prefs.getBool("is_admin");
     });
 
     return;
@@ -183,9 +210,14 @@ class _BookingCarsPageState extends State<BookingCarsPage> {
   String end_date;
 
   Future saveBooking() async {
-    var url = "http://api-apex.ceandb.com/bookingAdd.php";
-    final response = await http.post(Uri.parse(url), body: {
+    var url = Uri.parse("http://api-apex.ceandb.com/bookingAdd.php");
+
+    var request = await http.MultipartRequest('POST', url);
+
+    request.fields.addAll({
       "id_user": uid,
+      "id_user_auth_one": selecterAuth1 ?? 43.toString(),
+      "id_user_auth_dos": selecterAuth2 ?? 43.toString(),
       "booking_number": _generateRandomBookingNumber(),
       "name": "$first_name $last_name",
       "contact_number": contact_number,
@@ -198,27 +230,73 @@ class _BookingCarsPageState extends State<BookingCarsPage> {
       "updated_at": DateTime.now().toString(),
       "location": _locationDelivery.text
     });
-    print("body ${response.body}");
-    print(response.statusCode);
+
+    // add dpi front to fields
+    if (dpiFrontPhoto != null) {
+      request.files.add(
+          await http.MultipartFile.fromPath('dpifront', dpiFrontPhoto?.path));
+    }
+
+    // add dpi back to fields
+    if (dpiBackPhoto != null) {
+      request.files.add(
+          await http.MultipartFile.fromPath('dpiback', dpiBackPhoto?.path));
+    }
+
+    // add license front to fields
+    if (licenseFront != null) {
+      request.files.add(await http.MultipartFile.fromPath(
+          'licensefront', licenseFront?.path));
+    }
+
+    // add license back to fields
+    if (licenseBack != null) {
+      request.files.add(
+          await http.MultipartFile.fromPath('licenseback', licenseBack?.path));
+    }
+
+    var response = await request.send();
 
     if (response.statusCode == 200) {
-      var jsondata = json.decode(response.body);
-      PersistentNavBarNavigator.pushNewScreen(context,
-          screen: BookingList(), withNavBar: true);
-      if (jsondata["status"] == false) {
+      var responseData = await response.stream.transform(utf8.decoder).join();
+      var data = jsonDecode(responseData);
+
+      if (data["status"] == false) {
         setState(() {
           showprogress = false; //don't show progress indicator
           error = true;
-          errormsg = jsondata["message"];
+          errormsg = data["message"];
         });
       } else {
-        if (jsondata["status"] == true) {
+        if (data["status"] == true) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            behavior: SnackBarBehavior.fixed,
+            content: Text('¡Registro creado correctamente!'),
+            backgroundColor: Colors.green,
+            duration: Duration(seconds: 3),
+          ));
+          Future.delayed(Duration(seconds: 8), () {
+            PersistentNavBarNavigator.pushNewScreen(context,
+                screen: BookingList(), withNavBar: true);
+            // Navigator.push(
+            //     context, MaterialPageRoute(builder: (context) => LoginView()));
+          });
+
           setState(() {
             error = false;
             showprogress = false;
+            _filters.clear();
+            _filters.clear();
+            selectedUser = null;
+            _locationDelivery.text = '';
+            _startDate = null;
+            end_date = null;
+            dpiFrontPhoto = null;
+            dpiBackPhoto = null;
+            licenseFront = null;
+            licenseBack = null;
+            loading = false;
           });
-          PersistentNavBarNavigator.pushNewScreen(context,
-              withNavBar: true, screen: BookingList());
         } else {
           showprogress = false; //don't show progress indicator
           error = true;
@@ -267,7 +345,7 @@ class _BookingCarsPageState extends State<BookingCarsPage> {
           onPressed: () => Navigator.pop(context),
           icon: Icon(
             FeatherIcons.chevronLeft,
-            color: Colors.black,
+            color: Colors.grey,
             size: 35.0,
           ),
         ),
@@ -277,7 +355,6 @@ class _BookingCarsPageState extends State<BookingCarsPage> {
             color: Colors.black,
           ),
         ),
-        centerTitle: true,
         elevation: 0,
         backgroundColor: Color(0xffF8F8F8),
       ),
@@ -535,6 +612,8 @@ class _BookingCarsPageState extends State<BookingCarsPage> {
                           onChanged: (value) {
                             setState(() {
                               gender = value.toString();
+                              _locationDelivery.text = "Recoger";
+                              locationDelivery = "Recoger";
                               deliveryCar = false;
                             });
                           },
@@ -549,6 +628,7 @@ class _BookingCarsPageState extends State<BookingCarsPage> {
                           onChanged: (value) {
                             setState(() {
                               gender = value.toString();
+                              _locationDelivery.text = "";
                               deliveryCar = true;
                             });
 
@@ -573,11 +653,73 @@ class _BookingCarsPageState extends State<BookingCarsPage> {
                   Divider(),
                   SizedBox(height: 15),
                   Text(
-                    'Conductores autorizados (opcional)',
+                    'Subir foto de DPI/Pasaporte de ambos lados*',
+                    style: TextStyle(fontSize: 17.0, color: Colors.grey),
+                  ),
+                  SizedBox(height: 5),
+                  GestureDetector(
+                      onTap: () async {
+                        try {
+                          var image = await _imagePicker.pickImage(
+                              source: ImageSource.camera);
+
+                          setState(() => dpiFrontPhoto = File(image.path));
+                        } catch (e) {
+                          print(e);
+                        }
+                      },
+                      child: _dpiFront()),
+                  SizedBox(height: 15),
+                  GestureDetector(
+                      onTap: () async {
+                        try {
+                          var image = await _imagePicker.pickImage(
+                              source: ImageSource.camera);
+
+                          setState(() => dpiBackPhoto = File(image.path));
+                        } catch (e) {
+                          print(e);
+                        }
+                      },
+                      child: _dpiBack()),
+                  SizedBox(height: 15),
+                  Text(
+                    'Subir foto de Licencia de ambos lados*',
+                    style: TextStyle(fontSize: 17.0, color: Colors.grey),
+                  ),
+                  SizedBox(height: 5),
+                  GestureDetector(
+                      onTap: () async {
+                        try {
+                          var image = await _imagePicker.pickImage(
+                              source: ImageSource.camera);
+
+                          setState(() => licenseFront = File(image.path));
+                        } catch (e) {
+                          print(e);
+                        }
+                      },
+                      child: _licenseFront()),
+                  SizedBox(height: 15),
+                  GestureDetector(
+                      onTap: () async {
+                        try {
+                          var image = await _imagePicker.pickImage(
+                              source: ImageSource.camera);
+
+                          setState(() => licenseBack = File(image.path));
+                        } catch (e) {
+                          print(e);
+                        }
+                      },
+                      child: _licenseBack()),
+                  SizedBox(height: 15),
+                  Text(
+                    'Conductores auColor.fromARGB(255, 17, 7, 7)opcional)',
                     style: TextStyle(fontSize: 17.0, color: Colors.grey),
                   ),
                   Text(
-                    'Nota: Solo puedes seleccionar a 2.',
+                    'Nota: Solo puedes seleccionar a 2',
                     style: TextStyle(fontSize: 15.0, color: Colors.grey),
                   ),
                   Divider(),
@@ -621,6 +763,14 @@ class _BookingCarsPageState extends State<BookingCarsPage> {
                                             if (_filters.length < 2) {
                                               if (selected) {
                                                 _filters.add(e.id);
+                                                selecterAuth1 = _filters[0];
+                                                if (_filters
+                                                    .asMap()
+                                                    .containsKey(1)) {
+                                                  selecterAuth2 = _filters[1];
+                                                } else {
+                                                  print("no");
+                                                }
                                               } else {
                                                 _filters
                                                     .removeWhere((String id) {
@@ -678,6 +828,114 @@ class _BookingCarsPageState extends State<BookingCarsPage> {
         ),
       ),
     );
+  }
+
+  Widget _dpiFront() {
+    return Container(
+        width: MediaQuery.of(context).size.width,
+        height: 200,
+        padding: EdgeInsets.all(dpiFrontPhoto == null ? 20 : 5.0),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(15.0),
+          color: Color(0xffe9ecef).withOpacity(0.7),
+        ),
+        child: dpiFrontPhoto == null
+            ? Icon(MdiIcons.camera, color: Color(0xff333D55), size: 55.0)
+            : Row(
+                children: [
+                  Image.file(
+                    File(dpiFrontPhoto.path),
+                    height: 200,
+                    width: MediaQuery.of(context).size.width * 0.6,
+                  ),
+                  Icon(
+                    MdiIcons.cameraRetake,
+                    size: 55.0,
+                    color: Color(0xff333D55),
+                  )
+                ],
+              ));
+  }
+
+  Widget _dpiBack() {
+    return Container(
+        width: MediaQuery.of(context).size.width,
+        height: 200,
+        padding: EdgeInsets.all(dpiBackPhoto == null ? 20 : 5.0),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(15.0),
+          color: Color(0xffe9ecef).withOpacity(0.7),
+        ),
+        child: dpiBackPhoto == null
+            ? Icon(MdiIcons.camera, color: Color(0xff333D55), size: 55.0)
+            : Row(
+                children: [
+                  Image.file(
+                    File(dpiBackPhoto.path),
+                    height: 200,
+                    width: MediaQuery.of(context).size.width * 0.6,
+                  ),
+                  Icon(
+                    MdiIcons.cameraRetake,
+                    size: 55.0,
+                    color: Color(0xff333D55),
+                  )
+                ],
+              ));
+  }
+
+  Widget _licenseFront() {
+    return Container(
+        width: MediaQuery.of(context).size.width,
+        height: 200,
+        padding: EdgeInsets.all(licenseFront == null ? 20 : 5.0),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(15.0),
+          color: Color(0xffe9ecef).withOpacity(0.7),
+        ),
+        child: licenseFront == null
+            ? Icon(MdiIcons.camera, color: Color(0xff333D55), size: 55.0)
+            : Row(
+                children: [
+                  Image.file(
+                    File(licenseFront.path),
+                    height: 200,
+                    width: MediaQuery.of(context).size.width * 0.6,
+                  ),
+                  Icon(
+                    MdiIcons.cameraRetake,
+                    size: 55.0,
+                    color: Color(0xff333D55),
+                  )
+                ],
+              ));
+  }
+
+  Widget _licenseBack() {
+    return Container(
+        width: MediaQuery.of(context).size.width,
+        height: 200,
+        padding: EdgeInsets.all(licenseBack == null ? 20 : 5.0),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(15.0),
+          color: Color(0xffe9ecef).withOpacity(0.7),
+        ),
+        child: licenseBack == null
+            ? Icon(MdiIcons.camera, color: Color(0xff333D55), size: 55.0)
+            : Row(
+                children: [
+                  Image.file(
+                    File(licenseBack.path),
+                    height: 200,
+                    width: MediaQuery.of(context).size.width * 0.6,
+                  ),
+                  Icon(
+                    MdiIcons.cameraRetake,
+                    size: 55.0,
+                    color: Color(0xff333D55),
+                  )
+                ],
+              ));
   }
 
   String _formattedDate(DateTime date1, DateTime date2) {
@@ -765,7 +1023,7 @@ class _BookingCarsPageState extends State<BookingCarsPage> {
                             Navigator.pop(context);
                           },
                           style: ElevatedButton.styleFrom(
-                            // backgroundColor: Color(0xff333D55),
+                            backgroundColor: Color(0xff333D55),
                             padding: const EdgeInsets.symmetric(
                                 vertical: 14.0, horizontal: 40.0),
                             elevation: 0.0,
@@ -921,7 +1179,6 @@ class _BookingCarsPageState extends State<BookingCarsPage> {
                     color: Color(0xffe9ecef).withOpacity(0.7),
                     borderRadius: BorderRadius.circular(10.0)),
                 child: TextFormField(
-                    keyboardType: TextInputType.number,
                     decoration: InputDecoration(
                         prefixIcon: Icon(
                           FeatherIcons.creditCard,
@@ -978,7 +1235,6 @@ class _BookingCarsPageState extends State<BookingCarsPage> {
                           color: Color(0xffe9ecef).withOpacity(0.7),
                           borderRadius: BorderRadius.circular(10.0)),
                       child: TextFormField(
-                          keyboardType: TextInputType.number,
                           decoration: InputDecoration(
                               prefixIcon: Icon(
                                 FeatherIcons.creditCard,
@@ -1007,7 +1263,6 @@ class _BookingCarsPageState extends State<BookingCarsPage> {
                     color: Color(0xffe9ecef).withOpacity(0.7),
                     borderRadius: BorderRadius.circular(10.0)),
                 child: TextFormField(
-                  keyboardType: TextInputType.number,
                   decoration: InputDecoration(
                       prefixIcon: Icon(
                         FeatherIcons.creditCard,
@@ -1103,7 +1358,7 @@ class _BookingCarsPageState extends State<BookingCarsPage> {
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10.0)),
                       padding: const EdgeInsets.symmetric(
-                          vertical: 12, horizontal: 40.0),
+                          vertical: 12, horizontal: 20.0),
                       elevation: 0.0,
                       textStyle: TextStyle(
                         fontSize: 15,
@@ -1129,7 +1384,7 @@ class _BookingCarsPageState extends State<BookingCarsPage> {
       ),
       style: ButtonStyle(
         padding: MaterialStateProperty.all(
-          const EdgeInsets.symmetric(vertical: 12, horizontal: 40.0),
+          const EdgeInsets.symmetric(vertical: 12, horizontal: 20.0),
         ),
         shape: MaterialStateProperty.all(
             RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0))),
@@ -1153,38 +1408,64 @@ class _BookingCarsPageState extends State<BookingCarsPage> {
             height: 130.0,
           ),
           InkWell(
-            onTap: (_numberOfDays < 1 || _numberOfDays > 7)
+            onTap: (_numberOfDays < 1 ||
+                    _numberOfDays > 7 ||
+                    licenseBack == null ||
+                    licenseFront == null ||
+                    dpiBackPhoto == null ||
+                    dpiFrontPhoto == null)
                 ? null
-                : () => saveBooking(),
+                : () {
+                    setState(() => loading = true);
+
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      behavior: SnackBarBehavior.fixed,
+                      content: Text('Registrando...'),
+                      duration: Duration(seconds: 4),
+                    ));
+
+                    Future.delayed(Duration(seconds: 4), () {
+                      saveBooking();
+                    });
+                  },
             child: Container(
               height: 50,
               decoration: BoxDecoration(
-                color: (_numberOfDays < 1 || _numberOfDays > 7)
+                color: (_numberOfDays < 1 ||
+                        _numberOfDays > 7 ||
+                        licenseBack == null ||
+                        licenseFront == null ||
+                        dpiBackPhoto == null ||
+                        dpiFrontPhoto == null)
                     ? Colors.grey
                     : Color(0xff333D55),
                 borderRadius: BorderRadius.all(
-                  Radius.circular(10),
+                  Radius.circular(loading ? 100 : 10),
                 ),
               ),
               child: Center(
                 child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5.0),
-                  child: Row(
-                    children: [
-                      Text(
-                        "Reserva Ahora",
-                        style: TextStyle(
+                  child: loading
+                      ? CircularProgressIndicator(
                           color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          // fontSize: 16,
+                        )
+                      : Row(
+                          children: [
+                            Text(
+                              "Reserva Ahora",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                // fontSize: 16,
+                              ),
+                            ),
+                            Icon(
+                              FeatherIcons.chevronRight,
+                              color: Colors.white,
+                            )
+                          ],
                         ),
-                      ),
-                      Icon(
-                        FeatherIcons.chevronRight,
-                        color: Colors.white,
-                      )
-                    ],
-                  ),
                 ),
               ),
             ),

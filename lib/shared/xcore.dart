@@ -14,8 +14,7 @@ export 'utils/converter_helper.dart';
 export 'utils/open_dialog.dart';
 
 // Widgets
-export 'widgets/app_bar_widget.dart';
-export 'widgets/avatar_widget.dart';
+export 'widgets/app_bar_widget.dart'; 
 export 'widgets/images_widget.dart';
 export 'widgets/title_widget.dart';
 export 'widgets/car_widget.dart';
@@ -27,5 +26,4 @@ export 'widgets/country_form_field.dart';
 export 'widgets/date_form_field.dart';
 export 'widgets/dropdown_form_field.dart';
 export 'widgets/text_form_field.dart';
-export 'widgets/fitted_button.dart';
-export 'widgets/bubble_bottom_bar.dart';
+export 'widgets/fitted_button.dart'; 

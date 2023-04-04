@@ -18,7 +18,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 2.3.1+4
 
 environment:
-  sdk: ">=2.7.0 <3.0.0"
+  sdk: ">=2.7.0 <3.7.0"
 
 dependencies:
   flutter:
@@ -45,7 +45,6 @@ dependencies:
   transparent_image: ^2.0.0
   lottie: ^1.2.1
   flutter_animated_dialog: ^2.0.1
-  flutter_html: ^2.2.1
   country_pickers: ^2.0.0
   queen_validators: ^0.2.3
   http: ^0.13.5
@@ -66,8 +65,20 @@ dependencies:
   dio: ^4.0.6
   flutter_phoenix: ^1.1.0
   material_design_icons_flutter: ^6.0.7096
-  image_picker: ^0.8.6+2
-  
+  image_picker: ^0.8.6+2  
+  printing: 
+  syncfusion_flutter_pdf: 
+  path_provider:  
+  open_file:
+  pdf: ^3.9.0  
+  html: ^0.15.2
+  camera: ^0.10.3+2
+  modal_bottom_sheet:
+    git:
+      url: https://github.com/followthemoney1/modal_bottom_sheet.git
+      ref: main
+      path: modal_bottom_sheet
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -8,9 +8,10 @@ import 'package:car_rental/shared/widgets/images_widget3.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:get/get.dart';
+import 'package:html/parser.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:share/share.dart';
-import 'package:html/parser.dart';
+//import 'package:html/parser.dart';
 import '../../core.dart';
 
 class BookCarView extends StatefulWidget {
@@ -111,7 +112,7 @@ class _BookCarViewState extends State<BookCarView>
         automaticallyImplyLeading: false,
         elevation: 0.0,
         backgroundColor: _colorTween.value,
-        expandedHeight: 300.0,
+        expandedHeight: MediaQuery.of(context).size.width > 500 ? 600 : 300.0,
         floating: true,
         pinned: true,
         flexibleSpace: FlexibleSpaceBar(
@@ -129,7 +130,8 @@ class _BookCarViewState extends State<BookCarView>
                         color: Colors.black.withOpacity(0.3),
                       ),
                       alignment: Alignment.bottomCenter,
-                      height: 300.0,
+                      height:
+                          MediaQuery.of(context).size.width > 500 ? 600 : 300.0,
                     ),
                   )
                 ],
@@ -234,7 +236,7 @@ class _BookCarViewState extends State<BookCarView>
                 SizedBox(height: 10),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Text(_parseHtmlString(widget.car.description),
+                  child: Text(widget.car.description,
                       textAlign: TextAlign.justify,
                       style: TextStyle(fontSize: 15.0)),
                 ),
@@ -261,12 +263,12 @@ class _BookCarViewState extends State<BookCarView>
     );
   }
 
-  String _parseHtmlString(String htmlString) {
+  /* String _parseHtmlString(String htmlString) {
     final document = parse(htmlString);
     final String parsedString = parse(document.body.text).documentElement.text;
 
     return parsedString;
-  }
+  }*/
 
   Widget buildFooter() {
     return Container(
@@ -356,5 +358,12 @@ class _BookCarViewState extends State<BookCarView>
         ),
       ),
     );
+  }
+
+  String _parseHtmlString(String htmlString) {
+    final document = parse(htmlString);
+    final String parsedString = parse(document.body.text).documentElement.text;
+
+    return parsedString;
   }
 }

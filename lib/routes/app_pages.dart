@@ -9,11 +9,7 @@ class AppPages {
   static const HOME = Routes.HOME;
 
   static final routes = [
-    GetPage(
-      name: Routes.HOME,
-      page: () => MainView(),
-      binding: MainBinding(),
-    ),
+  
     GetPage(
       name: Routes.LOGIN,
       page: () => LoginView(),
@@ -45,16 +41,8 @@ class AppPages {
       page: () => NotificationView(),
       binding: MainBinding(),
     ),
-    GetPage(
-      name: Routes.PRIVACY_POLICY,
-      title: 'Privacy Policy',
-      page: () => const PrivacyPolicyView(),
-    ),
-    GetPage(
-      name: Routes.TERMS_CONDITIONS,
-      title: 'Terms & Conditions',
-      page: () => const TermsConditionsView(),
-    ),
+   
+
     GetPage(
       name: Routes.EDIT_PROFILE,
       title: 'Edit Profile',

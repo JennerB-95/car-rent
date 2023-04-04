@@ -2,15 +2,15 @@ class Report {
   String entity;
   String observation;
   String date;
-  String photo;
+  String fotografia;
 
-  Report({this.entity, this.observation, this.date, this.photo});
+  Report({this.entity, this.observation, this.date, this.fotografia});
 
   factory Report.fromJson(Map<String, dynamic> json) {
     return Report(
         entity: json["empresa"],
         observation: json["observacion"],
         date: json["fecha_hora"],
-        photo: json["photo"]);
+        fotografia: json["fotografia"]);
   }
 }

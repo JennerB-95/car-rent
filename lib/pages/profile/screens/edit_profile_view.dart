@@ -60,15 +60,7 @@ class EditProfileView extends GetView<ProfileController> {
       ),
       child: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 17.0),
-            child: AvatarWidget(
-              photoURL: controller.userProfile.photoURL,
-              isHideProgressBar: true,
-              width: 120,
-              heroTag: "profile",
-            ),
-          ),
+           
           TextButton(
             onPressed: () => OpenDialog.info(
                 lottieFilename: LottieFileName.COMING_SOON,
@@ -135,52 +127,13 @@ class EditProfileView extends GetView<ProfileController> {
               ]),
             ),
             const SizedBox(height: 15),
-            TextFormFieldX(
-              controller: controller.phoneCtrl,
-              label: "Phone Number",
-              hintText: "Enter your phone number",
-              keyboardType: TextInputType.phone,
-              initPhoneCode: CountryPickerUtils.getCountryByPhoneCode(
-                  ConverterHelper.getPhoneCode(controller.userProfile.phone) ??
-                      '62'),
-              validator: (value) {
-                if (value.isEmpty) {
-                  return "Phone number is required.";
-                }
-                return null;
-              },
-            ),
+ 
             const SizedBox(height: 15),
             Row(
               children: [
-                Expanded(
-                  child: DateFormField(
-                    initialDate: controller.userProfile.dob,
-                    controller: controller.dobCtrl,
-                    labelText: "Date of Birth",
-                    hintText: "Enter your date of birth",
-                  ),
-                ),
+               
                 const SizedBox(width: 17),
-                Expanded(
-                  child: DropdownFormField(
-                    value: controller.userProfile.gender == null
-                        ? null
-                        : Globals.getGenderItems().firstWhere((item) =>
-                            item.value ==
-                            controller.userProfile.gender?.toLowerCase()),
-                    controller: controller.genderCtrl,
-                    labelText: "Gender",
-                    hintText: "Enter your gender",
-                    items: Globals.getGenderItems(),
-                    validator: (value) {
-                      if (value?.isEmpty ?? true) {
-                        return "Gender is required.";
-                      }
-                      return null;
-                    },
-                  ),
-                ),
+              
               ],
             ),
             const SizedBox(height: 15),

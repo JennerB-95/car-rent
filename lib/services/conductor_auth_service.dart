@@ -9,7 +9,18 @@ class ConductorAuthService {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     String user_id = prefs.getString("user_id");
-    final response = await http.post(Uri.parse(url), body: {"id_user": "29"});
+    final response =
+        await http.post(Uri.parse(url), body: {"id_user": user_id});
+    if (response.statusCode != 200) {
+      throw response.body;
+    }
+    String responseUTF8 = utf8.decode(response.bodyBytes);
+    List body = jsonDecode(responseUTF8);
+    return body.map((app) => ConductorAutorizado.fromJson(app)).toList();
+  }
+
+  static Future<List<ConductorAutorizado>> fetchAllByUser(id) async {
+    final response = await http.post(Uri.parse(url), body: {"id_user": id});
     if (response.statusCode != 200) {
       throw response.body;
     }
