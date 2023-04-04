@@ -183,7 +183,7 @@ class _BookingListState extends State<BookingList> {
                     crossAxisSpacing: 9.0,
                     mainAxisSpacing: 2.0,
                     shrinkWrap: true,
-                    childAspectRatio: 1.5,
+                    childAspectRatio: 1.4,
                     children: _misReservas.reversed.map((e) {
                       print(e.name);
                       return GestureDetector(
@@ -244,60 +244,67 @@ class _BookingListState extends State<BookingList> {
                               ),
                               Expanded(
                                   child: Container(
-                                padding: EdgeInsets.only(
-                                    top: 20, left: 10, right: 10),
-                                child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        e.title,
-                                        style: TextStyle(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.bold,
-                                          height: 1.5,
-                                        ),
-                                      ),
-                                      Text(e.name ?? ""),
-                                      Text(
-                                          "Fecha de creación ${_formattedDate(DateTime.parse(e.created_at))}"),
-                                      Divider(),
-                                      Text(
-                                          "Del " +
-                                              _formattedDate(DateTime.parse(
-                                                  e.start_date)) +
-                                              ' al ' +
-                                              _formattedDate(
-                                                  DateTime.parse(e.end_date)),
-                                          style: TextStyle(
-                                            color: Colors.grey,
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.bold,
-                                            height: 1.5,
-                                          )),
-                                      SizedBox(height: 5),
-                                      Row(
-                                        children: [
-                                          Text("\Q",
-                                              style: TextStyle(
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.bold,
-                                              )),
-                                          Text(e.grand_total ?? "Sin info",
-                                              style: TextStyle(
-                                                fontSize: 15,
-                                                fontWeight: FontWeight.bold,
-                                              )),
-                                        ],
-                                      ),
-                                      SizedBox(
-                                        height: 5.0,
-                                      ),
-                                      Text(e.location ?? ""),
-                                      Text(
-                                          "Dias:  ${_numberOfDaysString(DateTime.parse(e.end_date), DateTime.parse(e.start_date))}")
-                                    ]),
-                              ))
+                                      padding:
+                                          EdgeInsets.only(left: 10, right: 10),
+                                      child: SingleChildScrollView(
+                                        child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                e.title,
+                                                style: TextStyle(
+                                                  fontSize: 20,
+                                                  fontWeight: FontWeight.bold,
+                                                  height: 1.5,
+                                                ),
+                                              ),
+                                              Text(e.name ?? ""),
+                                              Text(
+                                                  "Fecha de creación ${_formattedDate(DateTime.parse(e.created_at))}"),
+                                              Divider(),
+                                              Text(
+                                                  "Del " +
+                                                      _formattedDate(
+                                                          DateTime.parse(
+                                                              e.start_date)) +
+                                                      ' al ' +
+                                                      _formattedDate(
+                                                          DateTime.parse(
+                                                              e.end_date)),
+                                                  style: TextStyle(
+                                                    color: Colors.grey,
+                                                    fontSize: 15,
+                                                    fontWeight: FontWeight.bold,
+                                                    height: 1.5,
+                                                  )),
+                                              SizedBox(height: 5),
+                                              Row(
+                                                children: [
+                                                  Text("\Q",
+                                                      style: TextStyle(
+                                                        fontSize: 12,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      )),
+                                                  Text(
+                                                      e.grand_total ??
+                                                          "Sin info",
+                                                      style: TextStyle(
+                                                        fontSize: 15,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      )),
+                                                ],
+                                              ),
+                                              SizedBox(
+                                                height: 5.0,
+                                              ),
+                                              Text(e.location ?? ""),
+                                              Text(
+                                                  "Dias:  ${_numberOfDaysString(DateTime.parse(e.end_date), DateTime.parse(e.start_date))}")
+                                            ]),
+                                      )))
                             ],
                           ),
                         ),

@@ -190,6 +190,9 @@ class _LoginViewState extends State<LoginView> {
         child: SingleChildScrollView(
           physics: BouncingScrollPhysics(),
           child: Container(
+            margin: EdgeInsets.symmetric(
+                horizontal:
+                    MediaQuery.of(context).size.width > 500 ? 100.0 : 0.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [

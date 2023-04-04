@@ -393,104 +393,114 @@ class _HomeState extends State<Home> {
                                         },
                                       ),
                                       Padding(
-                                        padding: const EdgeInsets.only(
-                                            left: 15.0, right: 15.0),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              car.title,
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                            Row(
-                                              children: [
-                                                Icon(
-                                                  Icons.car_rental,
-                                                  color: Colors.grey,
-                                                ),
-                                                SizedBox(
-                                                  width: 3.0,
-                                                ),
-                                                Text(
-                                                  car.name,
-                                                  style: TextStyle(
-                                                      color: Colors.grey,
-                                                      fontWeight:
-                                                          FontWeight.bold),
-                                                ),
-                                              ],
-                                            ),
-                                            Row(
-                                              children: [
-                                                const Icon(
-                                                  Icons.pin_drop,
-                                                  color: Colors.grey,
-                                                ),
-                                                SizedBox(
-                                                  width: 3.0,
-                                                ),
-                                                Text(
-                                                  "Quetzaltenango",
-                                                  style: TextStyle(
-                                                      color: Colors.grey,
-                                                      fontWeight:
-                                                          FontWeight.bold),
-                                                ),
-                                              ],
-                                            ),
-                                            SizedBox(
-                                              height: 5.0,
-                                            ),
-                                            Column(
+                                          padding: const EdgeInsets.only(
+                                              left: 15.0, right: 15.0),
+                                          child: SingleChildScrollView(
+                                            child: Column(
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.start,
                                               children: [
-                                                Container(
-                                                  margin: EdgeInsets.symmetric(
-                                                      vertical: 3.0),
-                                                  padding: EdgeInsets.all(10.0),
-                                                  color: Colors.grey[50],
-                                                  child: Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                            left: 3.0),
-                                                    child: Text(
-                                                      "Q${car.per_day_price}/Día",
-                                                      style: TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          fontSize: 13.0),
+                                                Text(
+                                                  car.title,
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                                Row(
+                                                  children: [
+                                                    Icon(
+                                                      Icons.car_rental,
+                                                      color: Colors.grey,
                                                     ),
-                                                  ),
+                                                    SizedBox(
+                                                      width: 3.0,
+                                                    ),
+                                                    Text(
+                                                      car.name,
+                                                      style: TextStyle(
+                                                          color: Colors.grey,
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                    ),
+                                                  ],
+                                                ),
+                                                Row(
+                                                  children: [
+                                                    const Icon(
+                                                      Icons.pin_drop,
+                                                      color: Colors.grey,
+                                                    ),
+                                                    SizedBox(
+                                                      width: 3.0,
+                                                    ),
+                                                    Text(
+                                                      "Quetzaltenango",
+                                                      style: TextStyle(
+                                                          color: Colors.grey,
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                    ),
+                                                  ],
                                                 ),
                                                 SizedBox(
-                                                  width: 10.0,
+                                                  height: 5.0,
                                                 ),
-                                                Container(
-                                                  margin: EdgeInsets.symmetric(
-                                                      vertical: 3.0),
-                                                  padding: EdgeInsets.all(10.0),
-                                                  color: Colors.grey[50],
-                                                  child: Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                            left: 3.0),
-                                                    child: Text(
-                                                      "Q${car.per_week_price}/Semana",
-                                                      style: TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          fontSize: 13.0),
+                                                Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Container(
+                                                      margin:
+                                                          EdgeInsets.symmetric(
+                                                              vertical: 3.0),
+                                                      padding:
+                                                          EdgeInsets.all(10.0),
+                                                      color: Colors.grey[50],
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                    .only(
+                                                                left: 3.0),
+                                                        child: Text(
+                                                          "Q${car.per_day_price}/Día",
+                                                          style: TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              fontSize: 13.0),
+                                                        ),
+                                                      ),
                                                     ),
-                                                  ),
+                                                    SizedBox(
+                                                      width: 10.0,
+                                                    ),
+                                                    Container(
+                                                      margin:
+                                                          EdgeInsets.symmetric(
+                                                              vertical: 3.0),
+                                                      padding:
+                                                          EdgeInsets.all(10.0),
+                                                      color: Colors.grey[50],
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                    .only(
+                                                                left: 3.0),
+                                                        child: Text(
+                                                          "Q${car.per_week_price}/Semana",
+                                                          style: TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              fontSize: 13.0),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
                                                 ),
                                               ],
                                             ),
-                                          ],
-                                        ),
-                                      ),
+                                          )),
                                       Icon(
                                         FeatherIcons.chevronRight,
                                         color: Colors.grey,

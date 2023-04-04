@@ -314,161 +314,170 @@ class _AdminViewState extends State<AdminView> {
               } else {
                 return SingleChildScrollView(
                     child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: _reports
                       .map((report) => Card(
                             elevation: 0.0,
                             child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Row(
-                                children: [
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(15.0),
-                                    child: report.fotografia != ""
-                                        ? Image.network(
-                                            "https://rentcarapex.ceandb.com/assets/img/equipments/reports/${report.fotografia.toString()}",
-                                            height: MediaQuery.of(context)
-                                                        .size
-                                                        .width >
-                                                    500
-                                                ? 300
-                                                : 80.0,
-                                            loadingBuilder:
-                                                (BuildContext context,
-                                                    Widget child,
-                                                    ImageChunkEvent
-                                                        loadingProgress) {
-                                              if (loadingProgress == null) {
-                                                return child;
-                                              }
-                                              return Padding(
-                                                padding:
-                                                    const EdgeInsets.all(8.0),
-                                                child: Center(
-                                                  child:
-                                                      CircularProgressIndicator(
-                                                    strokeWidth: 2.0,
-                                                    backgroundColor:
-                                                        Colors.white,
-                                                    valueColor:
-                                                        new AlwaysStoppedAnimation<
-                                                            Color>(
-                                                      Color(0xff333D55),
+                                padding: const EdgeInsets.all(8.0),
+                                child: SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
+                                  child: Row(
+                                    children: [
+                                      ClipRRect(
+                                        borderRadius:
+                                            BorderRadius.circular(15.0),
+                                        child: report.fotografia != ""
+                                            ? Image.network(
+                                                "https://rentcarapex.ceandb.com/assets/img/equipments/reports/${report.fotografia.toString()}",
+                                                height: MediaQuery.of(context)
+                                                            .size
+                                                            .width >
+                                                        500
+                                                    ? 300
+                                                    : 80.0,
+                                                loadingBuilder:
+                                                    (BuildContext context,
+                                                        Widget child,
+                                                        ImageChunkEvent
+                                                            loadingProgress) {
+                                                  if (loadingProgress == null) {
+                                                    return child;
+                                                  }
+                                                  return Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            8.0),
+                                                    child: Center(
+                                                      child:
+                                                          CircularProgressIndicator(
+                                                        strokeWidth: 2.0,
+                                                        backgroundColor:
+                                                            Colors.white,
+                                                        valueColor:
+                                                            new AlwaysStoppedAnimation<
+                                                                Color>(
+                                                          Color(0xff333D55),
+                                                        ),
+                                                        value: loadingProgress
+                                                                    .expectedTotalBytes !=
+                                                                null
+                                                            ? loadingProgress
+                                                                    .cumulativeBytesLoaded /
+                                                                loadingProgress
+                                                                    .expectedTotalBytes
+                                                            : null,
+                                                      ),
                                                     ),
-                                                    value: loadingProgress
-                                                                .expectedTotalBytes !=
-                                                            null
-                                                        ? loadingProgress
-                                                                .cumulativeBytesLoaded /
-                                                            loadingProgress
-                                                                .expectedTotalBytes
-                                                        : null,
+                                                  );
+                                                },
+                                              )
+                                            : Icon(MdiIcons.cameraOff,
+                                                color: Colors.grey,
+                                                size: MediaQuery.of(context)
+                                                            .size
+                                                            .width >
+                                                        500
+                                                    ? 90
+                                                    : 55.0),
+                                      ),
+                                      VerticalDivider(),
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                            top: 8.0, bottom: 8.0),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceEvenly,
+                                          children: [
+                                            Row(
+                                              children: [
+                                                Icon(
+                                                  Icons.domain,
+                                                  color: Colors.grey,
+                                                  size: MediaQuery.of(context)
+                                                              .size
+                                                              .width >
+                                                          500
+                                                      ? 75
+                                                      : 30,
+                                                ),
+                                                VerticalDivider(),
+                                                Text(
+                                                  report.entity ?? "",
+                                                  softWrap: false,
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 20.0),
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                ),
+                                              ],
+                                            ),
+                                            Row(
+                                              children: [
+                                                Icon(
+                                                  MdiIcons.noteEdit,
+                                                  size: MediaQuery.of(context)
+                                                              .size
+                                                              .width >
+                                                          500
+                                                      ? 75
+                                                      : 30,
+                                                  color: Colors.grey,
+                                                ),
+                                                VerticalDivider(),
+                                                Container(
+                                                  width: MediaQuery.of(context)
+                                                              .size
+                                                              .width >
+                                                          500
+                                                      ? 260
+                                                      : 230, // ancho fijo del contenedor
+                                                  child: SingleChildScrollView(
+                                                    scrollDirection:
+                                                        Axis.vertical,
+                                                    child: Text(
+                                                        report.observation ??
+                                                            "",
+                                                        softWrap: true,
+                                                        textAlign:
+                                                            TextAlign.justify,
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                        maxLines: 20),
                                                   ),
                                                 ),
-                                              );
-                                            },
-                                          )
-                                        : Icon(MdiIcons.cameraOff,
-                                            color: Colors.grey,
-                                            size: MediaQuery.of(context)
-                                                        .size
-                                                        .width >
-                                                    500
-                                                ? 90
-                                                : 55.0),
-                                  ),
-                                  VerticalDivider(),
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        top: 8.0, bottom: 8.0),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceEvenly,
-                                      children: [
-                                        Row(
-                                          children: [
-                                            Icon(
-                                              Icons.domain,
-                                              color: Colors.grey,
-                                              size: MediaQuery.of(context)
-                                                          .size
-                                                          .width >
-                                                      500
-                                                  ? 75
-                                                  : 30,
+                                              ],
                                             ),
-                                            VerticalDivider(),
-                                            Text(
-                                              report.entity ?? "",
-                                              softWrap: false,
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 20.0),
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                          ],
-                                        ),
-                                        Row(
-                                          children: [
-                                            Icon(
-                                              MdiIcons.noteEdit,
-                                              size: MediaQuery.of(context)
-                                                          .size
-                                                          .width >
-                                                      500
-                                                  ? 75
-                                                  : 30,
-                                              color: Colors.grey,
-                                            ),
-                                            VerticalDivider(),
-                                            Container(
-                                              width: MediaQuery.of(context)
-                                                          .size
-                                                          .width >
-                                                      500
-                                                  ? 260
-                                                  : 230, // ancho fijo del contenedor
-                                              child: SingleChildScrollView(
-                                                scrollDirection: Axis.vertical,
-                                                child: Text(
-                                                    report.observation ?? "",
-                                                    softWrap: true,
-                                                    textAlign:
-                                                        TextAlign.justify,
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    maxLines: 20),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        Row(
-                                          children: [
-                                            Icon(
-                                              MdiIcons.calendar,
-                                              size: MediaQuery.of(context)
-                                                          .size
-                                                          .width >
-                                                      500
-                                                  ? 75
-                                                  : 30,
-                                              color: Colors.grey,
-                                            ),
-                                            VerticalDivider(),
-                                            Text(
-                                              _formattedDate(DateTime.parse(
-                                                report.date ?? "2000-01-01",
-                                              )),
+                                            Row(
+                                              children: [
+                                                Icon(
+                                                  MdiIcons.calendar,
+                                                  size: MediaQuery.of(context)
+                                                              .size
+                                                              .width >
+                                                          500
+                                                      ? 75
+                                                      : 30,
+                                                  color: Colors.grey,
+                                                ),
+                                                VerticalDivider(),
+                                                Text(
+                                                  _formattedDate(DateTime.parse(
+                                                    report.date ?? "2000-01-01",
+                                                  )),
+                                                )
+                                              ],
                                             )
                                           ],
-                                        )
-                                      ],
-                                    ),
-                                  )
-                                ],
-                              ),
-                            ),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                )),
                           ))
                       .toList(),
                 ));

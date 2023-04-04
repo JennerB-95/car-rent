@@ -176,25 +176,34 @@ code_sign_if_enabled() {
 }
 
 if [[ "$CONFIGURATION" == "Debug" ]]; then
-  install_framework "${BUILT_PRODUCTS_DIR}/path_provider/path_provider.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/camera_avfoundation/camera_avfoundation.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/flutter_localization/flutter_localization.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/image_picker_ios/image_picker_ios.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/open_file/open_file.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/path_provider_foundation/path_provider_foundation.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/printing/printing.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/share/share.framework"
-  install_framework "${BUILT_PRODUCTS_DIR}/video_player/video_player.framework"
-  install_framework "${BUILT_PRODUCTS_DIR}/wakelock/wakelock.framework"
-  install_framework "${BUILT_PRODUCTS_DIR}/webview_flutter_wkwebview/webview_flutter_wkwebview.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/shared_preferences_foundation/shared_preferences_foundation.framework"
 fi
 if [[ "$CONFIGURATION" == "Profile" ]]; then
-  install_framework "${BUILT_PRODUCTS_DIR}/path_provider/path_provider.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/camera_avfoundation/camera_avfoundation.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/flutter_localization/flutter_localization.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/image_picker_ios/image_picker_ios.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/open_file/open_file.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/path_provider_foundation/path_provider_foundation.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/printing/printing.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/share/share.framework"
-  install_framework "${BUILT_PRODUCTS_DIR}/video_player/video_player.framework"
-  install_framework "${BUILT_PRODUCTS_DIR}/wakelock/wakelock.framework"
-  install_framework "${BUILT_PRODUCTS_DIR}/webview_flutter_wkwebview/webview_flutter_wkwebview.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/shared_preferences_foundation/shared_preferences_foundation.framework"
 fi
 if [[ "$CONFIGURATION" == "Release" ]]; then
-  install_framework "${BUILT_PRODUCTS_DIR}/path_provider/path_provider.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/camera_avfoundation/camera_avfoundation.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/flutter_localization/flutter_localization.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/image_picker_ios/image_picker_ios.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/open_file/open_file.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/path_provider_foundation/path_provider_foundation.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/printing/printing.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/share/share.framework"
-  install_framework "${BUILT_PRODUCTS_DIR}/video_player/video_player.framework"
-  install_framework "${BUILT_PRODUCTS_DIR}/wakelock/wakelock.framework"
-  install_framework "${BUILT_PRODUCTS_DIR}/webview_flutter_wkwebview/webview_flutter_wkwebview.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/shared_preferences_foundation/shared_preferences_foundation.framework"
 fi
 if [ "${COCOAPODS_PARALLEL_CODE_SIGN}" == "true" ]; then
   wait
